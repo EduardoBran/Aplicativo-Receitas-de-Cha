@@ -61,7 +61,7 @@
     <color name="edittext_stroke_focused">@color/color_primary_base</color>
 
     <!-- Cor de erro para campos / textos (tom claro pra destacar no fundo escuro) -->
-    <color name="edittext_error">#F2B8B5</color>
+    <color name="text_error">#F2B8B5</color>
 
     <!-- ===================== -->
     <!-- BOTÕES (DARK)         -->
@@ -108,7 +108,7 @@
     <color name="colorSurface">@color/surface_card_background</color>
     <color name="colorOnSurface">@color/text_primary</color>
 
-    <color name="colorError">@color/edittext_error</color>
+    <color name="colorError">@color/text_error</color>
     <color name="colorOnError">@color/color_on_primary_base</color>
 
 </resources>

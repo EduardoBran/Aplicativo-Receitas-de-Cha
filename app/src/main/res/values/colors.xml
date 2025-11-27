@@ -69,7 +69,7 @@
     <color name="edittext_stroke_focused">@color/color_primary_base</color>
 
     <!-- Cor de erro para campos / textos -->
-    <color name="edittext_error">#B3261E</color>
+    <color name="text_error">#B3261E</color>
 
     <!-- ===================== -->
     <!-- BOTÕES                 -->
@@ -112,6 +112,6 @@
     <color name="colorOnBackground">@color/text_primary</color>
     <color name="colorSurface">@color/surface_card_background</color>
     <color name="colorOnSurface">@color/text_primary</color>
-    <color name="colorError">@color/edittext_error</color>
+    <color name="colorError">@color/text_error</color>
     <color name="colorOnError">@color/color_on_primary_base</color>
 </resources>
