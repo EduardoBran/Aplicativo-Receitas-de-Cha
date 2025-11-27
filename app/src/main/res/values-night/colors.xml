@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ===================== -->
+    <!-- PALETA PRINCIPAL (DARK) -->
+    <!-- ===================== -->
+
+    <!-- Verde principal um pouco mais claro para contrastar no fundo escuro -->
+    <color name="color_primary_base">#4C8C74</color>
+    <!-- Variante mais escura -->
+    <color name="color_primary_dark">#2F6F5B</color>
+    <!-- Variante mais clara / secondary -->
+    <color name="color_primary_light">#72B89A</color>
+    <!-- Cor usada sobre o verde (texto/ícone branco) -->
+    <color name="color_on_primary_base">#FFFFFF</color>
+
+    <!-- ===================== -->
+    <!-- FUNDOS / SUPERFÍCIES (DARK) -->
+    <!-- ===================== -->
+
+    <!-- Fundo geral do app (verde bem escuro) -->
+    <color name="app_background">#081814</color>
+
+    <!-- Superfície de cartões, EditText, etc. -->
+    <color name="surface_card_background">#122822</color>
+    <color name="edittext_background">@color/surface_card_background</color>
+
+    <!-- ===================== -->
+    <!-- TEXTOS (DARK)         -->
+    <!-- ===================== -->
+
+    <!-- Texto principal (quase branco com leve tom esverdeado) -->
+    <color name="text_primary">#E4F5EF</color>
+
+    <!-- Texto secundário / descrições -->
+    <color name="text_secondary">#A0B9B1</color>
+
+    <!-- Hint dos campos -->
+    <color name="text_hint">@color/text_secondary</color>
+
+    <!-- Texto sobre botões verdes (branco) -->
+    <color name="text_on_primary">@color/color_on_primary_base</color>
+
+    <!-- ===================== -->
+    <!-- EDITTEXT / CAMPOS     -->
+    <!-- ===================== -->
+
+    <!-- Ícone dentro do EditText -->
+    <color name="edittext_icon">@color/text_secondary</color>
+
+    <!-- Texto do campo (conteúdo digitado) -->
+    <color name="edittext_text">@color/text_primary</color>
+
+    <!-- Hint do campo -->
+    <color name="edittext_hint">@color/text_hint</color>
+
+    <!-- Borda do campo - estado normal -->
+    <color name="edittext_stroke">#37554B</color>
+
+    <!-- Borda do campo - estado focado -->
+    <color name="edittext_stroke_focused">@color/color_primary_base</color>
+
+    <!-- Cor de erro para campos / textos (tom claro pra destacar no fundo escuro) -->
+    <color name="edittext_error">#F2B8B5</color>
+
+    <!-- ===================== -->
+    <!-- BOTÕES (DARK)         -->
+    <!-- ===================== -->
+
+    <!-- Fundo dos botões principais -->
+    <color name="button_primary_background">@color/color_primary_base</color>
+
+    <!-- Texto dentro dos botões principais -->
+    <color name="button_primary_text">@color/text_on_primary</color>
+
+    <!-- Ícone dentro dos botões principais -->
+    <color name="button_primary_icon">@color/text_on_primary</color>
+
+    <!-- Botão desabilitado -->
+    <color name="button_disabled_background">#37554B</color>
+    <color name="button_disabled_text">#9DB3AB</color>
+
+    <!-- ===================== -->
+    <!-- DIVISÓRIAS / SOMBRA   -->
+    <!-- ===================== -->
+
+    <!-- Divisórias / bordas sutis -->
+    <color name="divider">#37554B</color>
+
+    <!-- Sombra mais forte em dark (40% preto) -->
+    <color name="shadow_light">#66000000</color>
+
+    <!-- ============================== -->
+    <!-- MAPEAMENTO PARA TEMA MATERIAL  -->
+    <!-- ============================== -->
+
+    <!-- AppCompat / Material (Theme.*) -->
+    <color name="colorPrimary">@color/color_primary_base</color>
+    <color name="colorPrimaryVariant">@color/color_primary_dark</color>
+    <color name="colorOnPrimary">@color/color_on_primary_base</color>
+
+    <color name="colorSecondary">@color/color_primary_light</color>
+    <color name="colorOnSecondary">@color/color_on_primary_base</color>
+
+    <color name="colorBackground">@color/app_background</color>
+    <color name="colorOnBackground">@color/text_primary</color>
+
+    <color name="colorSurface">@color/surface_card_background</color>
+    <color name="colorOnSurface">@color/text_primary</color>
+
+    <color name="colorError">@color/edittext_error</color>
+    <color name="colorOnError">@color/color_on_primary_base</color>
+
+</resources>

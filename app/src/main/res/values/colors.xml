@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- ===================== -->
+    <!-- PALETA PRINCIPAL      -->
+    <!-- ===================== -->
+
+    <!-- Verde principal (marca / botões principais) -->
+    <color name="color_primary_base">#2F6F5B</color>
+    <!-- Verde mais escuro (status bar, variant) -->
+    <color name="color_primary_dark">#214E40</color>
+    <!-- Verde mais claro (secondary, realces) -->
+    <color name="color_primary_light">#4C8C74</color>
+    <!-- Cor usada sobre o verde (texto/ícone branco) -->
+    <color name="color_on_primary_base">#FFFFFF</color>
+
+    <!-- ===================== -->
+    <!-- FUNDOS / SUPERFÍCIES  -->
+    <!-- ===================== -->
+
+    <!-- 1) Fundo geral do app -->
+    <color name="app_background">#C9DAD6</color>
+
+    <!-- Superfície de cartões, EditText, etc. -->
+    <!-- 2) Fundo do EditText -->
+    <color name="surface_card_background">#F9FBFA</color>
+    <color name="edittext_background">@color/surface_card_background</color>
+
+    <!-- ===================== -->
+    <!-- TEXTOS                 -->
+    <!-- ===================== -->
+
+    <!-- 4) Texto digitado no campo, títulos principais -->
+    <color name="text_primary">#133026</color>
+
+    <!-- Texto secundário (descrições) -->
+    <color name="text_secondary">#5F726C</color>
+
+    <!-- 5) Hint dos campos -->
+    <color name="text_hint">#5F726C</color>
+
+    <!-- Texto sobre botões verdes (branco) -->
+    <color name="text_on_primary">@color/color_on_primary_base</color>
+
+    <!-- ===================== -->
+    <!-- EDITTEXT / CAMPOS      -->
+    <!-- ===================== -->
+
+    <!-- 3) Ícone dentro do EditText -->
+    <color name="edittext_icon">#5F726C</color>
+
+    <!-- 4) Texto do campo (conteúdo digitado) -->
+    <color name="edittext_text">@color/text_primary</color>
+
+    <!-- 5) Hint do campo -->
+    <color name="edittext_hint">@color/text_hint</color>
+
+    <!-- 6) Borda do campo - estado normal -->
+    <color name="edittext_stroke">#AFC3BD</color>
+
+    <!-- 6) Borda do campo - estado focado -->
+    <color name="edittext_stroke_focused">@color/color_primary_base</color>
+
+    <!-- Cor de erro para campos / textos -->
+    <color name="edittext_error">#B3261E</color>
+
+    <!-- ===================== -->
+    <!-- BOTÕES                 -->
+    <!-- ===================== -->
+
+    <!-- 7) Fundo dos botões principais -->
+    <color name="button_primary_background">@color/color_primary_base</color>
+
+    <!-- 9) Texto dentro dos botões principais -->
+    <color name="button_primary_text">@color/text_on_primary</color>
+
+    <!-- 8) Ícone dentro dos botões principais -->
+    <color name="button_primary_icon">@color/text_on_primary</color>
+
+    <!-- Botão desabilitado -->
+    <color name="button_disabled_background">#AFC3BD</color>
+    <color name="button_disabled_text">#F9FBFA</color>
+
+    <!-- ===================== -->
+    <!-- DIVISÓRIAS / SOMBRA    -->
+    <!-- ===================== -->
+
+    <!-- 6) Pode ser usada como borda leve, divisórias, etc. -->
+    <color name="divider">#AFC3BD</color>
+
+    <!-- Sombra leve (15% preto) para cards/botões elevados -->
+    <color name="shadow_light">#26000000</color>
+
+    <!-- ============================== -->
+    <!-- MAPEAMENTO PARA TEMA MATERIAL  -->
+    <!-- ============================== -->
+
+    <!-- AppCompat / Material (Theme.*) -->
+    <color name="colorPrimary">@color/color_primary_base</color>
+    <color name="colorPrimaryVariant">@color/color_primary_dark</color>
+    <color name="colorOnPrimary">@color/color_on_primary_base</color>
+    <color name="colorSecondary">@color/color_primary_light</color>
+    <color name="colorOnSecondary">@color/color_on_primary_base</color>
+    <color name="colorBackground">@color/app_background</color>
+    <color name="colorOnBackground">@color/text_primary</color>
+    <color name="colorSurface">@color/surface_card_background</color>
+    <color name="colorOnSurface">@color/text_primary</color>
+    <color name="colorError">@color/edittext_error</color>
+    <color name="colorOnError">@color/color_on_primary_base</color>
+</resources>

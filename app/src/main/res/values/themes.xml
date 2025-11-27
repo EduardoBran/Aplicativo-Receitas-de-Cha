@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.AppReceitasCha" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Aqui depois você personaliza cores, fonte etc -->
+    </style>
+</resources>
