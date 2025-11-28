@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Tema base do app (MATERIAL COMPONENTS, modo claro) -->
+    <!-- Tema base do app em modo escuro -->
     <style name="Theme.AppReceitasCha" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
-        <!-- Cores principais mapeadas em colors.xml -->
+        <!-- As mesmas chaves de cor, mas os valores vêm de colors.xml (night) -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
@@ -21,16 +21,15 @@
         <item name="colorError">@color/colorError</item>
         <item name="colorOnError">@color/colorOnError</item>
 
-        <!-- Fundo padrão da janela -->
+        <!-- Fundo padrão da janela no dark -->
         <item name="android:windowBackground">@color/app_background</item>
 
-        <!-- Edge-to-edge + barras claras (ícones escuros) no modo claro -->
+        <!-- Edge-to-edge ajustado para dark (ícones claros) -->
         <item name="android:statusBarColor" >@android:color/transparent</item>
         <item name="android:navigationBarColor" >@android:color/transparent</item>
-        <item name="android:windowLightStatusBar" >true</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:windowLightStatusBar" >false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
 
-        <!-- Demais tipografias/heranças seguem do MaterialComponents -->
     </style>
 
 </resources>
