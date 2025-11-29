@@ -86,16 +86,26 @@ object FieldValidationRules {
      */
     fun validatePhone(phone: String): ValidationResult {
         val trimmed = phone.trim()
+
+        // Telefone é opcional
         if (trimmed.isBlank()) {
             return ValidationResult(true, null, null)
         }
-        if (!Patterns.PHONE.matcher(trimmed).matches()) {
-            return ValidationResult(
+
+        // Mantém apenas dígitos (remove "()", espaço, etc.)
+        val digits = trimmed.filter { it.isDigit() }
+
+        // Aceita SOMENTE 11 dígitos (ex.: 21998848525)
+        val isValidBrazilianMobile = digits.length == 11
+
+        return if (isValidBrazilianMobile) {
+            ValidationResult(true, null, null)
+        } else {
+            ValidationResult(
                 isValid = false,
                 errorResId = R.string.error_phone_invalid
             )
         }
-        return ValidationResult(true, null, null)
     }
 
     fun validatePassword(password: String): ValidationResult {

@@ -1,7 +1,9 @@
 package com.luizeduardobrandao.appreceitascha.ui.auth.resetpassword
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
@@ -16,8 +18,8 @@ import androidx.navigation.fragment.findNavController
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentResetPasswordBinding
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
+import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidationRules
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidator
-import com.luizeduardobrandao.appreceitascha.ui.common.view.RequiredIconManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -30,7 +32,6 @@ class ResetPasswordFragment : Fragment() {
     private val viewModel: ResetPasswordViewModel by viewModels()
 
     private val fieldValidator = FieldValidator()
-    private lateinit var requiredIconManager: RequiredIconManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,9 +43,7 @@ class ResetPasswordFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        requiredIconManager = RequiredIconManager(requireContext())
         setupToolbar()
-        setupRequiredIcons()
         setupListeners()
         observeUiState()
     }
@@ -75,35 +74,40 @@ class ResetPasswordFragment : Fragment() {
         }
     }
 
-    private fun setupRequiredIcons() {
-        requiredIconManager.setRequiredIconVisible(binding.etEmail, true)
-    }
-
     private fun setupListeners() {
+        // ---------- E-MAIL ----------
         binding.etEmail.doAfterTextChanged {
             val value = it?.toString().orEmpty()
             viewModel.onEmailChanged(value)
-            if (binding.tilEmail.isErrorEnabled) {
+
+            if (value.isBlank()) {
+                binding.tilEmail.tag = null
+                fieldValidator.validateEmailField(binding.tilEmail, value)
+            } else if (binding.tilEmail.tag != null) {
                 fieldValidator.validateEmailField(binding.tilEmail, value)
             }
-        }
 
+            updateSendButtonState()
+        }
         binding.etEmail.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                val valid = fieldValidator.validateEmailField(
-                    binding.tilEmail,
-                    binding.etEmail.text?.toString().orEmpty()
-                )
-                if (!valid) {
-                    SnackbarFragment.showError(
-                        binding.root,
-                        binding.tilEmail.error?.toString() ?: "E-mail inválido."
-                    )
+                val value = binding.etEmail.text?.toString().orEmpty()
+                if (value.isNotBlank()) {
+                    val valid = fieldValidator.validateEmailField(binding.tilEmail, value)
+                    if (!valid) {
+                        val messageFromValidator = binding.tilEmail.tag as? String
+                        SnackbarFragment.showError(
+                            binding.root,
+                            messageFromValidator ?: getString(R.string.error_email_required)
+                        )
+                    }
                 }
             }
         }
 
         binding.btnSend.setOnClickListener {
+            // Fecha o teclado antes de enviar
+            hideKeyboard()
             viewModel.submitResetPassword()
         }
     }
@@ -113,6 +117,7 @@ class ResetPasswordFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progressReset.isVisible = state.isLoading
+                    updateSendButtonState(additionalLoadingFlag = state.isLoading)
 
                     if (state.errorMessage != null) {
                         // Para simplificar: erro comum é "e-mail não existe"
@@ -132,6 +137,20 @@ class ResetPasswordFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun updateSendButtonState(additionalLoadingFlag: Boolean = false) {
+        val email = binding.etEmail.text?.toString().orEmpty()
+        val emailValid = FieldValidationRules.validateEmail(email).isValid
+
+        val enabled = emailValid && !additionalLoadingFlag
+        binding.btnSend.isEnabled = enabled
+        binding.btnSend.alpha = if (enabled) 1f else 0.6f
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
     override fun onDestroyView() {

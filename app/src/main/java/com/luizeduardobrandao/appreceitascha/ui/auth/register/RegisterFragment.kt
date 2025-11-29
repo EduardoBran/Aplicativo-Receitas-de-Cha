@@ -1,7 +1,11 @@
 package com.luizeduardobrandao.appreceitascha.ui.auth.register
 
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
@@ -73,128 +77,213 @@ class RegisterFragment : Fragment() {
     }
 
     private fun setupListeners() {
+        // ---------- NOME ----------
         binding.etName.doAfterTextChanged {
             val value = it?.toString().orEmpty()
             viewModel.onNameChanged(value)
-            if (binding.tilName.isErrorEnabled) {
+
+            if (value.isBlank()) {
+                // Campo vazio: limpa erro via validator
+                binding.tilName.tag = null
+                fieldValidator.validateNameField(binding.tilName, value)
+            } else if (binding.tilName.tag != null) {
+                // Revalida enquanto digita se já havia erro
                 fieldValidator.validateNameField(binding.tilName, value)
             }
+
             updateRegisterButtonState()
         }
         binding.etName.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                val valid = fieldValidator.validateNameField(
-                    binding.tilName,
-                    binding.etName.text?.toString().orEmpty()
-                )
-                if (!valid) {
-                    SnackbarFragment.showError(
-                        binding.root,
-                        binding.tilName.error?.toString() ?: "Nome inválido."
-                    )
+                val value = binding.etName.text?.toString().orEmpty()
+                if (value.isNotBlank()) {
+                    val valid = fieldValidator.validateNameField(binding.tilName, value)
+                    if (!valid) {
+                        val messageFromValidator = binding.tilName.tag as? String
+                        SnackbarFragment.showError(
+                            binding.root,
+                            messageFromValidator ?: getString(R.string.error_name_required)
+                        )
+                    }
                 }
             }
         }
 
+        // ---------- E-MAIL ----------
         binding.etEmail.doAfterTextChanged {
             val value = it?.toString().orEmpty()
             viewModel.onEmailChanged(value)
-            if (binding.tilEmail.isErrorEnabled) {
+
+            if (value.isBlank()) {
+                binding.tilEmail.tag = null
+                fieldValidator.validateEmailField(binding.tilEmail, value)
+            } else if (binding.tilEmail.tag != null) {
                 fieldValidator.validateEmailField(binding.tilEmail, value)
             }
+
             updateRegisterButtonState()
         }
         binding.etEmail.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                val valid = fieldValidator.validateEmailField(
-                    binding.tilEmail,
-                    binding.etEmail.text?.toString().orEmpty()
-                )
-                if (!valid) {
-                    SnackbarFragment.showError(
-                        binding.root,
-                        binding.tilEmail.error?.toString() ?: "E-mail inválido."
-                    )
+                val value = binding.etEmail.text?.toString().orEmpty()
+                if (value.isNotBlank()) {
+                    val valid = fieldValidator.validateEmailField(binding.tilEmail, value)
+                    if (!valid) {
+                        val messageFromValidator = binding.tilEmail.tag as? String
+                        SnackbarFragment.showError(
+                            binding.root,
+                            messageFromValidator ?: getString(R.string.error_email_required)
+                        )
+                    }
                 }
             }
         }
 
+        // ---------- SENHA ----------
         binding.etPassword.doAfterTextChanged {
             val value = it?.toString().orEmpty()
             viewModel.onPasswordChanged(value)
-            if (binding.tilPassword.isErrorEnabled) {
+
+            if (value.isBlank()) {
+                binding.tilPassword.tag = null
+                fieldValidator.validatePasswordField(binding.tilPassword, value)
+            } else if (binding.tilPassword.tag != null) {
                 fieldValidator.validatePasswordField(binding.tilPassword, value)
             }
+
             updateRegisterButtonState()
         }
         binding.etPassword.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                val valid = fieldValidator.validatePasswordField(
-                    binding.tilPassword,
-                    binding.etPassword.text?.toString().orEmpty()
-                )
-                if (!valid) {
-                    SnackbarFragment.showError(
-                        binding.root,
-                        binding.tilPassword.error?.toString() ?: "Senha inválida."
-                    )
+                val value = binding.etPassword.text?.toString().orEmpty()
+                if (value.isNotBlank()) {
+                    val valid = fieldValidator.validatePasswordField(binding.tilPassword, value)
+                    if (!valid) {
+                        val messageFromValidator = binding.tilPassword.tag as? String
+                        SnackbarFragment.showError(
+                            binding.root,
+                            messageFromValidator ?: getString(R.string.error_password_required)
+                        )
+                    }
                 }
             }
         }
 
+        // ---------- CONFIRMAR SENHA ----------
         binding.etConfirmPassword.doAfterTextChanged {
             val confirm = it?.toString().orEmpty()
             val password = binding.etPassword.text?.toString().orEmpty()
-            viewModel.onPasswordChanged(password) // já está sendo chamado acima
-            if (binding.tilConfirmPassword.isErrorEnabled) {
+            viewModel.onPasswordChanged(password)
+
+            if (confirm.isBlank()) {
+                binding.tilConfirmPassword.tag = null
+                fieldValidator.validateConfirmPasswordField(
+                    binding.tilConfirmPassword,
+                    password,
+                    confirm
+                )
+            } else if (binding.tilConfirmPassword.tag != null) {
                 fieldValidator.validateConfirmPasswordField(
                     binding.tilConfirmPassword,
                     password,
                     confirm
                 )
             }
+
             updateRegisterButtonState()
         }
         binding.etConfirmPassword.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                val valid = fieldValidator.validateConfirmPasswordField(
-                    binding.tilConfirmPassword,
-                    binding.etPassword.text?.toString().orEmpty(),
-                    binding.etConfirmPassword.text?.toString().orEmpty()
-                )
-                if (!valid) {
-                    SnackbarFragment.showError(
-                        binding.root,
-                        binding.tilConfirmPassword.error?.toString() ?: "Confirmação inválida."
+                val password = binding.etPassword.text?.toString().orEmpty()
+                val confirm = binding.etConfirmPassword.text?.toString().orEmpty()
+
+                if (confirm.isNotBlank()) {
+                    val valid = fieldValidator.validateConfirmPasswordField(
+                        binding.tilConfirmPassword,
+                        password,
+                        confirm
                     )
+                    if (!valid) {
+                        val messageFromValidator = binding.tilConfirmPassword.tag as? String
+                        SnackbarFragment.showError(
+                            binding.root,
+                            messageFromValidator
+                                ?: getString(R.string.error_confirm_password_required)
+                        )
+                    }
                 }
             }
         }
 
-        binding.etPhone.doAfterTextChanged {
-            val value = it?.toString().orEmpty()
-            viewModel.onPhoneChanged(value)
-            if (binding.tilPhone.isErrorEnabled) {
-                fieldValidator.validatePhoneField(binding.tilPhone, value)
+        // ---------- TELEFONE ----------
+        binding.etPhone.addTextChangedListener(object : TextWatcher {
+
+            private var isFormatting = false
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                if (isFormatting) return
+
+                val current = s?.toString().orEmpty()
+
+                // Mantém apenas dígitos
+                val digits = current.filter { it.isDigit() }
+
+                val formatted = when {
+                    digits.isEmpty() -> ""
+                    digits.length <= 2 -> "(${digits}"
+                    else -> "(${digits.substring(0, 2)}) ${digits.substring(2)}"
+                }
+
+                isFormatting = true
+                s?.replace(0, s.length, formatted)
+                isFormatting = false
+
+                // Ajusta posição do cursor para o final do texto formatado
+                val cursorPosition = formatted.length
+                binding.etPhone.setSelection(
+                    cursorPosition.coerceAtMost(binding.etPhone.text?.length ?: 0)
+                )
+
+                // Atualiza ViewModel com o TEXTO formatado (a validação depois tira máscara)
+                val valueForState = formatted
+                viewModel.onPhoneChanged(valueForState)
+
+                // Se já existia erro, revalida enquanto digita
+                if (binding.tilPhone.tag != null) {
+                    fieldValidator.validatePhoneField(binding.tilPhone, valueForState)
+                }
+
+                updateRegisterButtonState()
             }
-            updateRegisterButtonState()
-        }
+        })
+
         binding.etPhone.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                val valid = fieldValidator.validatePhoneField(
-                    binding.tilPhone,
-                    binding.etPhone.text?.toString().orEmpty()
-                )
-                if (!valid) {
-                    SnackbarFragment.showError(
-                        binding.root,
-                        binding.tilPhone.error?.toString() ?: "Telefone inválido."
-                    )
+                val value = binding.etPhone.text?.toString().orEmpty()
+                // Valida APENAS se tiver conteúdo (opcional, mas se tiver tem que ser válido)
+                if (value.isNotBlank()) {
+                    val valid = fieldValidator.validatePhoneField(binding.tilPhone, value)
+                    if (!valid) {
+                        val messageFromValidator = binding.tilPhone.tag as? String
+                        SnackbarFragment.showError(
+                            binding.root,
+                            messageFromValidator ?: getString(R.string.error_phone_invalid)
+                        )
+                    }
+                } else {
+                    // Campo vazio é válido (opcional), então limpa qualquer erro
+                    binding.tilPhone.tag = null
+                    fieldValidator.validatePhoneField(binding.tilPhone, value)
                 }
             }
         }
 
         binding.btnRegister.setOnClickListener {
+            hideKeyboard()
             viewModel.submitRegister()
         }
     }
@@ -262,6 +351,12 @@ class RegisterFragment : Fragment() {
             .setPopUpTo(R.id.loginFragment, true)
             .build()
         findNavController().navigate(R.id.loginFragment, null, navOptions)
+    }
+
+    private fun hideKeyboard() {
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
     override fun onDestroyView() {

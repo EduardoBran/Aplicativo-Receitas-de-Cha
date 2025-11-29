@@ -2,7 +2,7 @@
     <string name="app_name">Nature Chá</string>
 
     <!-- Login -->
-    <string name="login_title">Receitas de Chá</string>
+    <string name="login_title">Faça login ou clique em ‘Criar conta’ para comprar um plano e liberar todas as receitas.</string>
     <string name="login_email_hint">E-mail</string>
     <string name="login_password_hint">Senha</string>
     <string name="login_button_text">Login</string>

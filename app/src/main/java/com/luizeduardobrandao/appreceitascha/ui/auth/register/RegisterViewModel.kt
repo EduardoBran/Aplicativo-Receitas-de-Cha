@@ -116,9 +116,15 @@ class RegisterViewModel @Inject constructor(
         }
 
         // Telefone (opcional): valida apenas se preenchido
-        if (phone.isNotBlank() && !Patterns.PHONE.matcher(phone).matches()) {
-            phoneError = "Telefone inválido."
-            hasError = true
+        if (phone.isNotBlank()) {
+            // Remove máscara do campo (parênteses, espaço, etc.) e mantém só dígitos
+            val digits = phone.filter { it.isDigit() }
+
+            // Aceita SOMENTE 11 dígitos (ex.: 21998848525)
+            if (digits.length != 11) {
+                phoneError = "Telefone inválido."
+                hasError = true
+            }
         }
 
         // Senha
@@ -142,7 +148,9 @@ class RegisterViewModel @Inject constructor(
             return
         }
 
-        val phoneOrNull = if (phone.isBlank()) null else phone
+        // Remove qualquer máscara antes de salvar no banco
+        val digitsOnlyPhone = phone.filter { it.isDigit() }
+        val phoneOrNull = digitsOnlyPhone.ifBlank { null }
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
