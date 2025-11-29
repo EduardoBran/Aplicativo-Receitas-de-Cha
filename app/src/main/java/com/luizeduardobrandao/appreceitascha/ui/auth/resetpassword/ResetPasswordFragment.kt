@@ -4,8 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -13,8 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavOptions
-import androidx.navigation.fragment.findNavController
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentResetPasswordBinding
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
@@ -43,35 +39,8 @@ class ResetPasswordFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupToolbar()
         setupListeners()
         observeUiState()
-    }
-
-    private fun setupToolbar() {
-        // Clique no item de menu "Home" -> voltar para Login limpando a back stack
-        binding.toolbarReset.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.menu_go_home_login -> {
-                    val navOptions = NavOptions.Builder()
-                        .setPopUpTo(R.id.loginFragment, true)
-                        .build()
-                    findNavController().navigate(R.id.loginFragment, null, navOptions)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        // Deixa o ícone do item "Home" branco programaticamente
-        val homeItem = binding.toolbarReset.menu.findItem(R.id.menu_go_home_login)
-        val whiteColor = ContextCompat.getColor(requireContext(), R.color.text_on_primary)
-
-        homeItem?.icon?.let { originalDrawable ->
-            val wrapped = DrawableCompat.wrap(originalDrawable).mutate()
-            DrawableCompat.setTint(wrapped, whiteColor)
-            homeItem.icon = wrapped
-        }
     }
 
     private fun setupListeners() {
@@ -149,7 +118,8 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 

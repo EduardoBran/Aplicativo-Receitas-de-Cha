@@ -5,6 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <!-- ======== Tela Home ======== -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.home.HomeFragment"
@@ -13,33 +14,37 @@
 
         <argument
             android:name="userName"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
 
         <action
             android:id="@+id/action_homeFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
 
+    <!-- ======== Tela Categorias ======== -->
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.categories.CategoriesFragment"
         android:label="fragment_categories"
         tools:layout="@layout/fragment_categories" />
 
+    <!-- ======== Tela Favoritos ======== -->
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.favorites.FavoritesFragment"
         android:label="fragment_favorites"
         tools:layout="@layout/fragment_favorites" />
 
+    <!-- ======== Tela Planos ======== -->
     <fragment
         android:id="@+id/plansFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.plans.PlansFragment"
         android:label="fragment_plans"
         tools:layout="@layout/fragment_plans" />
 
+    <!-- ======== Tela Login ======== -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.auth.login.LoginFragment"
@@ -59,6 +64,7 @@
             app:destination="@id/homeFragment" />
     </fragment>
 
+    <!-- ======== Tela Cadastro ======== -->
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.auth.register.RegisterFragment"
@@ -74,6 +80,7 @@
             app:destination="@id/loginFragment" />
     </fragment>
 
+    <!-- ======== Tela Reset Password ======== -->
     <fragment
         android:id="@+id/resetPasswordFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.auth.resetpassword.ResetPasswordFragment"

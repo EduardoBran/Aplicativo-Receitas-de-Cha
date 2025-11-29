@@ -25,12 +25,29 @@
         <item name="android:windowBackground">@color/app_background</item>
 
         <!-- Edge-to-edge + barras claras (ícones escuros) no modo claro -->
-        <item name="android:statusBarColor" >@android:color/transparent</item>
-        <item name="android:navigationBarColor" >@android:color/transparent</item>
-        <item name="android:windowLightStatusBar" >true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
 
         <!-- Demais tipografias/heranças seguem do MaterialComponents -->
+    </style>
+
+    <!-- Estilo base para o BottomNavigationView do app -->
+    <style name="Widget.AppReceitasCha.BottomNav" parent="Widget.MaterialComponents.BottomNavigationView" />
+
+    <!-- Indicador ativo do BottomNavigationView em forma de pílula -->
+    <style name="Widget.AppReceitasCha.BottomNav.ActiveIndicator">
+        <item name="android:width">72dp</item>
+        <item name="android:height">40dp</item>
+        <!-- Forma de pílula totalmente arredondada -->
+        <item name="shapeAppearance">@style/ShapeAppearance.AppReceitasCha.BottomNav.Pill</item>
+        <item name="android:color">@color/bottom_nav_active_indicator</item>
+    </style>
+
+    <style name="ShapeAppearance.AppReceitasCha.BottomNav.Pill" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 
 </resources>

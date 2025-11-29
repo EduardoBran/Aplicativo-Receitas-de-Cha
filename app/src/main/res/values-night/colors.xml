@@ -81,6 +81,16 @@
     <color name="button_disabled_text">#9DB3AB</color>
 
     <!-- ===================== -->
+    <!-- BOTTOM NAV             -->
+    <!-- ===================== -->
+
+    <!-- Cor da “pílula” ativa do item selecionado -->
+    <color name="bottom_nav_active_indicator">@color/color_primary_base</color>
+
+    <!-- Fundo do bottom nav (barra) -->
+    <color name="bottom_nav_background">@color/surface_card_background</color>
+
+    <!-- ===================== -->
     <!-- DIVISÓRIAS / SOMBRA   -->
     <!-- ===================== -->
 

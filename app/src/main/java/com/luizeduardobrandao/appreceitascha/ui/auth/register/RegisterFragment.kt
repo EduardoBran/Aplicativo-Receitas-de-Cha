@@ -6,8 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -47,33 +45,8 @@ class RegisterFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupToolbar()
         setupListeners()
         observeUiState()
-    }
-
-    private fun setupToolbar() {
-        // Clique no item de menu (Home -> voltar para login limpando back stack)
-        binding.toolbarRegister.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.menu_go_home_login -> {
-                    navigateBackToLoginClearBackStack()
-                    true
-                }
-
-                else -> false
-            }
-        }
-
-        // Deixa o ícone do menu "Home" branco programaticamente
-        val homeItem = binding.toolbarRegister.menu.findItem(R.id.menu_go_home_login)
-        val whiteColor = ContextCompat.getColor(requireContext(), R.color.text_on_primary)
-
-        homeItem?.icon?.let { originalDrawable ->
-            val wrapped = DrawableCompat.wrap(originalDrawable).mutate()
-            DrawableCompat.setTint(wrapped, whiteColor)
-            homeItem.icon = wrapped
-        }
     }
 
     private fun setupListeners() {
@@ -344,13 +317,6 @@ class RegisterFragment : Fragment() {
             .build()
 
         findNavController().navigate(directions, navOptions)
-    }
-
-    private fun navigateBackToLoginClearBackStack() {
-        val navOptions = NavOptions.Builder()
-            .setPopUpTo(R.id.loginFragment, true)
-            .build()
-        findNavController().navigate(R.id.loginFragment, null, navOptions)
     }
 
     private fun hideKeyboard() {
