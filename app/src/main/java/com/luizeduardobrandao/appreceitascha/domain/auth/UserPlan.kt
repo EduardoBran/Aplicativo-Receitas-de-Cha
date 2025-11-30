@@ -1,19 +1,6 @@
 package com.luizeduardobrandao.appreceitascha.domain.auth
 
 /**
- * Tipo de plano disponível no app.
- *
- * NONE representa SEM_PLANO (nunca comprou ou plano expirado).
- */
-enum class PlanType {
-    NONE,
-    PLAN_3M,
-    PLAN_6M,
-    PLAN_12M,
-    PLAN_LIFE
-}
-
-/**
  * Informações de plano de um usuário.
  *
  * Espelha a estrutura salva em /userPlans/{uid} no Realtime Database.
@@ -31,6 +18,19 @@ data class UserPlan(
 enum class AuthState {
     NAO_LOGADO,
     LOGADO
+}
+
+/**
+ * Tipo de plano disponível no app.
+ *
+ * NONE representa SEM_PLANO (nunca comprou ou plano expirado).
+ */
+enum class PlanType {
+    NONE,
+    PLAN_3M,
+    PLAN_6M,
+    PLAN_12M,
+    PLAN_LIFE
 }
 
 /**

@@ -40,6 +40,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -118,4 +119,11 @@ dependencies {
 
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // Google Play Billing (KTX) – versão compatível com as regras atuais do Google
+    implementation("com.android.billingclient:billing:8.1.0")
+    implementation("com.android.billingclient:billing-ktx:8.1.0")
+
+    // Desugaring do Java Time
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

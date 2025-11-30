@@ -4,6 +4,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanType
+import com.luizeduardobrandao.appreceitascha.domain.auth.PlanConstants
+import com.luizeduardobrandao.appreceitascha.domain.auth.toPlanId
+import com.luizeduardobrandao.appreceitascha.domain.auth.toPlanType
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
 import com.luizeduardobrandao.appreceitascha.domain.auth.User
@@ -89,7 +92,7 @@ class AuthRepositoryImpl @Inject constructor(
                 .child(user.uid)
 
             val initialPlanData = mapOf(
-                "planId" to "none",
+                "planId" to PlanConstants.PLAN_ID_NONE,
                 "expiresAt" to null,
                 "isLifetime" to false
             )
@@ -135,13 +138,7 @@ class AuthRepositoryImpl @Inject constructor(
                 val expiresAt = snapshot.child("expiresAt").getValue(Long::class.java)
                 val isLifetime = snapshot.child("isLifetime").getValue(Boolean::class.java) ?: false
 
-                val planType = when (planId) {
-                    "plan_3m" -> PlanType.PLAN_3M
-                    "plan_6m" -> PlanType.PLAN_6M
-                    "plan_12m" -> PlanType.PLAN_12M
-                    "plan_life" -> PlanType.PLAN_LIFE
-                    else -> PlanType.NONE
-                }
+                val planType = planId.toPlanType()
 
                 Result.success(
                     UserPlan(
@@ -161,29 +158,15 @@ class AuthRepositoryImpl @Inject constructor(
      * Será chamado após uma compra aprovada ou sincronização com a Play Store. */
     override suspend fun updateUserPlan(plan: UserPlan): Result<Unit> {
         return try {
-            val planId = when (plan.planType) {
-                PlanType.PLAN_3M -> "plan_3m"
-                PlanType.PLAN_6M -> "plan_6m"
-                PlanType.PLAN_12M -> "plan_12m"
-                PlanType.PLAN_LIFE -> "plan_life"
-                PlanType.NONE -> null              // SEM_PLANO
-            }
+            val ref = database.getReference("userPlans").child(plan.uid)
 
             val data = hashMapOf<String, Any?>(
-                "expiresAt" to plan.expiresAtMillis,
-                "isLifetime" to plan.isLifetime
+                "planId" to plan.planType.toPlanId(),        // SEM_PLANO -> "none"
+                "expiresAt" to plan.expiresAtMillis,         // null para vitalício ou NONE
+                "isLifetime" to plan.isLifetime              // false para NONE / planos temporários
             )
 
-            if (planId != null) {
-                data["planId"] = planId
-            } else {
-                // PlanType.NONE → SEM_PLANO: removemos planId
-                data["planId"] = null
-            }
-
-            val ref = database.getReference("userPlans").child(plan.uid)
             ref.setValue(data).await()
-
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
