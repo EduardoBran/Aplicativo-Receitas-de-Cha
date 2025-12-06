@@ -138,30 +138,18 @@
 
     <!-- ======== CategoriesFragment ========-->
     <string name="categories_title">Categorias de Chás</string>
-    <string name="categories_empty_state">
-        Não encontramos nenhuma categoria no momento.\nTente novamente mais tarde.
-    </string>
-    <string name="categories_error_generic">
-        Ocorreu um erro ao carregar as categorias. Por favor, tente novamente.
-    </string>
-    <string name="categories_item_icon_go_content_description">
-        Ver receitas desta categoria
-    </string>
+    <string name="categories_empty_state">Não encontramos nenhuma categoria no momento.\nTente novamente mais tarde.</string>
+    <string name="categories_error_generic">Ocorreu um erro ao carregar as categorias. Por favor, tente novamente.</string>
+    <string name="categories_item_icon_go_content_description">Ver receitas desta categoria.</string>
+    <string name="categories_loading_message">Carregando as categorias…</string>
 
 
     <!-- ======== RecipesListFragment ========-->
-    <string name="recipes_list_empty_state">
-        Não encontramos nenhuma receita para esta categoria.\nTente novamente mais tarde.
-    </string>
-    <string name="recipes_list_error_generic">
-        Ocorreu um erro ao carregar as receitas. Por favor, tente novamente.
-    </string>
-    <string name="recipes_item_icon_go_content_description">
-        Ver detalhes da receita
-    </string>
-    <string name="recipe_locked_requires_plan_or_login">
-        Para visualizar esta receita, faça login e ative um plano.
-    </string>
+    <string name="recipes_list_empty_state">Não encontramos nenhuma receita para esta categoria.\nTente novamente mais tarde.</string>
+    <string name="recipes_list_error_generic">Ocorreu um erro ao carregar as receitas. Por favor, tente novamente.</string>
+    <string name="recipes_item_icon_go_content_description">Ver detalhes da receita.</string>
+    <string name="recipe_locked_requires_plan_or_login">Para visualizar esta receita, faça login e ative um plano.</string>
+    <string name="recipes_list_loading_message">Carregando as receitas…</string>
 
 
     <!-- ======== RecipesDetailFragment ========-->
@@ -192,7 +180,7 @@
     </string>
 
 
-    <!-- ======== FavouritesFragment ========-->
+    <!-- ======== FavoritesFragment ========-->
     <string name="favorites_title">Favoritos</string>
     <string name="favorites_empty_state">Você ainda não tem receitas favoritas.</string>
     <string name="favorites_error_generic">Ocorreu um erro ao carregar seus favoritos.</string>
@@ -200,9 +188,55 @@
     <string name="favorites_remove_content_description">Remover de favoritos.</string>
     <string name="favorites_open_recipe_content_description">Receita desbloqueada.</string>
     <string name="favorites_cont_empty">Sem receitas na lista de favoritos.</string>
-
     <string name="recipe_favorite_added_success">%1$s adicionada aos favoritos.</string>
     <string name="recipe_favorite_removed_success">%1$s removida de favoritos.</string>
+    <string name="favorites_loading_message">Carregando lista de favoritas…</string>
+
+
+    <!-- ======== PlansFragment ========-->
+    <string name="plans_title">Planos Nature Chá</string>
+    <string name="plans_subtitle">Escolha o plano ideal para acessar todas as receitas.</string>
+
+    <string name="plans_plan_3m_name">Plano 3 meses</string>
+    <string name="plans_plan_6m_name">Plano 6 meses</string>
+    <string name="plans_plan_12m_name">Plano 12 meses</string>
+    <string name="plans_plan_life_name">Plano vitalício</string>
+
+    <!-- Valores fixos exibidos na UI (devem bater com a Play Store) -->
+    <string name="plans_plan_3m_price">R$ 9,90</string>
+    <string name="plans_plan_6m_price">R$ 29,90</string>
+    <string name="plans_plan_12m_price">R$ 49,90</string>
+    <string name="plans_plan_life_price">R$ 69,90</string>
+
+    <string name="plans_plan_3m_description">Acesse todas as receitas por 3 meses, ideal para experimentar o Nature Chá.</string>
+    <string name="plans_plan_6m_description">Plano semestral para quem quer cuidar da saúde por mais tempo.</string>
+    <string name="plans_plan_12m_description">Um ano inteiro de acesso às receitas completas do Nature Chá.</string>
+    <string name="plans_plan_life_description">Acesso vitalício a todas as receitas, em um único pagamento.</string>
+
+    <string name="plans_buy_button">Comprar</string>
+
+    <!-- Mensagens genéricas de erro/sucesso de planos (usadas na ViewModel) -->
+    <string name="plans_loading_error">Não foi possível carregar os planos. Tente novamente mais tarde.</string>
+    <string name="plans_purchase_success">Plano ativado com sucesso! Aproveite as receitas completas.</string>
+    <string name="plans_purchase_pending">Pagamento pendente de confirmação. Assim que for aprovado, seu plano será liberado.</string>
+    <string name="plans_purchase_cancelled">Compra cancelada. Você pode tentar novamente quando quiser.</string>
+    <string name="plans_purchase_error">Erro ao processar a compra. Tente novamente mais tarde.</string>
+
+    <!-- Home: botão de gerenciar planos (caso queira ajustar o texto do botão no XML) -->
+    <string name="home_manage_plans">Gerenciar planos</string>
+
+    <!-- Tela de Gerenciar Plano -->
+    <string name="manage_plan_title">Gerenciar plano</string>
+    <string name="manage_plan_not_logged">Faça login para gerenciar seu plano.</string>
+    <string name="manage_plan_no_plan">Você não possui um plano ativo no momento.</string>
+    <string name="manage_plan_current_plan_label">Seu plano atual</string>
+    <string name="manage_plan_expires_label">Válido até %s</string>
+    <string name="manage_plan_lifetime_label">Plano vitalício — pagamento único, sem renovação automática.</string>
+
+    <string name="manage_plan_cancel_button">Cancelar plano na Google Play</string>
+    <string name="manage_plan_see_plans_button">Ver planos</string>
+    <string name="manage_plan_go_to_login_button">Ir para login</string>
+    <string name="manage_plan_play_unavailable">Não foi possível abrir a tela de assinaturas da Google Play.</string>
 
 
     <!-- ======== Bottom Navigation Icons ========-->
@@ -214,5 +248,7 @@
 
     <!-- OAuth Client ID - será substituído pelo google-services.json -->
     <string name="default_web_client_id" translatable="false">your_web_client_id_here</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

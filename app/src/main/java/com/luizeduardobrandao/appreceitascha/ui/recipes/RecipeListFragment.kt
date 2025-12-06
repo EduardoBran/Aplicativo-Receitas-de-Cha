@@ -18,6 +18,7 @@ import com.luizeduardobrandao.appreceitascha.MainViewModel
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentRecipeListBinding
 import com.luizeduardobrandao.appreceitascha.domain.recipes.Recipe
+import com.luizeduardobrandao.appreceitascha.ui.common.animation.LottieLoadingController
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
 import com.luizeduardobrandao.appreceitascha.ui.recipes.adapter.RecipesAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +49,13 @@ class RecipeListFragment : Fragment() {
 
     private lateinit var recipesAdapter: RecipesAdapter
 
+    // Controller para animação de loading com Lottie
+    private lateinit var lottieController: LottieLoadingController
+
+    // Controle de tempo mínimo da animação de loading
+    private var isShowingLoadingOverlay: Boolean = false
+    private var loadingStartTime: Long = 0L
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,6 +67,12 @@ class RecipeListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Instancia o controlador de loading com Lottie centralizado
+        lottieController = LottieLoadingController(
+            overlay = binding.recipeListLoadingOverlay,
+            lottieView = binding.lottieRecipeList
+        )
 
         setupRecyclerView()
         setupTitle()
@@ -109,28 +123,91 @@ class RecipeListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    recipesAdapter.submitList(state.recipes)
-
-                    binding.progressBarRecipes.isVisible = state.isLoading
-
-                    val showEmpty =
-                        !state.isLoading &&
-                                state.recipes.isEmpty() &&
-                                state.errorMessage == null
-
-                    binding.textRecipesEmptyState.isVisible = showEmpty
-
-                    if (state.errorMessage != null) {
-                        SnackbarFragment.showError(
-                            requireView(),
-                            getString(R.string.recipes_list_error_generic)
-                        )
-                        viewModel.clearError()
-                    }
+                    renderUi(state)
                 }
             }
         }
     }
+
+    private fun renderUi(state: RecipeListUiState) {
+        // Se a view já foi destruída, não tenta renderizar nada
+        if (_binding == null) return
+
+        if (state.isLoading) {
+            // Início de um novo ciclo de loading
+            if (!isShowingLoadingOverlay) {
+                isShowingLoadingOverlay = true
+                loadingStartTime = System.currentTimeMillis()
+                lottieController.showLoading()
+            }
+
+            // Enquanto estiver carregando, esconde lista e estado vazio
+            hideAllContent()
+            return
+        }
+
+        // Aqui, state.isLoading == false.
+        // Garante que o Lottie fique visível por pelo menos MIN_RECIPE_LOADING_LOTTIE_MS.
+        if (isShowingLoadingOverlay) {
+            val elapsed = System.currentTimeMillis() - loadingStartTime
+            if (elapsed < MIN_RECIPE_LOADING_LOTTIE_MS) {
+                // Ainda não atingiu o tempo mínimo: mantém overlay e conteúdo ocultos.
+                hideAllContent()
+
+                val delay = MIN_RECIPE_LOADING_LOTTIE_MS - elapsed
+
+                binding.root.postDelayed({
+                    if (!isAdded) return@postDelayed
+                    if (_binding == null) return@postDelayed
+                    if (!isShowingLoadingOverlay) return@postDelayed
+
+                    isShowingLoadingOverlay = false
+                    lottieController.hide()
+                    renderNonLoadingUi(state)
+                }, delay)
+
+                return
+            } else {
+                // Já passou do tempo mínimo: pode esconder overlay imediatamente.
+                isShowingLoadingOverlay = false
+                lottieController.hide()
+            }
+        }
+
+        // Não está mais carregando e o overlay já foi tratado: renderiza normalmente.
+        renderNonLoadingUi(state)
+    }
+
+    private fun hideAllContent() {
+        val binding = _binding ?: return
+        binding.recyclerViewRecipes.isVisible = false
+        binding.textRecipesEmptyState.isVisible = false
+    }
+
+    private fun renderNonLoadingUi(state: RecipeListUiState) {
+        val binding = _binding ?: return
+
+        // Lista de receitas
+        recipesAdapter.submitList(state.recipes)
+        binding.recyclerViewRecipes.isVisible = state.recipes.isNotEmpty()
+
+        // Estado vazio (sem erro)
+        val showEmpty =
+            state.recipes.isEmpty() &&
+                    state.errorMessage == null
+
+        binding.textRecipesEmptyState.isVisible = showEmpty
+
+        // Erro → Snackbar com texto vindo de strings.xml
+        if (state.errorMessage != null) {
+            SnackbarFragment.showError(
+                requireView(),
+                getString(R.string.recipes_list_error_generic)
+            )
+            viewModel.clearError()
+        }
+    }
+
 
     /**
      * Clique em uma receita:
@@ -156,7 +233,17 @@ class RecipeListFragment : Fragment() {
         _binding?.root?.let { root ->
             SnackbarFragment.cancelPendingSnackbars(root)
         }
+
+        if (::lottieController.isInitialized) {
+            lottieController.clear()
+        }
+
         _binding = null
         super.onDestroyView()
+    }
+
+    companion object {
+        /** Tempo mínimo em ms que o Lottie deve permanecer visível na lista de receitas. */
+        private const val MIN_RECIPE_LOADING_LOTTIE_MS: Long = 1000L
     }
 }

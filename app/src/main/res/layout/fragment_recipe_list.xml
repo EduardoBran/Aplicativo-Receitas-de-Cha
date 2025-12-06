@@ -36,18 +36,6 @@
         app:layout_constraintTop_toBottomOf="@id/textRecipesTitle"
         tools:listitem="@layout/item_recipe" />
 
-    <!-- ProgressBar central -->
-    <ProgressBar
-        android:id="@+id/progressBarRecipes"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <!-- Estado vazio -->
     <TextView
         android:id="@+id/textRecipesEmptyState"
@@ -64,5 +52,43 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Overlay de loading com Lottie + texto centralizado -->
+    <LinearLayout
+        android:id="@+id/recipeListLoadingOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/app_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieRecipeList"
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/lottie_cup_of_tea"
+            app:lottie_renderMode="software"
+            app:lottie_speed="1.0" />
+
+        <TextView
+            android:id="@+id/textRecipesLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/recipes_list_loading_message"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/colorOnBackground"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

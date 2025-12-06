@@ -18,6 +18,7 @@ import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanType
+import com.luizeduardobrandao.appreceitascha.ui.common.animation.LottieLoadingController
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -46,6 +47,13 @@ class HomeFragment : Fragment() {
         HomeFragmentArgs.fromBundle(requireArguments())
     }
 
+    // Controller para animação de loading com Lottie
+    private lateinit var lottieController: LottieLoadingController
+
+    // Controle de tempo mínimo da animação de loading
+    private var isShowingLoadingOverlay: Boolean = false
+    private var loadingStartTime: Long = 0L
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,6 +65,12 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Instancia o controlador de loading com Lottie centralizado
+        lottieController = LottieLoadingController(
+            overlay = binding.homeLoadingOverlay,
+            lottieView = binding.lottieHome
+        )
 
         setupWelcomeMessage()
         setupClickListeners()
@@ -108,7 +122,63 @@ class HomeFragment : Fragment() {
     }
 
     private fun renderUi(uiState: HomeUiState) {
-        binding.progressHome.isVisible = uiState.isLoading
+        // Se a view já foi destruída, não tenta renderizar nada
+        if (_binding == null) return
+
+        if (uiState.isLoading) {
+            // Início de um novo ciclo de loading
+            if (!isShowingLoadingOverlay) {
+                isShowingLoadingOverlay = true
+                loadingStartTime = System.currentTimeMillis()
+                lottieController.showLoading()
+            }
+
+            // Enquanto estiver carregando, nenhum card deve aparecer
+            hideAllCards()
+            return
+        }
+
+        // Aqui, uiState.isLoading == false.
+        // Garante que o Lottie fique visível por pelo menos MIN_HOME_LOADING_LOTTIE_MS.
+        if (isShowingLoadingOverlay) {
+            val elapsed = System.currentTimeMillis() - loadingStartTime
+            if (elapsed < MIN_HOME_LOADING_LOTTIE_MS) {
+                // Ainda não atingiu o tempo mínimo: mantém overlay e cards ocultos.
+                hideAllCards()
+
+                val delay = MIN_HOME_LOADING_LOTTIE_MS - elapsed
+
+                binding.homeRoot.postDelayed({
+                    if (!isAdded) return@postDelayed
+                    if (_binding == null) return@postDelayed
+                    if (!isShowingLoadingOverlay) return@postDelayed
+
+                    isShowingLoadingOverlay = false
+                    lottieController.hide()
+                    renderNonLoadingUi(uiState)
+                }, delay)
+
+                return
+            } else {
+                // Já passou do tempo mínimo: pode esconder overlay imediatamente.
+                isShowingLoadingOverlay = false
+                lottieController.hide()
+            }
+        }
+
+        // Não está mais carregando e o overlay já foi tratado: renderiza os cards normalmente.
+        renderNonLoadingUi(uiState)
+    }
+
+    private fun hideAllCards() {
+        val binding = _binding ?: return
+        binding.groupGuest.isVisible = false
+        binding.groupFree.isVisible = false
+        binding.groupPremium.isVisible = false
+    }
+
+    private fun renderNonLoadingUi(uiState: HomeUiState) {
+        val binding = _binding ?: return
 
         val session = uiState.sessionState
         val authState = session?.authState ?: AuthState.NAO_LOGADO
@@ -117,7 +187,7 @@ class HomeFragment : Fragment() {
         val isLogged = authState == AuthState.LOGADO
         val hasPlan = planState == PlanState.COM_PLANO
 
-        // Visibilidade dos cards
+        // Visibilidade dos cards (somente após concluir o carregamento)
         binding.groupGuest.isVisible = !isLogged
         binding.groupFree.isVisible = isLogged && !hasPlan
         binding.groupPremium.isVisible = isLogged && hasPlan
@@ -144,16 +214,12 @@ class HomeFragment : Fragment() {
                     val formattedDate = formatDate(userPlan.expiresAtMillis)
                     getString(R.string.home_plan_expires_at, formattedDate)
                 }
-
                 else -> ""
             }
             binding.tvPremiumPlanExpires.text = expiresText
         }
 
-        // Se quiser exibir erro genérico no futuro:
         uiState.errorMessage?.let {
-            // Evita spam de snackbar em cada recomposição — aqui você pode depois
-            // trocar para um Event. Por enquanto, deixo simples:
             SnackbarFragment.showError(binding.root, it)
         }
     }
@@ -182,7 +248,8 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.categoriesFragment)
         }
         binding.btnPremiumPlanDetails.setOnClickListener {
-            findNavController().navigate(R.id.plansFragment)
+            // Agora abre a tela de GERENCIAR PLANO (plano atual + botão de cancelar)
+            findNavController().navigate(R.id.managePlanFragment)
         }
     }
 
@@ -193,7 +260,15 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        if (::lottieController.isInitialized) {
+            lottieController.clear()
+        }
         _binding = null
+        super.onDestroyView()
+    }
+
+    companion object {
+        /** Tempo mínimo em ms que o Lottie deve permanecer visível na Home. */
+        private const val MIN_HOME_LOADING_LOTTIE_MS: Long = 1000L
     }
 }

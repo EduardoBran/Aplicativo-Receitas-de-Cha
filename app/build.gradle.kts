@@ -131,4 +131,7 @@ dependencies {
 
     // Desugaring do Java Time
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+
+    // Lottie (carregamento)
+    implementation("com.airbnb.android:lottie:6.4.0")
 }

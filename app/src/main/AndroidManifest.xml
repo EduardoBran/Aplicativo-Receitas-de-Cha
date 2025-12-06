@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- Permissão necessária para usar Google Play Billing -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
     <application
         android:name=".MyApp"
         android:allowBackup="true"

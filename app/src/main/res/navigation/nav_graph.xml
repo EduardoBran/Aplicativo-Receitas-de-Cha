@@ -76,7 +76,7 @@
 
         <action
             android:id="@+id/action_favoritesFragment_to_recipeDetailFragment"
-            app:destination="@id/recipeDetailFragment" >
+            app:destination="@id/recipeDetailFragment">
             <argument
                 android:name="recipeId"
                 app:argType="string" />
@@ -89,6 +89,13 @@
         android:name="com.luizeduardobrandao.appreceitascha.ui.plans.PlansFragment"
         android:label="fragment_plans"
         tools:layout="@layout/fragment_plans" />
+
+    <!-- ======== Tela Gerenciar Plano ======== -->
+    <fragment
+        android:id="@+id/managePlanFragment"
+        android:name="com.luizeduardobrandao.appreceitascha.ui.plans.ManagePlanFragment"
+        android:label="fragment_manage_plan"
+        tools:layout="@layout/fragment_manage_plan" />
 
     <!-- ======== Tela Login ======== -->
     <fragment

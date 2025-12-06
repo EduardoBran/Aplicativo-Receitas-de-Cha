@@ -29,13 +29,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:textColor="@color/colorOnSurface"
             app:layout_constraintEnd_toStartOf="@id/imageCategoryArrow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Chás Calmantes e Antiestresse" />
+            tools:text="Chás Energizantes e Termogênicos" />
 
         <!-- Descrição curta -->
         <TextView
