@@ -1,13 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recipeDetailRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/app_background"
     tools:context=".ui.recipes.RecipeDetailFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+    <!-- Conteúdo rolável -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollRecipeContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/contentRecipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Título + ícone favorito -->
+            <TextView
+                android:id="@+id/textRecipeTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textColor="@color/colorOnBackground"
+                app:layout_constraintEnd_toStartOf="@id/imageRecipeFavorite"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Chá de Camomila Clássico" />
+
+            <ImageView
+                android:id="@+id/imageRecipeFavorite"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/recipe_favorite_add_content_description"
+                android:padding="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_recipe_favorite_plus_24"
+                app:tint="@color/colorPrimary" />
+
+            <!-- Subtítulo -->
+            <TextView
+                android:id="@+id/textRecipeSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textAppearance="?attr/textAppearanceSubtitle2"
+                android:textColor="@color/colorOnBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textRecipeTitle"
+                tools:text="A Rainha da Tranquilidade" />
+
+            <!-- Seção: Resumo -->
+            <TextView
+                android:id="@+id/textLabelShortDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/recipe_detail_section_short_description"
+                android:textAllCaps="true"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textRecipeSubtitle" />
+
+            <TextView
+                android:id="@+id/textRecipeShortDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textColor="@color/colorOnBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textLabelShortDescription"
+                tools:text="Resumo curto da receita..." />
+
+            <!-- Seção: Modo de preparo -->
+            <TextView
+                android:id="@+id/textLabelModoPreparo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/recipe_detail_section_modo_preparo"
+                android:textAllCaps="true"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textRecipeShortDescription" />
+
+            <TextView
+                android:id="@+id/textRecipeModoPreparo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textColor="@color/colorOnBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textLabelModoPreparo"
+                tools:text="Modo de preparo completo..." />
+
+            <!-- Seção: Benefícios -->
+            <TextView
+                android:id="@+id/textLabelBeneficios"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/recipe_detail_section_beneficios"
+                android:textAllCaps="true"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textRecipeModoPreparo" />
+
+            <TextView
+                android:id="@+id/textRecipeBeneficios"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textColor="@color/colorOnBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textLabelBeneficios"
+                tools:text="Benefícios da receita..." />
+
+            <!-- Seção: Observações -->
+            <TextView
+                android:id="@+id/textLabelObservacoes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/recipe_detail_section_observacoes"
+                android:textAllCaps="true"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textRecipeBeneficios" />
+
+            <TextView
+                android:id="@+id/textRecipeObservacoes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textColor="@color/colorOnBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textLabelObservacoes"
+                tools:text="Observações importantes..." />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- ProgressBar central -->
+    <ProgressBar
+        android:id="@+id/progressBarRecipeDetail"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

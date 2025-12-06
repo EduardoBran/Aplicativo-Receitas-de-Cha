@@ -23,12 +23,49 @@
             app:destination="@id/loginFragment" />
     </fragment>
 
-    <!-- ======== Tela Categorias ======== -->
+    <!-- ======== Tela Categorias Chá ======== -->
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.categories.CategoriesFragment"
         android:label="fragment_categories"
-        tools:layout="@layout/fragment_categories" />
+        tools:layout="@layout/fragment_categories">
+
+        <action
+            android:id="@+id/action_categoriesFragment_to_recipeListFragment"
+            app:destination="@id/recipeListFragment" />
+    </fragment>
+
+    <!-- ======== Tela Lista de Receitas ======== -->
+    <fragment
+        android:id="@+id/recipeListFragment"
+        android:name="com.luizeduardobrandao.appreceitascha.ui.recipes.RecipeListFragment"
+        android:label="fragment_recipe_list"
+        tools:layout="@layout/fragment_recipe_list">
+
+        <argument
+            android:name="categoryId"
+            app:argType="string" />
+
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_recipeListFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment" />
+    </fragment>
+
+    <!-- ======== Tela Detalhes da Receita Chá ======== -->
+    <fragment
+        android:id="@+id/recipeDetailFragment"
+        android:name="com.luizeduardobrandao.appreceitascha.ui.recipes.RecipeDetailFragment"
+        android:label="fragment_recipe_detail"
+        tools:layout="@layout/fragment_recipe_detail">
+
+        <argument
+            android:name="recipeId"
+            app:argType="string" />
+    </fragment>
 
     <!-- ======== Tela Favoritos ======== -->
     <fragment

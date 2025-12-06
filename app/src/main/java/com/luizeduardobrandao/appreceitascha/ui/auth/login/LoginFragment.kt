@@ -1,7 +1,6 @@
 package com.luizeduardobrandao.appreceitascha.ui.auth.login
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -201,23 +200,28 @@ class LoginFragment : Fragment() {
 
             } catch (e: GetCredentialCancellationException) {
                 // Usuário cancelou o fluxo
-                Log.d("LoginFragment", "User cancelled Google Sign-In")
                 SnackbarFragment.showWarning(
                     binding.root,
                     getString(R.string.google_sign_in_cancelled)
                 )
             } catch (e: NoCredentialException) {
                 // Nenhuma credencial disponível
-                Log.e("LoginFragment", "No credentials available", e)
-                SnackbarFragment.showError(binding.root, getString(R.string.google_sign_in_error))
+                SnackbarFragment.showError(
+                    binding.root,
+                    getString(R.string.error_google_signin_generic)
+                )
             } catch (e: GetCredentialException) {
                 // Erro ao obter credenciais
-                Log.e("LoginFragment", "Error getting credentials", e)
-                SnackbarFragment.showError(binding.root, getString(R.string.google_sign_in_error))
+                SnackbarFragment.showError(
+                    binding.root,
+                    getString(R.string.error_google_signin_generic)
+                )
             } catch (e: Exception) {
                 // Erro inesperado
-                Log.e("LoginFragment", "Unexpected error during Google Sign-In", e)
-                SnackbarFragment.showError(binding.root, getString(R.string.google_sign_in_error))
+                SnackbarFragment.showError(
+                    binding.root,
+                    getString(R.string.error_google_signin_generic)
+                )
             }
         }
     }
@@ -236,24 +240,21 @@ class LoginFragment : Fragment() {
                         viewModel.signInWithGoogle(idToken)
 
                     } catch (e: Exception) {
-                        Log.e("LoginFragment", "Error parsing Google ID Token", e)
                         SnackbarFragment.showError(
                             binding.root,
-                            getString(R.string.google_sign_in_error)
+                            getString(R.string.error_google_signin_generic)
                         )
                     }
                 } else {
-                    Log.e("LoginFragment", "Unexpected credential type: ${credential.type}")
                     SnackbarFragment.showError(
                         binding.root,
-                        getString(R.string.google_sign_in_error)
+                        getString(R.string.error_google_signin_generic)
                     )
                 }
             }
 
             else -> {
-                Log.e("LoginFragment", "Unexpected credential type")
-                showSnackbar(getString(R.string.google_sign_in_error))
+                showSnackbar(getString(R.string.error_google_signin_generic))
             }
         }
     }
@@ -325,6 +326,10 @@ class LoginFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        // Cancela qualquer snackbar pendente antes de destruir a view
+        _binding?.let { binding ->
+            SnackbarFragment.cancelPendingSnackbars(binding.root)
+        }
         super.onDestroyView()
         _binding = null
     }

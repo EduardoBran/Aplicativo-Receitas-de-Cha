@@ -276,7 +276,7 @@
                         android:layout_height="48dp"
                         android:layout_marginBottom="16dp"
                         android:backgroundTint="@color/text_error"
-                        android:text="@string/home_logout_button_text"
+                        android:text="@string/register_btn_logout"
                         android:textAllCaps="false"
                         android:textColor="@color/button_primary_text"
                         android:textSize="16sp"

@@ -519,6 +519,10 @@ class RegisterFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        // Cancela qualquer snackbar pendente antes de destruir a view
+        _binding?.let { binding ->
+            SnackbarFragment.cancelPendingSnackbars(binding.root)
+        }
         super.onDestroyView()
         _binding = null
     }
