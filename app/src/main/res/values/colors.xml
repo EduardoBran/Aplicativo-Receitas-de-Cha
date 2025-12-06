@@ -124,4 +124,5 @@
     <color name="colorOnSurface">@color/text_primary</color>
     <color name="colorError">@color/text_error</color>
     <color name="colorOnError">@color/color_on_primary_base</color>
+    <color name="warning_color">#FF9800</color> <!-- Laranja para avisos -->
 </resources>

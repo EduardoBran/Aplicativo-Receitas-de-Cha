@@ -1,7 +1,9 @@
 package com.luizeduardobrandao.appreceitascha.data.auth
 
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import com.luizeduardobrandao.appreceitascha.data.local.SessionManager
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanType
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanConstants
@@ -29,7 +31,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val authDataSource: FirebaseAuthDataSource,
-    private val database: FirebaseDatabase
+    private val database: FirebaseDatabase,
+    private val sessionManager: SessionManager
 ) : AuthRepository {
 
     /** Login delegando ao [FirebaseAuthDataSource] e mapeando o [FirebaseUser] para [User]. */
@@ -119,6 +122,7 @@ class AuthRepositoryImpl @Inject constructor(
     /** Efetua logout delegando ao DataSource. */
     override fun logout() {
         authDataSource.logout()
+        sessionManager.resetWelcomeFlag()
     }
 
     /** PLANOS DO USUÁRIO
@@ -179,20 +183,27 @@ class AuthRepositoryImpl @Inject constructor(
             ?: return Result.success(
                 UserSessionState(
                     authState = AuthState.NAO_LOGADO,
-                    planState = PlanState.SEM_PLANO
+                    planState = PlanState.SEM_PLANO,
+                    planType = PlanType.NONE
                 )
             )
-        // Usuário não logado => NAO_LOGADO + SEM_PLANO
+
         val uid = firebaseUser.uid
         val planResult = getUserPlan(uid)
 
         return planResult.map { plan ->
+            val now = System.currentTimeMillis()
+
+            // Se não houver plano no banco, consideramos NONE
+            val effectivePlanType = plan?.planType ?: PlanType.NONE
+
             val planState =
-                if (plan == null || plan.planType == PlanType.NONE) {
+                if (plan == null || effectivePlanType == PlanType.NONE) {
                     PlanState.SEM_PLANO
-                } else if (!plan.isLifetime &&
+                } else if (
+                    !plan.isLifetime &&
                     plan.expiresAtMillis != null &&
-                    plan.expiresAtMillis < System.currentTimeMillis()
+                    plan.expiresAtMillis < now
                 ) {
                     // Plano temporário expirado
                     PlanState.SEM_PLANO
@@ -202,9 +213,122 @@ class AuthRepositoryImpl @Inject constructor(
 
             UserSessionState(
                 authState = AuthState.LOGADO,
-                planState = planState
+                planState = planState,
+                planType = effectivePlanType
             )
         }
+    }
+
+    /** Atualiza nome e telefone do usuário */
+    override suspend fun updateUserProfile(
+        uid: String,
+        name: String,
+        phone: String?
+    ): Result<Unit> {
+        return try {
+            // 1) Atualiza displayName no FirebaseAuth
+            val currentFirebaseUser = authDataSource.getCurrentFirebaseUser()
+            if (currentFirebaseUser != null && currentFirebaseUser.uid == uid) {
+                val profileUpdates = userProfileChangeRequest {
+                    displayName = name
+                }
+                currentFirebaseUser.updateProfile(profileUpdates).await()
+            }
+
+            // 2) Atualiza dados no Realtime Database /users/{uid}
+            val userRef = database.getReference("users").child(uid)
+            val updates = mapOf(
+                "name" to name,
+                "phone" to (phone ?: "")
+            )
+            userRef.updateChildren(updates).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /** Reautentica o usuário com senha atual */
+    override suspend fun reauthenticateUser(currentPassword: String): Result<Unit> {
+        return authDataSource.reauthenticateWithPassword(currentPassword)
+    }
+
+    /** Atualiza e-mail (requer reautenticação prévia) */
+    override suspend fun updateUserEmail(newEmail: String): Result<Unit> {
+        val result = authDataSource.updateEmail(newEmail)
+
+        // Se sucesso, atualiza também no Realtime Database
+        if (result.isSuccess) {
+            try {
+                val uid = authDataSource.getCurrentFirebaseUser()?.uid
+                if (uid != null) {
+                    val userRef = database.getReference("users").child(uid)
+                    userRef.child("email").setValue(newEmail).await()
+                }
+            } catch (e: Exception) {
+                // Ignora erro de atualização no database, pois o principal já foi feito
+            }
+        }
+
+        return result
+    }
+
+    /** Atualiza senha (requer reautenticação prévia) */
+    override suspend fun updateUserPassword(newPassword: String): Result<Unit> {
+        return authDataSource.updatePassword(newPassword)
+    }
+
+    /** Login com Google usando idToken */
+    override suspend fun signInWithGoogle(idToken: String): Result<User> {
+        val signInResult = authDataSource.signInWithGoogle(idToken)
+
+        if (signInResult.isFailure) {
+            return Result.failure(
+                signInResult.exceptionOrNull()
+                    ?: Exception("Erro desconhecido ao fazer login com Google.")
+            )
+        }
+
+        val firebaseUser = signInResult.getOrThrow()
+
+        return try {
+            val user = firebaseUser.toDomainUser()
+
+            // Verifica se o usuário já existe no Realtime Database
+            val userRef = database.getReference("users").child(user.uid)
+            val snapshot = userRef.get().await()
+
+            if (!snapshot.exists()) {
+                // Primeira vez - criar perfil no database
+                val userData = mapOf(
+                    "uid" to user.uid,
+                    "name" to (user.name ?: ""),
+                    "email" to user.email,
+                    "phone" to (user.phone ?: ""),
+                    "emailVerified" to true // Google já verifica
+                )
+                userRef.setValue(userData).await()
+
+                // Criar plano inicial
+                val userPlanRef = database.getReference("userPlans").child(user.uid)
+                val initialPlanData = mapOf(
+                    "planId" to PlanConstants.PLAN_ID_NONE,
+                    "expiresAt" to null,
+                    "isLifetime" to false
+                )
+                userPlanRef.setValue(initialPlanData).await()
+            }
+
+            Result.success(user)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /** Envia e-mail de verificação */
+    override suspend fun sendEmailVerification(): Result<Unit> {
+        return authDataSource.sendEmailVerification()
     }
 }
 
@@ -215,8 +339,16 @@ private fun FirebaseUser.toDomainUser(
     explicitName: String? = null,
     explicitPhone: String? = null
 ): User {
+    // Captura o provider principal do usuário
+    // providerData[0] é geralmente "firebase", então pegamos o primeiro provider real
+    val provider = providerData.firstOrNull { it.providerId != "firebase" }?.providerId
+
     return User(
-        uid = uid, name = explicitName ?: displayName, email = email.orEmpty(),
-        phone = explicitPhone ?: phoneNumber, isEmailVerified = isEmailVerified
+        uid = uid,
+        name = explicitName ?: displayName,
+        email = email.orEmpty(),
+        phone = explicitPhone ?: phoneNumber,
+        isEmailVerified = isEmailVerified,
+        provider = provider
     )
 }

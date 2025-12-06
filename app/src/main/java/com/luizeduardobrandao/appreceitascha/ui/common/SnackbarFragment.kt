@@ -12,33 +12,42 @@ import com.luizeduardobrandao.appreceitascha.R
 
 /**
  * "SnackbarFragment" é um helper para exibir um retângulo pequeno
- * (Snackbar) com mensagens de erro ou sucesso por ~2 segundos.
+ * (Snackbar) com mensagens de erro, sucesso ou aviso por ~2 segundos.
  *
  * - Erro: fundo vermelho, texto branco.
  * - Sucesso: fundo verde, texto branco.
+ * - Aviso: fundo laranja/amarelo, texto branco.
  *
  * O Snackbar só é exibido quando o teclado está oculto.
  */
 object SnackbarFragment {
 
+    enum class SnackbarType {
+        ERROR, SUCCESS, WARNING
+    }
+
     fun showError(rootView: View, message: String) {
-        show(rootView, message, isError = true)
+        show(rootView, message, SnackbarType.ERROR)
     }
 
     fun showSuccess(rootView: View, message: String) {
-        show(rootView, message, isError = false)
+        show(rootView, message, SnackbarType.SUCCESS)
     }
 
-    private fun show(rootView: View, message: String, isError: Boolean) {
+    fun showWarning(rootView: View, message: String) {
+        show(rootView, message, SnackbarType.WARNING)
+    }
+
+    private fun show(rootView: View, message: String, type: SnackbarType) {
         // Verifica se o teclado está visível
         if (isKeyboardVisible(rootView)) {
             // Aguarda o teclado fechar antes de mostrar o Snackbar
             waitForKeyboardToHide(rootView) {
-                showSnackbar(rootView, message, isError)
+                showSnackbar(rootView, message, type)
             }
         } else {
             // Teclado já está oculto, mostra o Snackbar imediatamente
-            showSnackbar(rootView, message, isError)
+            showSnackbar(rootView, message, type)
         }
     }
 
@@ -60,13 +69,13 @@ object SnackbarFragment {
         rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
     }
 
-    private fun showSnackbar(rootView: View, message: String, isError: Boolean) {
+    private fun showSnackbar(rootView: View, message: String, type: SnackbarType) {
         val snackbar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT) // ~2s
 
-        val backgroundColorRes = if (isError) {
-            R.color.text_error
-        } else {
-            R.color.color_primary_base
+        val backgroundColorRes = when (type) {
+            SnackbarType.ERROR -> R.color.text_error
+            SnackbarType.SUCCESS -> R.color.color_primary_base
+            SnackbarType.WARNING -> R.color.warning_color
         }
 
         snackbar.view.setBackgroundColor(

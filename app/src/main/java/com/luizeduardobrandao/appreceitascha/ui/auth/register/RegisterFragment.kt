@@ -1,11 +1,10 @@
 package com.luizeduardobrandao.appreceitascha.ui.auth.register
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
-import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -15,12 +14,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentRegisterBinding
+import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
+import com.luizeduardobrandao.appreceitascha.ui.auth.AuthErrorCode
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
+import com.luizeduardobrandao.appreceitascha.ui.common.utils.KeyboardUtils
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidationRules
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidator
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -30,6 +34,13 @@ class RegisterFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: RegisterViewModel by viewModels()
+
+    @Inject
+    lateinit var authRepository: AuthRepository
+
+    private val args: RegisterFragmentArgs by navArgs()
+    private val isEditMode: Boolean
+        get() = args.isEditMode
 
     private val fieldValidator = FieldValidator()
 
@@ -45,6 +56,13 @@ class RegisterFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Inicializa modo de edição se necessário
+        if (isEditMode) {
+            viewModel.initEditMode()
+        }
+
         setupListeners()
         observeUiState()
     }
@@ -256,73 +274,248 @@ class RegisterFragment : Fragment() {
         }
 
         binding.btnRegister.setOnClickListener {
-            hideKeyboard()
-            viewModel.submitRegister()
+            KeyboardUtils.hideKeyboard(this@RegisterFragment)
+            if (isEditMode) {
+                viewModel.submitUpdate()
+            } else {
+                viewModel.submitRegister()
+            }
         }
+
+        binding.btnChangeEmail.setOnClickListener {
+            val dialog = ChangeEmailDialogFragment.newInstance()
+            dialog.setParentView(binding.root)
+            dialog.show(childFragmentManager, "ChangeEmailDialog")
+        }
+
+        binding.btnChangePassword.setOnClickListener {
+            val dialog = ChangePasswordDialogFragment.newInstance()
+            dialog.setParentView(binding.root)
+            dialog.show(childFragmentManager, "ChangePasswordDialog")
+        }
+
+        binding.btnLogout.setOnClickListener {
+            performLogout()
+        }
+
+        binding.btnGoToLogin.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun performLogout() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.dialog_logout_title)
+            .setMessage(R.string.dialog_logout_message)
+            .setPositiveButton(R.string.dialog_yes) { _, _ ->
+                authRepository.logout()
+                requireActivity().invalidateOptionsMenu()
+
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.homeFragment, true)
+                    .build()
+
+                findNavController().navigate(R.id.homeFragment, null, navOptions)
+            }
+            .setNegativeButton(R.string.dialog_no, null)
+            .show()
     }
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.progressRegister.isVisible = state.isLoading
-                    updateRegisterButtonState(additionalLoadingFlag = state.isLoading)
-
-                    if (state.errorMessage != null) {
-                        // Para simplificar, qualquer erro no cadastro será exibido como
-                        // "e-mail já cadastrado" (caso real comum). Pode refinar depois.
-                        SnackbarFragment.showError(
-                            binding.root,
-                            getString(R.string.snackbar_error_email_exists)
-                        )
-                        viewModel.clearErrorMessage()
-                    }
-
-                    if (state.isRegistered && state.registeredUser != null && !hasNavigatedToHome) {
-                        navigateToHomeAndClearBackStack(state.registeredUser.name ?: "")
-                    }
+                    renderUi(state)
                 }
             }
         }
     }
 
+    private fun renderUi(state: RegisterUiState) {
+        // Configura UI baseado no modo
+        if (state.isEditMode) {
+            // ===== MODO EDIÇÃO =====
+            binding.tvTitle.text = getString(R.string.register_edit_mode_title)
+            binding.tvSubtitle.isVisible = false
+            binding.btnRegister.text = getString(R.string.register_update_button_text)
+            binding.btnLogout.isVisible = true
+            binding.layoutBackToLogin.isVisible = false
+
+            val currentUser = authRepository.getCurrentUser()
+            val isGoogleUser = currentUser?.provider == "google.com"
+
+            if (isGoogleUser) {
+                binding.btnChangeEmail.isVisible = false
+                binding.btnChangePassword.isVisible = false
+
+                binding.tilEmail.isEnabled = false
+                binding.etEmail.isEnabled = false
+                binding.etEmail.isFocusable = false
+                binding.etEmail.isFocusableInTouchMode = false
+                binding.etEmail.isClickable = false
+                binding.tilEmail.alpha = 0.6f
+
+                binding.tilPassword.isEnabled = false
+                binding.etPassword.isEnabled = false
+                binding.etPassword.isFocusable = false
+                binding.etPassword.isFocusableInTouchMode = false
+                binding.etPassword.isClickable = false
+                binding.tilPassword.alpha = 0.6f
+            } else {
+                binding.btnChangeEmail.isVisible = true
+                binding.btnChangePassword.isVisible = true
+
+                binding.tilEmail.isEnabled = false
+                binding.etEmail.isEnabled = false
+                binding.etEmail.isFocusable = false
+                binding.etEmail.isFocusableInTouchMode = false
+                binding.etEmail.isClickable = false
+                binding.tilEmail.alpha = 0.6f
+
+                binding.tilPassword.isEnabled = false
+                binding.etPassword.isEnabled = false
+                binding.etPassword.isFocusable = false
+                binding.etPassword.isFocusableInTouchMode = false
+                binding.etPassword.isClickable = false
+                binding.tilPassword.alpha = 0.6f
+            }
+
+            binding.tilConfirmPassword.isVisible = false
+
+            if (binding.etName.text.toString() != state.name) {
+                binding.etName.setText(state.name)
+            }
+            if (binding.etEmail.text.toString() != state.email) {
+                binding.etEmail.setText(state.email)
+            }
+            if (binding.etPhone.text.toString() != state.phone) {
+                binding.etPhone.setText(state.phone)
+            }
+            binding.etPassword.setText("")
+            binding.etConfirmPassword.setText("")
+        } else {
+            // ===== MODO CADASTRO =====
+            binding.tvTitle.text = getString(R.string.register_title)
+            binding.tvSubtitle.isVisible = true
+            binding.tvSubtitle.text = getString(R.string.register_subtitle)
+            binding.btnRegister.text = getString(R.string.register_button_text)
+            binding.btnLogout.isVisible = false
+            binding.layoutBackToLogin.isVisible = true
+
+            binding.tilEmail.isEnabled = true
+            binding.etEmail.isEnabled = true
+            binding.etEmail.isFocusable = true
+            binding.etEmail.isFocusableInTouchMode = true
+            binding.etEmail.isClickable = true
+            binding.tilEmail.alpha = 1f
+
+            binding.tilPassword.isEnabled = true
+            binding.etPassword.isEnabled = true
+            binding.etPassword.isFocusable = true
+            binding.etPassword.isFocusableInTouchMode = true
+            binding.etPassword.isClickable = true
+            binding.tilPassword.alpha = 1f
+
+            binding.tilConfirmPassword.isVisible = true
+            binding.tilConfirmPassword.isEnabled = true
+            binding.etConfirmPassword.isEnabled = true
+            binding.etConfirmPassword.isFocusable = true
+            binding.etConfirmPassword.isFocusableInTouchMode = true
+            binding.etConfirmPassword.isClickable = true
+            binding.tilConfirmPassword.alpha = 1f
+
+            binding.btnChangeEmail.isVisible = false
+            binding.btnChangePassword.isVisible = false
+        }
+
+        binding.progressRegister.isVisible = state.isLoading
+        updateRegisterButtonState(additionalLoadingFlag = state.isLoading)
+
+        // ✅ Traduz código de erro para mensagem
+        state.errorCode?.let { errorCode ->
+            val message = when (errorCode) {
+                AuthErrorCode.EMAIL_ALREADY_IN_USE ->
+                    getString(R.string.error_register_email_in_use)
+
+                AuthErrorCode.REGISTER_FAILED ->
+                    getString(R.string.error_register_generic)
+
+                AuthErrorCode.EMAIL_VERIFICATION_FAILED ->
+                    getString(R.string.error_register_verification_failed)
+
+                AuthErrorCode.UPDATE_PROFILE_FAILED ->
+                    getString(R.string.error_update_profile_failed)
+
+                AuthErrorCode.USER_NOT_IDENTIFIED ->
+                    getString(R.string.error_user_not_identified)
+
+                else -> getString(R.string.error_register_generic)
+            }
+            SnackbarFragment.showError(binding.root, message)
+            viewModel.clearErrorMessage()
+        }
+
+        if (state.isUpdateSuccessful && !hasNavigatedToHome) {
+            hasNavigatedToHome = true
+            SnackbarFragment.showSuccess(
+                binding.root,
+                getString(R.string.snackbar_success_profile_updated)
+            )
+            binding.root.postDelayed({
+                findNavController().navigateUp()
+            }, 1500)
+        }
+
+        if (state.isRegistered && state.registeredUser != null && !hasNavigatedToHome) {
+            hasNavigatedToHome = true
+            if (state.verificationEmailSent) {
+                SnackbarFragment.showSuccess(
+                    binding.root,
+                    getString(R.string.email_verification_sent, state.registeredUser.email)
+                )
+            }
+            binding.root.postDelayed({
+                findNavController().navigateUp()
+            }, 2500)
+        }
+    }
+
     private fun updateRegisterButtonState(additionalLoadingFlag: Boolean = false) {
-        val name = binding.etName.text?.toString().orEmpty()
-        val email = binding.etEmail.text?.toString().orEmpty()
-        val password = binding.etPassword.text?.toString().orEmpty()
-        val confirm = binding.etConfirmPassword.text?.toString().orEmpty()
-        val phone = binding.etPhone.text?.toString().orEmpty()
+        val currentState = viewModel.uiState.value
 
-        val nameValid = FieldValidationRules.validateName(name).isValid
-        val emailValid = FieldValidationRules.validateEmail(email).isValid
-        val passwordValid = FieldValidationRules.validatePassword(password).isValid
-        val confirmValid = FieldValidationRules.validateConfirmPassword(password, confirm).isValid
-        val phoneValid = FieldValidationRules.validatePhone(phone).isValid
+        if (currentState.isEditMode) {
+            // Modo edição: valida apenas nome e telefone
+            val name = binding.etName.text?.toString().orEmpty()
+            val phone = binding.etPhone.text?.toString().orEmpty()
 
-        val enabled =
-            nameValid && emailValid && passwordValid && confirmValid && phoneValid && !additionalLoadingFlag
+            val nameValid = FieldValidationRules.validateName(name).isValid
+            val phoneValid = FieldValidationRules.validatePhone(phone).isValid
 
-        binding.btnRegister.isEnabled = enabled
-        binding.btnRegister.alpha = if (enabled) 1f else 0.6f
-    }
+            val enabled = nameValid && phoneValid && !additionalLoadingFlag
 
-    private fun navigateToHomeAndClearBackStack(userName: String) {
-        hasNavigatedToHome = true
+            binding.btnRegister.isEnabled = enabled
+            binding.btnRegister.alpha = if (enabled) 1f else 0.6f
+        } else {
+            // Modo cadastro: valida todos os campos
+            val name = binding.etName.text?.toString().orEmpty()
+            val email = binding.etEmail.text?.toString().orEmpty()
+            val password = binding.etPassword.text?.toString().orEmpty()
+            val confirm = binding.etConfirmPassword.text?.toString().orEmpty()
+            val phone = binding.etPhone.text?.toString().orEmpty()
 
-        val directions =
-            RegisterFragmentDirections.actionRegisterFragmentToHomeFragment(userName = userName)
+            val nameValid = FieldValidationRules.validateName(name).isValid
+            val emailValid = FieldValidationRules.validateEmail(email).isValid
+            val passwordValid = FieldValidationRules.validatePassword(password).isValid
+            val confirmValid =
+                FieldValidationRules.validateConfirmPassword(password, confirm).isValid
+            val phoneValid = FieldValidationRules.validatePhone(phone).isValid
 
-        val navOptions = NavOptions.Builder()
-            .setPopUpTo(R.id.loginFragment, true)
-            .build()
+            val enabled =
+                nameValid && emailValid && passwordValid && confirmValid && phoneValid && !additionalLoadingFlag
 
-        findNavController().navigate(directions, navOptions)
-    }
-
-    private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+            binding.btnRegister.isEnabled = enabled
+            binding.btnRegister.alpha = if (enabled) 1f else 0.6f
+        }
     }
 
     override fun onDestroyView() {

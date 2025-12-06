@@ -1,0 +1,38 @@
+package com.luizeduardobrandao.appreceitascha.ui.auth
+
+/**
+ * Códigos de erro para operações de autenticação
+ */
+enum class AuthErrorCode {
+    // Login
+    INVALID_CREDENTIALS,
+    EMAIL_NOT_VERIFIED,
+
+    // Google Sign-In
+    GOOGLE_SIGNIN_FAILED,
+
+    // Cadastro
+    EMAIL_ALREADY_IN_USE,
+    REGISTER_FAILED,
+    EMAIL_VERIFICATION_FAILED,
+
+    // Atualização de perfil
+    UPDATE_PROFILE_FAILED,
+    USER_NOT_IDENTIFIED,
+
+    // Change Email
+    CHANGE_EMAIL_INCORRECT_PASSWORD,
+    CHANGE_EMAIL_USER_MISMATCH,
+    CHANGE_EMAIL_ALREADY_IN_USE,
+    CHANGE_EMAIL_INVALID,
+    CHANGE_EMAIL_REQUIRES_RECENT_LOGIN,
+    CHANGE_EMAIL_GENERIC,
+
+    // Change Password
+    CHANGE_PASSWORD_INCORRECT_PASSWORD,
+    CHANGE_PASSWORD_USER_MISMATCH,
+    CHANGE_PASSWORD_SAME_PASSWORD,
+    CHANGE_PASSWORD_WEAK,
+    CHANGE_PASSWORD_REQUIRES_RECENT_LOGIN,
+    CHANGE_PASSWORD_GENERIC
+}

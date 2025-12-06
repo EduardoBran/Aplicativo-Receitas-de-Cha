@@ -51,5 +51,6 @@ enum class PlanState {
  */
 data class UserSessionState(
     val authState: AuthState,
-    val planState: PlanState
+    val planState: PlanState,
+    val planType: PlanType = PlanType.NONE
 )

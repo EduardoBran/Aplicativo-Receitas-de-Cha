@@ -47,12 +47,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="24dp"
+                        android:layout_marginBottom="8dp"
                         android:text="@string/login_title"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                         android:textColor="@color/text_primary"
                         android:textStyle="bold" />
+
+                    <!-- Subtítulo -->
+                    <TextView
+                        android:id="@+id/tvSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="24dp"
+                        android:text="@string/login_subtitle"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:textColor="@color/text_secondary" />
 
                     <!-- Campo Email -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -91,7 +103,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="24dp"
+                        android:layout_marginBottom="16dp"
                         android:hint="@string/login_password_hint"
                         app:boxBackgroundColor="@color/edittext_background"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -124,7 +136,7 @@
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="8dp"
                         android:backgroundTint="@color/button_primary_background"
                         android:enabled="false"
                         android:text="@string/login_button_text"
@@ -134,42 +146,36 @@
                         android:textStyle="bold"
                         app:cornerRadius="12dp" />
 
-                    <!-- ProgressBar -->
-                    <ProgressBar
-                        android:id="@+id/progressLogin"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="12dp"
-                        android:indeterminateTint="@color/color_primary_base"
-                        android:visibility="gone"
-                        tools:visibility="gone" />
-
                     <!-- Link Recuperar Senha -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnGoToResetPassword"
                         style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        android:layout_gravity="end"
                         android:layout_marginBottom="16dp"
                         android:minHeight="0dp"
                         android:text="@string/login_forgot_password_text"
                         android:textAllCaps="false"
                         android:textColor="@color/color_primary_base"
                         android:textSize="14sp"
-                        app:icon="@drawable/ic_login_recover_pass_24"
-                        app:iconGravity="textStart"
-                        app:iconPadding="4dp"
-                        app:iconSize="18dp"
-                        app:iconTint="@color/color_primary_base" />
+                        app:icon="@drawable/ic_login_recover_pass_24" />
+
+                    <!-- ProgressBar -->
+                    <ProgressBar
+                        android:id="@+id/progressLogin"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="16dp"
+                        android:indeterminateTint="@color/color_primary_base"
+                        android:visibility="gone"
+                        tools:visibility="gone" />
 
                     <!-- Divisor -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
                         android:layout_marginBottom="16dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
@@ -185,7 +191,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:layout_marginEnd="12dp"
-                            android:text="@string/login_or"
+                            android:text="@string/login_or_continue_with"
                             android:textColor="@color/text_secondary"
                             android:textSize="13sp" />
 
@@ -196,24 +202,56 @@
                             android:background="@color/divider" />
                     </LinearLayout>
 
-                    <!-- Botão Criar Conta -->
+                    <!-- Botão Google -->
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnGoToRegister"
+                        android:id="@+id/btnGoogleSignIn"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:text="@string/login_register_text"
+                        android:layout_marginBottom="24dp"
+                        android:backgroundTint="@android:color/white"
+                        android:text="@string/login_google_button"
                         android:textAllCaps="false"
-                        android:textColor="@color/color_primary_base"
+                        android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         app:cornerRadius="12dp"
-                        app:icon="@drawable/ic_login_person_add_24"
+                        app:icon="@drawable/ic_google_24"
                         app:iconGravity="textStart"
                         app:iconPadding="8dp"
-                        app:iconSize="20dp"
-                        app:iconTint="@color/color_primary_base"
-                        app:strokeColor="@color/color_primary_base"
-                        app:strokeWidth="2dp" />
+                        app:iconTint="@null"
+                        app:strokeColor="@color/divider"
+                        app:strokeWidth="1dp" />
+
+                    <!-- Texto Criar Conta -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/login_no_account"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGoToRegister"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="0dp"
+                            android:text="@string/login_create_account"
+                            android:textAllCaps="false"
+                            android:textColor="@color/color_primary_base"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:icon="@drawable/ic_login_person_add_24" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

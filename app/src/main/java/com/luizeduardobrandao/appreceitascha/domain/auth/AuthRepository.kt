@@ -49,4 +49,39 @@ interface AuthRepository {
      *   - Usado pela UI para decidir qual card mostrar na Home,
      *     e o que liberar em Recipes e Favorites. */
     suspend fun getCurrentUserSessionState(): Result<UserSessionState>
+
+    /** ATUALIZAÇÃO DE PERFIL */
+
+    /** Atualiza apenas nome e telefone do usuário.
+     * @param uid ID do usuário
+     * @param name Nome atualizado
+     * @param phone Telefone atualizado (opcional)
+     * @return Result com sucesso ou erro */
+    suspend fun updateUserProfile(uid: String, name: String, phone: String?): Result<Unit>
+
+    /** Reautentica o usuário com sua senha atual.
+     * Necessário antes de alterar e-mail ou senha por segurança.
+     * @param currentPassword Senha atual do usuário
+     * @return Result com sucesso ou erro */
+    suspend fun reauthenticateUser(currentPassword: String): Result<Unit>
+
+    /** Altera o e-mail do usuário (requer reautenticação prévia).
+     * @param newEmail Novo e-mail
+     * @return Result com sucesso ou erro */
+    suspend fun updateUserEmail(newEmail: String): Result<Unit>
+
+    /** Altera a senha do usuário (requer reautenticação prévia).
+     * @param newPassword Nova senha
+     * @return Result com sucesso ou erro */
+    suspend fun updateUserPassword(newPassword: String): Result<Unit>
+
+    /** Login com Google usando idToken.
+     * @param idToken Token de identificação do Google
+     * @return Result com User autenticado ou erro */
+    suspend fun signInWithGoogle(idToken: String): Result<User>
+
+    /** Envia e-mail de verificação para o usuário atual.
+     * Usado após cadastro com e-mail/senha.
+     * @return Result com sucesso ou erro */
+    suspend fun sendEmailVerification(): Result<Unit>
 }

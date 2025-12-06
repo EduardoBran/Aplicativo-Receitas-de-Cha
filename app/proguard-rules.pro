@@ -56,3 +56,55 @@
 
 # 5) (Opcional) Caso queira preservar nomes de classes públicas do seu app:
 # -keep class com.luizeduardobrandao.obra.** { *; }
+
+# ─────────────────────────────────────────────────────────────────────
+# Credential Manager API (Google Sign-In moderno)
+# ─────────────────────────────────────────────────────────────────────
+
+# Mantém classes do Credential Manager
+-keep class androidx.credentials.** { *; }
+-keep interface androidx.credentials.** { *; }
+
+# Mantém a implementação do Play Services
+-if class androidx.credentials.CredentialManager
+-keep class androidx.credentials.playservices.** {
+  *;
+}
+
+# Mantém classes do Google ID Token
+-keep class com.google.android.libraries.identity.googleid.** { *; }
+-keepclassmembers class com.google.android.libraries.identity.googleid.** {
+  *;
+}
+
+# Mantém credenciais customizadas
+-keep class * extends androidx.credentials.Credential {
+  *;
+}
+
+# Evita warnings do Credential Manager
+-dontwarn androidx.credentials.**
+-dontwarn com.google.android.libraries.identity.googleid.**
+
+# ─────────────────────────────────────────────────────────────────────
+# Firebase Auth (adicional)
+# ─────────────────────────────────────────────────────────────────────
+
+# Mantém classes do Firebase Auth
+-keep class com.google.firebase.auth.** { *; }
+-keepclassmembers class com.google.firebase.auth.** {
+  *;
+}
+
+# Mantém providers do Firebase
+-keep class com.google.firebase.auth.FirebaseAuth { *; }
+-keep class com.google.firebase.auth.FirebaseUser { *; }
+-keep class com.google.firebase.auth.GoogleAuthProvider { *; }
+
+# ─────────────────────────────────────────────────────────────────────
+# Google Play Services Auth (base)
+# ─────────────────────────────────────────────────────────────────────
+
+-keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.common.** { *; }
+-dontwarn com.google.android.gms.**

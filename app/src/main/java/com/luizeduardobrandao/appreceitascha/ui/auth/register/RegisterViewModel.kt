@@ -1,10 +1,10 @@
 package com.luizeduardobrandao.appreceitascha.ui.auth.register
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
 import com.luizeduardobrandao.appreceitascha.domain.auth.User
+import com.luizeduardobrandao.appreceitascha.ui.auth.AuthErrorCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,20 +15,11 @@ import javax.inject.Inject
 
 /**
  * ViewModel responsável pela tela de Cadastro.
- *
- * - Controla campos de nome, e-mail, telefone (opcional) e senha.
- * - Faz validações básicas, incluindo comprimento mínimo de senha.
- * - Chama o [AuthRepository.register] para criar o usuário.
- * - Salva o perfil automaticamente no Realtime Database (via AuthRepositoryImpl).
  */
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
-
-    companion object {
-        private const val MIN_PASSWORD_LENGTH = 6
-    }
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
@@ -38,7 +29,7 @@ class RegisterViewModel @Inject constructor(
             current.copy(
                 name = value,
                 nameError = null,
-                errorMessage = null
+                errorCode = null
             )
         }
     }
@@ -48,7 +39,7 @@ class RegisterViewModel @Inject constructor(
             current.copy(
                 email = value,
                 emailError = null,
-                errorMessage = null
+                errorCode = null
             )
         }
     }
@@ -58,7 +49,7 @@ class RegisterViewModel @Inject constructor(
             current.copy(
                 phone = value,
                 phoneError = null,
-                errorMessage = null
+                errorCode = null
             )
         }
     }
@@ -68,24 +59,99 @@ class RegisterViewModel @Inject constructor(
             current.copy(
                 password = value,
                 passwordError = null,
-                errorMessage = null
+                errorCode = null
             )
         }
     }
 
     fun clearErrorMessage() {
         _uiState.update { current ->
-            current.copy(errorMessage = null)
+            current.copy(errorCode = null)
+        }
+    }
+
+    /**
+     * Inicializa o modo de edição carregando os dados do usuário atual
+     */
+    fun initEditMode() {
+        val currentUser = authRepository.getCurrentUser()
+        if (currentUser != null) {
+            _uiState.update { current ->
+                current.copy(
+                    isEditMode = true,
+                    currentUserId = currentUser.uid,
+                    name = currentUser.name ?: "",
+                    email = currentUser.email,
+                    phone = formatPhoneForDisplay(currentUser.phone)
+                )
+            }
+        }
+    }
+
+    private fun formatPhoneForDisplay(phone: String?): String {
+        if (phone.isNullOrBlank()) return ""
+        val digits = phone.filter { it.isDigit() }
+        return when {
+            digits.isEmpty() -> ""
+            digits.length <= 2 -> "(${digits}"
+            else -> "(${digits.substring(0, 2)}) ${digits.substring(2)}"
+        }
+    }
+
+    /**
+     * Atualiza apenas nome e telefone no modo edição
+     */
+    fun submitUpdate() {
+        val current = _uiState.value
+        val name = current.name.trim()
+        val phone = current.phone.trim()
+
+        val digitsOnlyPhone = phone.filter { it.isDigit() }
+        val phoneOrNull = digitsOnlyPhone.ifBlank { null }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorCode = null) }
+
+            val userId = current.currentUserId
+            if (userId == null) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorCode = AuthErrorCode.USER_NOT_IDENTIFIED
+                    )
+                }
+                return@launch
+            }
+
+            val result = authRepository.updateUserProfile(
+                uid = userId,
+                name = name,
+                phone = phoneOrNull
+            )
+
+            result
+                .onSuccess {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isUpdateSuccessful = true,
+                            errorCode = null
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorCode = AuthErrorCode.UPDATE_PROFILE_FAILED
+                        )
+                    }
+                }
         }
     }
 
     /**
      * Tenta realizar o cadastro com os dados atuais do formulário.
-     *
-     * Fluxo:
-     * 1) Valida campos.
-     * 2) Se estiver ok, chama o [AuthRepository.register].
-     * 3) Atualiza estado com loading / sucesso / erro.
      */
     fun submitRegister() {
         val current = _uiState.value
@@ -94,66 +160,11 @@ class RegisterViewModel @Inject constructor(
         val phone = current.phone.trim()
         val password = current.password
 
-        var hasError = false
-        var nameError: String? = null
-        var emailError: String? = null
-        var phoneError: String? = null
-        var passwordError: String? = null
-
-        // Nome
-        if (name.isBlank()) {
-            nameError = "Informe o nome."
-            hasError = true
-        }
-
-        // E-mail
-        if (email.isBlank()) {
-            emailError = "Informe o e-mail."
-            hasError = true
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailError = "E-mail inválido."
-            hasError = true
-        }
-
-        // Telefone (opcional): valida apenas se preenchido
-        if (phone.isNotBlank()) {
-            // Remove máscara do campo (parênteses, espaço, etc.) e mantém só dígitos
-            val digits = phone.filter { it.isDigit() }
-
-            // Aceita SOMENTE 11 dígitos (ex.: 21998848525)
-            if (digits.length != 11) {
-                phoneError = "Telefone inválido."
-                hasError = true
-            }
-        }
-
-        // Senha
-        if (password.isBlank()) {
-            passwordError = "Informe a senha."
-            hasError = true
-        } else if (password.length < MIN_PASSWORD_LENGTH) {
-            passwordError = "A senha deve ter pelo menos $MIN_PASSWORD_LENGTH caracteres."
-            hasError = true
-        }
-
-        if (hasError) {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    nameError = nameError,
-                    emailError = emailError,
-                    phoneError = phoneError,
-                    passwordError = passwordError
-                )
-            }
-            return
-        }
-
-        // Remove qualquer máscara antes de salvar no banco
         val digitsOnlyPhone = phone.filter { it.isDigit() }
         val phoneOrNull = digitsOnlyPhone.ifBlank { null }
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { it.copy(isLoading = true, errorCode = null) }
 
             val result = authRepository.register(
                 name = name,
@@ -164,23 +175,56 @@ class RegisterViewModel @Inject constructor(
 
             result
                 .onSuccess { user ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            isRegistered = true,
-                            registeredUser = user,
-                            errorMessage = null
-                        )
+                    // Enviar e-mail de verificação
+                    val verificationResult = authRepository.sendEmailVerification()
+
+                    if (verificationResult.isSuccess) {
+                        // Fazer logout para forçar verificação
+                        authRepository.logout()
+
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isRegistered = true,
+                                registeredUser = user,
+                                errorCode = null,
+                                verificationEmailSent = true
+                            )
+                        }
+                    } else {
+                        // Erro ao enviar verificação, mas cadastro foi feito
+                        authRepository.logout()
+
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isRegistered = true,
+                                registeredUser = user,
+                                errorCode = AuthErrorCode.EMAIL_VERIFICATION_FAILED,
+                                verificationEmailSent = false
+                            )
+                        }
                     }
                 }
                 .onFailure { throwable ->
+                    // Detecta se é erro de e-mail já cadastrado
+                    val errorCode = if (throwable.message?.contains(
+                            "already in use",
+                            ignoreCase = true
+                        ) == true
+                    ) {
+                        AuthErrorCode.EMAIL_ALREADY_IN_USE
+                    } else {
+                        AuthErrorCode.REGISTER_FAILED
+                    }
+
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             isRegistered = false,
                             registeredUser = null,
-                            errorMessage = throwable.message
-                                ?: "Erro ao realizar cadastro. Tente novamente."
+                            errorCode = errorCode,
+                            verificationEmailSent = false
                         )
                     }
                 }
@@ -190,11 +234,11 @@ class RegisterViewModel @Inject constructor(
 
 /**
  * Estado da tela de Cadastro.
- *
- * Ideal para ligar com TextInputLayouts exibindo erros
- * e um ProgressBar/estado de carregamento no botão "Cadastrar".
  */
 data class RegisterUiState(
+    val isEditMode: Boolean = false,
+    val currentUserId: String? = null,
+
     val name: String = "",
     val email: String = "",
     val phone: String = "",
@@ -207,6 +251,8 @@ data class RegisterUiState(
 
     val isLoading: Boolean = false,
     val isRegistered: Boolean = false,
+    val isUpdateSuccessful: Boolean = false,
     val registeredUser: User? = null,
-    val errorMessage: String? = null
+    val errorCode: AuthErrorCode? = null,
+    val verificationEmailSent: Boolean = false
 )

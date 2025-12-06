@@ -1,39 +1,116 @@
 <resources>
     <string name="app_name">Nature Chá</string>
 
-    <!-- Login -->
-    <string name="login_title">Faça login ou clique em ‘Criar conta’ para comprar um plano e liberar todas as receitas.</string>
+    <!-- ======== Login Fragment ======== -->
+
     <string name="login_email_hint">E-mail</string>
     <string name="login_password_hint">Senha</string>
-    <string name="login_button_text">Login</string>
     <string name="login_register_text">Criar conta</string>
-    <string name="login_forgot_password_text">Esqueci minha senha</string>
     <string name="login_or">ou</string>
 
-    <!-- Cadastro -->
-    <string name="register_title">Cadastro</string>
-    <string name="register_subtitle">Crie sua conta</string>
+    <!-- Erros de login -->
+    <string name="error_login_invalid_credentials">E-mail ou senha incorretos.</string>
+    <string name="error_login_generic">Erro ao fazer login. Tente novamente.</string>
+
+    <!-- Erros de cadastro -->
+    <string name="error_register_email_in_use">Este e-mail já está cadastrado.</string>
+    <string name="error_register_generic">Erro ao cadastrar. Tente novamente.</string>
+
+    <!-- Erros de Google Sign-In -->
+    <string name="error_google_signin_generic">Erro no login com Google. Tente novamente.</string>
+
+    <!-- ======== RegisterFragment ========-->
     <string name="register_name_hint">Nome *</string>
     <string name="register_email_hint">E-mail *</string>
     <string name="register_password_hint">Senha *</string>
     <string name="register_confirm_password_hint">Repetir senha *</string>
     <string name="register_phone_hint">Telefone (opcional)</string>
-    <string name="register_button_text">Cadastrar</string>
 
-    <!-- Reset password -->
+    <!-- Modo Edição -->
+    <string name="register_update_button_text">Atualizar</string>
+    <string name="register_edit_mode_title">Editar Perfil</string>
+    <string name="snackbar_success_profile_updated">Perfil atualizado com sucesso!</string>
+
+    <!-- Botões de alteração -->
+    <string name="register_change_email_button">Alterar e-mail</string>
+    <string name="register_change_password_button">Alterar senha</string>
+
+    <!-- Diálogo de alteração de e-mail -->
+    <string name="dialog_change_email_title">Alterar E-mail</string>
+    <string name="dialog_change_email_message">Confirme sua senha e informe o novo e-mail.</string>
+    <string name="dialog_current_password_hint">Senha atual</string>
+    <string name="dialog_new_email_hint">Novo e-mail</string>
+    <string name="dialog_change_email_success">E-mail de verificação enviado!</string>
+
+    <!-- Diálogo de alteração de senha -->
+    <string name="dialog_change_password_title">Alterar Senha</string>
+    <string name="dialog_change_password_message">Confirme sua senha atual e informe a nova senha.</string>
+    <string name="dialog_new_password_hint">Nova senha</string>
+    <string name="dialog_confirm_new_password_hint">Confirmar nova senha</string>
+    <string name="dialog_change_password_success">Senha alterada com sucesso!</string>
+
+    <!-- Botões do diálogo -->
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_confirm">Confirmar</string>
+
+    <!-- Erros -->
+    <string name="error_password_too_short">A senha deve ter pelo menos 6 caracteres</string>
+    <string name="error_passwords_dont_match">As senhas não coincidem</string>
+
+    <!-- Diálogo de logout -->
+    <string name="dialog_logout_title">Sair da conta</string>
+    <string name="dialog_logout_message">Tem certeza que deseja sair?</string>
+    <string name="dialog_yes">Sim</string>
+    <string name="dialog_no">Não</string>
+
+    <!-- Erros de cadastro -->
+    <string name="error_register_verification_failed">Cadastro feito, mas erro ao enviar e-mail de verificação.</string>
+    <!-- Erros de atualização de perfil -->
+    <string name="error_update_profile_failed">Erro ao atualizar perfil. Tente novamente.</string>
+    <string name="error_user_not_identified">Erro: usuário não identificado.</string>
+
+    <!-- ======== ResetPasswordFragment ======== -->
     <string name="reset_title">Recuperar Senha</string>
     <string name="reset_subtitle">Informe seu e-mail cadastrado</string>
     <string name="reset_email_hint">E-mail</string>
     <string name="reset_button_text">Enviar</string>
 
-    <!-- Home -->
+    <!-- ======== HomeFragment ========-->
     <string name="home_placeholder_title">Bem-vindo</string>
     <string name="home_logout_button_text">Logout</string>
 
-    <!-- Menus -->
-    <string name="menu_home">Início</string>
+    <!-- Home - cards de estado -->
+    <string name="home_guest_title">Crie sua conta gratuita</string>
+    <string name="home_guest_body">
+        Experimente uma receita gratuita em cada categoria.
+        Para liberar o botão Comprar e ter acesso às receitas completas, crie sua conta com e-mail e senha.
+    </string>
+    <string name="home_guest_primary_action">Fazer login / Cadastre-se</string>
 
-    <!-- Snackbars -->
+    <string name="home_free_title">Você está no modo gratuito</string>
+    <string name="home_free_body">
+        Você pode ver uma receita gratuita em cada categoria.
+        Para liberar todas as receitas, escolha um dos nossos planos.
+    </string>
+    <string name="home_free_plans_summary">Planos de 3, 6, 12 meses ou acesso vitalício.</string>
+    <string name="home_free_primary_action">Comprar</string>
+
+    <string name="home_premium_title">Seu plano atual</string>
+    <string name="home_premium_plan_label">Plano: %1$s</string>
+    <string name="home_plan_3m">Plano 3 meses</string>
+    <string name="home_plan_6m">Plano 6 meses</string>
+    <string name="home_plan_12m">Plano 12 meses</string>
+    <string name="home_plan_life">Acesso vitalício</string>
+    <string name="home_plan_unknown">Plano desconhecido</string>
+    <string name="home_plan_no_expiration">Sem data de expiração</string>
+    <string name="home_plan_expires_at">Expira em %1$s</string>
+    <string name="home_premium_details_button">Ver detalhes do plano</string>
+
+    <!-- Home - ações comuns -->
+    <string name="home_common_see_recipes">Ver receitas</string>
+
+
+    <!-- ======== Snackbars Messages ========-->
     <string name="snackbar_error_invalid_login">E-mail ou senha inválidos.</string>
     <string name="snackbar_success_welcome">Bem-vindo %1$s!</string>
     <string name="snackbar_error_email_exists">Este e-mail já foi cadastrado.</string>
@@ -43,21 +120,75 @@
     <!-- Erros de campos -->
     <string name="error_name_required">Informe o nome.</string>
     <string name="error_name_min_length">O nome deve ter pelo menos %1$d letras.</string>
-
     <string name="error_email_required">Informe o e-mail.</string>
     <string name="error_email_invalid">E-mail inválido.</string>
-
     <string name="error_phone_invalid">Telefone inválido.</string>
-
     <string name="error_password_required">Informe a senha.</string>
     <string name="error_password_min_length">A senha deve ter pelo menos %1$d caracteres.</string>
-
     <string name="error_confirm_password_required">Repita a senha.</string>
     <string name="error_confirm_password_mismatch">As senhas não coincidem.</string>
 
-    <!-- Bottom navigation -->
+    <!-- ======== Bottom Navigation Icons ========-->
     <string name="bottom_nav_home">Início</string>
     <string name="bottom_nav_categories">Categorias</string>
     <string name="bottom_nav_favorites">Favoritos</string>
     <string name="bottom_nav_login">Login</string>
+    <string name="bottom_nav_profile">Perfil</string>
+
+    <!-- Login Screen - Updated -->
+    <string name="login_title">Entre para continuar</string>
+    <string name="login_subtitle">Faça login para ver suas receitas e gerenciar seu plano.</string>
+    <string name="login_button_text">Entrar</string>
+    <string name="login_forgot_password_text">Esqueci minha senha</string>
+    <string name="login_or_continue_with">ou continue com</string>
+    <string name="login_google_button">Continuar com Google</string>
+    <string name="login_no_account">Não tem conta?</string>
+    <string name="login_create_account">Criar conta</string>
+
+    <!-- Register Screen - Updated -->
+    <string name="register_title">Crie sua conta</string>
+    <string name="register_subtitle">Leva menos de 1 minuto.</string>
+    <string name="register_button_text">Cadastrar</string>
+    <string name="register_already_have_account">Já tem conta?</string>
+    <string name="register_go_to_login">Entrar</string>
+
+    <!-- Email Verification -->
+    <string name="email_verification_sent">E-mail enviado para %s. Confirme para fazer login.</string>
+    <string name="email_not_verified">Confirme o e-mail enviado para %s antes de entrar.</string>
+    <string name="email_verified">E-mail validado.</string>
+
+    <!-- Google Sign In -->
+    <string name="google_sign_in_error">Erro ao fazer login com Google. Tente novamente.</string>
+    <string name="google_sign_in_cancelled">Login com Google cancelado.</string>
+
+    <!-- OAuth Client ID - será substituído pelo google-services.json -->
+    <string name="default_web_client_id" translatable="false">your_web_client_id_here</string>
+
+    <!-- Google User Restrictions -->
+    <string name="error_google_user_cannot_change_email">Esta operação não está disponível para contas Google. Gerencie seu e-mail nas configurações da sua conta Google.</string>
+    <string name="error_google_user_cannot_change_password">Esta operação não está disponível para contas Google. Gerencie sua senha nas configurações da sua conta Google.</string>
+
+    <!-- Change Email Errors -->
+    <string name="error_change_email_incorrect_password">Senha atual incorreta.</string>
+    <string name="error_change_email_user_mismatch">Esta operação não está disponível para sua conta.</string>
+    <string name="error_change_email_already_in_use">Este e-mail já está em uso.</string>
+    <string name="error_change_email_invalid">E-mail inválido.</string>
+    <string name="error_change_email_requires_recent_login">Por segurança, faça login novamente antes de alterar o e-mail.</string>
+    <string name="error_change_email_generic">Erro ao alterar e-mail. Tente novamente.</string>
+
+    <!-- Change Password Errors -->
+    <string name="error_change_password_incorrect_password">Senha atual incorreta.</string>
+    <string name="error_change_password_user_mismatch">Esta operação não está disponível para sua conta.</string>
+    <string name="error_change_password_same_password">A nova senha deve ser diferente da atual.</string>
+    <string name="error_change_password_weak">A senha é muito fraca. Use pelo menos 6 caracteres.</string>
+    <string name="error_change_password_requires_recent_login">Por segurança, faça login novamente antes de alterar a senha.</string>
+    <string name="error_change_password_generic">Erro ao alterar senha. Tente novamente.</string>
+
+    <!-- Unsaved Changes Dialog -->
+    <string name="dialog_unsaved_changes_title">Descartar alterações?</string>
+    <string name="dialog_unsaved_changes_message">Você tem alterações não salvas. Se sair agora, nenhuma informação será salva.</string>
+
+    <string name="error_weak_password">Senha muito fraca. Use no mínimo 6 caracteres.</string>
+    <string name="error_network">Erro de conexão. Verifique sua internet.</string>
+    <string name="error_invalid_email">E-mail inválido.</string>
 </resources>

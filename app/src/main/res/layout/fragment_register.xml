@@ -48,11 +48,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/register_title"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold" />
+
+                    <!-- Subtítulo -->
+                    <TextView
+                        android:id="@+id/tvSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="24dp"
                         android:text="@string/register_subtitle"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                        android:textColor="@color/text_primary" />
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:textColor="@color/text_secondary" />
 
                     <!-- Campo Nome -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -91,7 +104,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="8dp"
                         android:hint="@string/register_email_hint"
                         app:boxBackgroundColor="@color/edittext_background"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -115,6 +128,19 @@
                             android:textColor="@color/edittext_text"
                             android:textSize="16sp" />
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Botão "Alterar e-mail" - visível apenas no modo edição -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangeEmail"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/register_change_email_button"
+                        android:textColor="@color/color_primary_base"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <!-- Campo Senha -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -155,7 +181,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="8dp"
                         android:hint="@string/register_confirm_password_hint"
                         app:boxBackgroundColor="@color/edittext_background"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -181,6 +207,19 @@
                             android:textColor="@color/edittext_text"
                             android:textSize="16sp" />
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Botão "Alterar senha" - visível apenas no modo edição -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePassword"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/register_change_password_button"
+                        android:textColor="@color/color_primary_base"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <!-- Campo Telefone -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -213,7 +252,7 @@
                             android:textSize="16sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Botão Registrar -->
+                    <!-- Botão Registrar/Salvar -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnRegister"
                         style="@style/Widget.MaterialComponents.Button"
@@ -229,16 +268,64 @@
                         android:textStyle="bold"
                         app:cornerRadius="12dp" />
 
+                    <!-- Botão Logout (apenas no modo edição) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLogout"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="16dp"
+                        android:backgroundTint="@color/text_error"
+                        android:text="@string/home_logout_button_text"
+                        android:textAllCaps="false"
+                        android:textColor="@color/button_primary_text"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:cornerRadius="12dp"
+                        tools:visibility="visible" />
+
                     <!-- ProgressBar -->
                     <ProgressBar
                         android:id="@+id/progressRegister"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="16dp"
                         android:indeterminateTint="@color/color_primary_base"
                         android:visibility="gone"
                         tools:visibility="gone" />
+
+                    <!-- Texto Voltar ao Login (apenas modo cadastro) -->
+                    <LinearLayout
+                        android:id="@+id/layoutBackToLogin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/register_already_have_account"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGoToLogin"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="0dp"
+                            android:text="@string/register_go_to_login"
+                            android:textAllCaps="false"
+                            android:textColor="@color/color_primary_base"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

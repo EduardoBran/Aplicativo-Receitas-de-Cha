@@ -1,9 +1,7 @@
 package com.luizeduardobrandao.appreceitascha.ui.auth.resetpassword
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -11,9 +9,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentResetPasswordBinding
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
+import com.luizeduardobrandao.appreceitascha.ui.common.utils.KeyboardUtils
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidationRules
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidator
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,7 +76,7 @@ class ResetPasswordFragment : Fragment() {
 
         binding.btnSend.setOnClickListener {
             // Fecha o teclado antes de enviar
-            hideKeyboard()
+            KeyboardUtils.hideKeyboard(this@ResetPasswordFragment)
             viewModel.submitResetPassword()
         }
     }
@@ -89,7 +89,6 @@ class ResetPasswordFragment : Fragment() {
                     updateSendButtonState(additionalLoadingFlag = state.isLoading)
 
                     if (state.errorMessage != null) {
-                        // Para simplificar: erro comum é "e-mail não existe"
                         SnackbarFragment.showError(
                             binding.root,
                             getString(R.string.snackbar_error_email_not_found)
@@ -98,14 +97,22 @@ class ResetPasswordFragment : Fragment() {
                     }
 
                     if (state.isSuccess) {
-                        SnackbarFragment.showSuccess(
+                        SnackbarFragment.showWarning(
                             binding.root,
                             getString(R.string.snackbar_success_reset_email_sent)
                         )
+
+                        binding.root.postDelayed({
+                            navigateToLogin()
+                        }, 2500)
                     }
                 }
             }
         }
+    }
+
+    private fun navigateToLogin() {
+        findNavController().navigateUp()
     }
 
     private fun updateSendButtonState(additionalLoadingFlag: Boolean = false) {
@@ -115,12 +122,6 @@ class ResetPasswordFragment : Fragment() {
         val enabled = emailValid && !additionalLoadingFlag
         binding.btnSend.isEnabled = enabled
         binding.btnSend.alpha = if (enabled) 1f else 0.6f
-    }
-
-    private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
     override fun onDestroyView() {

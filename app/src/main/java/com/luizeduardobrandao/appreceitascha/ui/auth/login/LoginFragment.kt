@@ -1,30 +1,45 @@
 package com.luizeduardobrandao.appreceitascha.ui.auth.login
 
-import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import androidx.core.view.isVisible
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.luizeduardobrandao.appreceitascha.R
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentLoginBinding
-import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
+import com.luizeduardobrandao.appreceitascha.R
+import com.luizeduardobrandao.appreceitascha.ui.auth.AuthErrorCode
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
+import com.luizeduardobrandao.appreceitascha.ui.common.utils.KeyboardUtils
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidationRules
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import androidx.core.widget.doAfterTextChanged
-import androidx.navigation.NavOptions
+import java.security.MessageDigest
+import java.util.UUID
 
+/**
+ * Fragment responsável pela tela de Login.
+ *
+ * - Observa o [LoginViewModel] via StateFlow.
+ * - Vincula campos de texto ao estado.
+ * - Exibe erros de validação e mensagens gerais.
+ * - Navega para outras telas (RegisterFragment, ResetPasswordFragment, Home).
+ * - Implementa login com Google usando Credential Manager API (API moderna oficial).
+ */
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
 
@@ -32,12 +47,8 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: LoginViewModel by viewModels()
-
-    @Inject
-    lateinit var authRepository: AuthRepository
-
-    private var hasNavigatedToHome = false
     private val fieldValidator = FieldValidator()
+    private lateinit var credentialManager: CredentialManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,14 +60,12 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        credentialManager = CredentialManager.create(requireContext())
+
         setupListeners()
         observeUiState()
-
-        // Se o usuário já estiver logado (fechou e abriu o app), ir direto para Home
-        val currentUser = authRepository.getCurrentUser()
-        if (currentUser != null && !hasNavigatedToHome) {
-            navigateToHomeAndClearBackStack(currentUser.name ?: "")
-        }
     }
 
     private fun setupListeners() {
@@ -74,6 +83,7 @@ class LoginFragment : Fragment() {
 
             updateLoginButtonState()
         }
+
         binding.etEmail.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val value = binding.etEmail.text?.toString().orEmpty()
@@ -104,6 +114,7 @@ class LoginFragment : Fragment() {
 
             updateLoginButtonState()
         }
+
         binding.etPassword.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val value = binding.etPassword.text?.toString().orEmpty()
@@ -120,42 +131,30 @@ class LoginFragment : Fragment() {
             }
         }
 
+        // Botão de login
         binding.btnLogin.setOnClickListener {
-            hideKeyboard()
+            KeyboardUtils.hideKeyboard(this@LoginFragment)
             viewModel.submitLogin()
         }
 
-        binding.btnGoToRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        // Botão Google Sign-In
+        binding.btnGoogleSignIn.setOnClickListener {
+            KeyboardUtils.hideKeyboard(this@LoginFragment)
+            startGoogleSignIn()
         }
 
+        // Link para recuperação de senha
         binding.btnGoToResetPassword.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_resetPasswordFragment)
+            findNavController().navigate(
+                R.id.action_loginFragment_to_resetPasswordFragment
+            )
         }
-    }
 
-    private fun observeUiState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    binding.progressLogin.isVisible = state.isLoading
-
-                    // Atualiza botão com base na validade + loading
-                    updateLoginButtonState(additionalLoadingFlag = state.isLoading)
-
-                    if (state.errorMessage != null) {
-                        SnackbarFragment.showError(
-                            binding.root,
-                            getString(R.string.snackbar_error_invalid_login)
-                        )
-                        viewModel.clearErrorMessage()
-                    }
-
-                    if (state.isLoggedIn && state.loggedUser != null && !hasNavigatedToHome) {
-                        navigateToHomeAndClearBackStack(state.loggedUser.name ?: "")
-                    }
-                }
-            }
+        // Link para cadastro
+        binding.btnGoToRegister.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_loginFragment_to_registerFragment
+            )
         }
     }
 
@@ -167,27 +166,162 @@ class LoginFragment : Fragment() {
         val passwordValid = FieldValidationRules.validatePassword(password).isValid
 
         val enabled = emailValid && passwordValid && !additionalLoadingFlag
+
         binding.btnLogin.isEnabled = enabled
         binding.btnLogin.alpha = if (enabled) 1f else 0.6f
     }
 
-    private fun navigateToHomeAndClearBackStack(userName: String) {
-        hasNavigatedToHome = true
+    private fun startGoogleSignIn() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // Gera um nonce aleatório para segurança
+                val rawNonce = UUID.randomUUID().toString()
+                val hashedNonce = hashNonce(rawNonce)
 
-        val directions =
-            LoginFragmentDirections.actionLoginFragmentToHomeFragment(userName = userName)
+                // Configura as opções do Google ID
+                val googleIdOption = GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(false)
+                    .setServerClientId(getString(R.string.default_web_client_id))
+                    .setNonce(hashedNonce)
+                    .setAutoSelectEnabled(false)
+                    .build()
 
-        val navOptions = NavOptions.Builder()
-            .setPopUpTo(R.id.loginFragment, true)
-            .build()
+                // Cria a request de credenciais
+                val request = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
 
-        findNavController().navigate(directions, navOptions)
+                // Solicita as credenciais
+                val result = credentialManager.getCredential(
+                    request = request,
+                    context = requireContext()
+                )
+
+                handleSignInResult(result)
+
+            } catch (e: GetCredentialCancellationException) {
+                // Usuário cancelou o fluxo
+                Log.d("LoginFragment", "User cancelled Google Sign-In")
+                SnackbarFragment.showWarning(
+                    binding.root,
+                    getString(R.string.google_sign_in_cancelled)
+                )
+            } catch (e: NoCredentialException) {
+                // Nenhuma credencial disponível
+                Log.e("LoginFragment", "No credentials available", e)
+                SnackbarFragment.showError(binding.root, getString(R.string.google_sign_in_error))
+            } catch (e: GetCredentialException) {
+                // Erro ao obter credenciais
+                Log.e("LoginFragment", "Error getting credentials", e)
+                SnackbarFragment.showError(binding.root, getString(R.string.google_sign_in_error))
+            } catch (e: Exception) {
+                // Erro inesperado
+                Log.e("LoginFragment", "Unexpected error during Google Sign-In", e)
+                SnackbarFragment.showError(binding.root, getString(R.string.google_sign_in_error))
+            }
+        }
     }
 
-    private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    private fun handleSignInResult(result: GetCredentialResponse) {
+        when (val credential = result.credential) {
+            is CustomCredential -> {
+                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    try {
+                        val googleIdTokenCredential = GoogleIdTokenCredential
+                            .createFrom(credential.data)
+
+                        val idToken = googleIdTokenCredential.idToken
+
+                        // Envia o token para o ViewModel
+                        viewModel.signInWithGoogle(idToken)
+
+                    } catch (e: Exception) {
+                        Log.e("LoginFragment", "Error parsing Google ID Token", e)
+                        SnackbarFragment.showError(
+                            binding.root,
+                            getString(R.string.google_sign_in_error)
+                        )
+                    }
+                } else {
+                    Log.e("LoginFragment", "Unexpected credential type: ${credential.type}")
+                    SnackbarFragment.showError(
+                        binding.root,
+                        getString(R.string.google_sign_in_error)
+                    )
+                }
+            }
+
+            else -> {
+                Log.e("LoginFragment", "Unexpected credential type")
+                showSnackbar(getString(R.string.google_sign_in_error))
+            }
+        }
+    }
+
+    /**
+     * Gera um hash SHA-256 do nonce para segurança adicional
+     */
+    private fun hashNonce(nonce: String): String {
+        val bytes = nonce.toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        return digest.fold("") { str, it -> str + "%02x".format(it) }
+    }
+
+    private fun observeUiState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                updateUi(state)
+            }
+        }
+    }
+
+    private fun updateUi(state: LoginUiState) {
+        // Atualiza erros nos campos
+        binding.tilEmail.error = state.emailError
+        binding.tilPassword.error = state.passwordError
+
+        // Atualiza estado do botão de login
+        updateLoginButtonState(additionalLoadingFlag = state.isLoading)
+
+        // Desabilita botão Google durante loading
+        binding.btnGoogleSignIn.isEnabled = !state.isLoading
+
+        // Mostra/esconde ProgressBar
+        binding.progressLogin.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+
+        // ✅ Traduz código de erro para mensagem
+        state.errorCode?.let { errorCode ->
+            val message = when (errorCode) {
+                AuthErrorCode.INVALID_CREDENTIALS ->
+                    getString(R.string.error_login_invalid_credentials)
+
+                AuthErrorCode.EMAIL_NOT_VERIFIED ->
+                    getString(R.string.email_not_verified, state.userEmail ?: "")
+
+                AuthErrorCode.GOOGLE_SIGNIN_FAILED ->
+                    getString(R.string.error_google_signin_generic)
+
+                else -> getString(R.string.error_login_generic)
+            }
+            SnackbarFragment.showError(binding.root, message)
+            viewModel.clearErrorMessage()
+        }
+
+        // Se login foi bem-sucedido, navega para a Home
+        if (state.isLoggedIn && state.loggedUser != null) {
+            navigateToHome()
+        }
+    }
+
+    private fun navigateToHome() {
+        findNavController().navigate(
+            R.id.action_loginFragment_to_homeFragment
+        )
+    }
+
+    private fun showSnackbar(message: String) {
+        SnackbarFragment.showError(binding.root, message)
     }
 
     override fun onDestroyView() {

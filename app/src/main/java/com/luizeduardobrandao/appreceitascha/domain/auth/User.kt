@@ -20,5 +20,8 @@ data class User(
     val phone: String?,
 
     /** Indica se o e-mail do usuário já foi verificado. */
-    val isEmailVerified: Boolean
+    val isEmailVerified: Boolean,
+
+    /** Provider de autenticação: "password", "google.com", "facebook.com", etc. */
+    val provider: String? = null
 )
