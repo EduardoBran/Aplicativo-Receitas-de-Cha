@@ -79,10 +79,13 @@ class LoginViewModel @Inject constructor(
             result
                 .onSuccess { user ->
                     val currentUser = authRepository.getCurrentUser()
-                    val isPasswordProvider = currentUser != null &&
+
+                    // Representa: "usuário atual ainda NÃO verificado no Firebase"
+                    val isEmailNotVerifiedInFirebase = currentUser != null &&
                             !currentUser.isEmailVerified
 
-                    if (!user.isEmailVerified && isPasswordProvider) {
+                    if (!user.isEmailVerified && isEmailNotVerifiedInFirebase) {
+                        // Caso: usuário de senha com e-mail ainda não verificado
                         authRepository.logout()
 
                         _uiState.update {

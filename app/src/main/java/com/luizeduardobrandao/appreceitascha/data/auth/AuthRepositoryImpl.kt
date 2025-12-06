@@ -39,7 +39,27 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(email: String, password: String): Result<User> {
         return authDataSource
             .signIn(email, password)
-            .map { firebaseUser -> firebaseUser.toDomainUser() }
+            .map { firebaseUser ->
+                // Converte usuário do Firebase para o modelo de domínio
+                val user = firebaseUser.toDomainUser()
+
+                // 🔄 Sincroniza o campo emailVerified no Realtime Database,
+                // SEM alterar o comportamento do login em caso de erro.
+                try {
+                    val userRef = database.getReference("users")
+                        .child(user.uid)
+
+                    // Atualiza apenas o campo emailVerified com o estado atual do FirebaseAuth
+                    userRef.child("emailVerified")
+                        .setValue(user.isEmailVerified)
+                        .await()
+                } catch (e: Exception) {
+                    // Ignora qualquer falha aqui para NÃO quebrar o login.
+                    // (Opcionalmente você poderia logar isso com Log.e, se quiser no futuro.)
+                }
+
+                user
+            }
     }
 
     /** Cadastro de usuário:

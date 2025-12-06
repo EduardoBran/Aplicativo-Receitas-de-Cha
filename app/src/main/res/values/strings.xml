@@ -192,6 +192,19 @@
     </string>
 
 
+    <!-- ======== FavouritesFragment ========-->
+    <string name="favorites_title">Favoritos</string>
+    <string name="favorites_empty_state">Você ainda não tem receitas favoritas.</string>
+    <string name="favorites_error_generic">Ocorreu um erro ao carregar seus favoritos.</string>
+    <string name="favorites_requires_plan_or_login">Esta área é exclusiva para usuários com plano ativo. Faça login e contrate um plano para usar favoritos.</string>
+    <string name="favorites_remove_content_description">Remover de favoritos.</string>
+    <string name="favorites_open_recipe_content_description">Receita desbloqueada.</string>
+    <string name="favorites_cont_empty">Sem receitas na lista de favoritos.</string>
+
+    <string name="recipe_favorite_added_success">%1$s adicionada aos favoritos.</string>
+    <string name="recipe_favorite_removed_success">%1$s removida de favoritos.</string>
+
+
     <!-- ======== Bottom Navigation Icons ========-->
     <string name="bottom_nav_home">Início</string>
     <string name="bottom_nav_categories">Categorias</string>

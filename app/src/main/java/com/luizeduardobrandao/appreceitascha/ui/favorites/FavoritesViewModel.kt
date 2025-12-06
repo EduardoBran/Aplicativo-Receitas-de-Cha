@@ -2,32 +2,25 @@ package com.luizeduardobrandao.appreceitascha.ui.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
+import com.luizeduardobrandao.appreceitascha.domain.auth.PlanType
 import com.luizeduardobrandao.appreceitascha.domain.auth.UserSessionState
 import com.luizeduardobrandao.appreceitascha.domain.favorites.FavoritesRepository
 import com.luizeduardobrandao.appreceitascha.domain.recipes.Recipe
 import com.luizeduardobrandao.appreceitascha.domain.recipes.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-/**
- * ViewModel responsável pela tela de favoritos.
- *
- * - Carrega IDs favoritos de /favorites/{uid}.
- * - Para cada ID, busca a [Recipe] correspondente em /recipes.
- * - Respeita o estado de sessão: apenas LOGADO + COM_PLANO exibe a lista.
- */
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     private val favoritesRepository: FavoritesRepository,
     private val recipeRepository: RecipeRepository
 ) : ViewModel() {
@@ -36,152 +29,132 @@ class FavoritesViewModel @Inject constructor(
         FavoritesUiState(
             sessionState = UserSessionState(
                 authState = AuthState.NAO_LOGADO,
-                planState = PlanState.SEM_PLANO
+                planState = PlanState.SEM_PLANO,
+                planType = PlanType.NONE
             )
         )
     )
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
 
     /**
-     * Atualiza o estado de sessão.
-     * Deve ser chamado pelo Fragment antes de carregar os favoritos.
-     */
-    fun updateSessionState(sessionState: UserSessionState) {
-        _uiState.update { it.copy(sessionState = sessionState) }
-    }
-
-    /**
-     * Carrega as receitas favoritas do usuário [uid].
+     * Carrega a lista de receitas favoritas do usuário.
      *
-     * Regras:
-     * - LOGADO + COM_PLANO → carrega normalmente.
-     * - NAO_LOGADO / SEM_PLANO → marca "isLockedByPlan" = true
-     *   e não tenta buscar nada no Firebase.
+     * - Se não for LOGADO + COM_PLANO → não libera feature.
+     * - Se for LOGADO + COM_PLANO → marca feature disponível e tenta carregar favoritos.
      */
-    fun loadFavorites(uid: String) {
+    fun loadFavorites() {
         viewModelScope.launch {
-            val session = _uiState.value.sessionState
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+            }
 
-            val isAllowed =
+            val sessionResult = authRepository.getCurrentUserSessionState()
+            val session = sessionResult.getOrElse {
+                UserSessionState(
+                    authState = AuthState.NAO_LOGADO,
+                    planState = PlanState.SEM_PLANO,
+                    planType = PlanType.NONE
+                )
+            }
+
+            _uiState.update { it.copy(sessionState = session) }
+
+            val user = authRepository.getCurrentUser()
+
+            val isAuthorized =
                 session.authState == AuthState.LOGADO &&
-                        session.planState == PlanState.COM_PLANO
+                        session.planState == PlanState.COM_PLANO &&
+                        user != null
 
-            if (!isAllowed) {
+            if (!isAuthorized) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         recipes = emptyList(),
-                        isLockedByPlan = true,
+                        isFeatureAvailable = false,
                         errorMessage = null
                     )
                 }
                 return@launch
             }
 
-            _uiState.update {
-                it.copy(
-                    isLoading = true,
-                    errorMessage = null,
-                    isLockedByPlan = false
-                )
-            }
+            // Aqui user já foi validado como não-null no if acima
+            val favResult = user?.let { favoritesRepository.getFavoriteRecipeIds(it.uid) }
 
-            val idsResult = favoritesRepository.getFavoriteRecipeIds(uid)
-
-            idsResult
-                .onSuccess { ids ->
+            if (favResult != null) {
+                favResult.onSuccess { ids ->
                     if (ids.isEmpty()) {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                recipes = emptyList()
+                                recipes = emptyList(),
+                                isFeatureAvailable = true,
+                                errorMessage = null
                             )
                         }
                         return@onSuccess
                     }
 
-                    // Busca todas as receitas em paralelo para os IDs retornados.
-                    val recipes = loadRecipesForIds(ids)
+                    val loadedRecipes = mutableListOf<Recipe>()
+                    var hadError = false
+
+                    for (recipeId in ids) {
+                        val recipeResult = recipeRepository.getRecipeById(recipeId)
+                        recipeResult
+                            .onSuccess { recipe ->
+                                if (recipe != null) loadedRecipes.add(recipe)
+                            }
+                            .onFailure {
+                                hadError = true
+                            }
+                    }
 
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            recipes = recipes
+                            recipes = loadedRecipes,
+                            isFeatureAvailable = true,
+                            errorMessage = if (hadError) {
+                                "FAVORITES_PARTIAL_LOAD_ERROR"
+                            } else {
+                                null
+                            }
                         )
                     }
-                }
-                .onFailure { throwable ->
+                }.onFailure { throwable ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = throwable.message
-                                ?: "Erro ao carregar favoritos."
+                            recipes = emptyList(),
+                            isFeatureAvailable = true,
+                            errorMessage = throwable.message ?: "FAVORITES_GENERIC_ERROR"
                         )
                     }
                 }
+            }
         }
     }
 
-    /**
-     * Remove uma receita favorita da lista e do Firebase.
-     */
-    fun removeFavorite(uid: String, recipeId: String) {
-        viewModelScope.launch {
-            val result = favoritesRepository.removeFavorite(uid, recipeId)
-
-            result
-                .onSuccess {
-                    _uiState.update { state ->
-                        state.copy(
-                            recipes = state.recipes.filterNot { it.id == recipeId }
-                        )
-                    }
-                }
-                .onFailure { throwable ->
-                    _uiState.update {
-                        it.copy(
-                            errorMessage = throwable.message
-                                ?: "Erro ao remover favorito."
-                        )
-                    }
-                }
-        }
-    }
-
-    /**
-     * Limpa mensagem de erro.
-     */
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
     }
 
-    /**
-     * Função auxiliar para buscar todas as receitas de uma lista de IDs.
-     *
-     * OBS: hoje usa [RecipeRepository.getRecipeById] para cada ID.
-     *      Se necessário otimizar no futuro, pode ser criado no domínio
-     *      uma função como `getRecipesByIds(ids: List<String>)`.
-     */
-    private suspend fun loadRecipesForIds(ids: List<String>): List<Recipe> =
-        coroutineScope {
-            ids.map { id ->
-                async {
-                    val result = recipeRepository.getRecipeById(id)
-                    result.getOrNull()
-                }
-            }
-                .awaitAll()
-                .filterNotNull()
-        }
+    fun clearLastRemovedRecipeTitle() {
+        _uiState.update { it.copy(lastRemovedRecipeTitle = null) }
+    }
 }
 
 /**
- * Estado da UI para a tela de favoritos.
+ * Estado da UI da tela de Favoritos.
  */
 data class FavoritesUiState(
     val isLoading: Boolean = false,
     val recipes: List<Recipe> = emptyList(),
+    val isFeatureAvailable: Boolean = false,
     val sessionState: UserSessionState,
-    val isLockedByPlan: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val lastRemovedRecipeTitle: String? = null
 )

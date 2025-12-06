@@ -72,7 +72,16 @@
         android:id="@+id/favoritesFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.favorites.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites">
+
+        <action
+            android:id="@+id/action_favoritesFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment" >
+            <argument
+                android:name="recipeId"
+                app:argType="string" />
+        </action>
+    </fragment>
 
     <!-- ======== Tela Planos ======== -->
     <fragment

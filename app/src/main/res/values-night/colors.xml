@@ -121,4 +121,6 @@
     <color name="colorError">@color/text_error</color>
     <color name="colorOnError">@color/color_on_primary_base</color>
 
+    <color name="warning_color">#FB9908</color> <!-- Laranja para avisos -->
+
 </resources>

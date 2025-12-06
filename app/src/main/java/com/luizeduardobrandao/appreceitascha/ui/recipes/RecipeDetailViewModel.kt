@@ -18,29 +18,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel responsável pela tela de detalhes da receita.
- *
- * - Carrega 1 receita pelo ID.
- * - Controla estado de favorito para o usuário atual.
- * - Usa [UserSessionState] para saber se o usuário pode favoritar:
- *      • LOGADO + COM_PLANO → pode favoritar
- *      • Caso contrário → mostra aviso de que precisa de login/plano
- */
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
-    private val favoritesRepository: FavoritesRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     companion object {
-        /**
-         * Código interno para indicar especificamente a situação:
-         * "Usuário sem login ou sem plano não pode usar favoritos".
-         */
         const val ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN =
             "ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN"
+
+        private const val ERROR_GENERIC = "RECIPE_DETAIL_GENERIC_ERROR"
     }
 
     private val _uiState = MutableStateFlow(
@@ -55,11 +44,9 @@ class RecipeDetailViewModel @Inject constructor(
     val uiState: StateFlow<RecipeDetailUiState> = _uiState.asStateFlow()
 
     /**
-     * Carrega os dados da receita pelo [recipeId].
+     * Carrega a receita pelo ID e guarda o recipeId atual no estado.
      */
     fun loadRecipe(recipeId: String) {
-        if (recipeId.isBlank()) return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
@@ -70,7 +57,6 @@ class RecipeDetailViewModel @Inject constructor(
             }
 
             val result = recipeRepository.getRecipeById(recipeId)
-
             result
                 .onSuccess { recipe ->
                     _uiState.update {
@@ -84,8 +70,7 @@ class RecipeDetailViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = throwable.message
-                                ?: "RECIPE_DETAIL_LOAD_ERROR"
+                            errorMessage = throwable.message ?: ERROR_GENERIC
                         )
                     }
                 }
@@ -93,14 +78,12 @@ class RecipeDetailViewModel @Inject constructor(
     }
 
     /**
-     * Atualiza o [UserSessionState] a partir do [AuthRepository].
-     * - Enxerga NAO_LOGADO / LOGADO + SEM_PLANO / LOGADO + COM_PLANO.
+     * Atualiza o estado de sessão com base no AuthRepository (auth + plano).
      */
     fun refreshSessionState() {
         viewModelScope.launch {
-            val result = authRepository.getCurrentUserSessionState()
-
-            val session = result.getOrElse {
+            val sessionResult = authRepository.getCurrentUserSessionState()
+            val session = sessionResult.getOrElse {
                 UserSessionState(
                     authState = AuthState.NAO_LOGADO,
                     planState = PlanState.SEM_PLANO,
@@ -113,104 +96,122 @@ class RecipeDetailViewModel @Inject constructor(
     }
 
     /**
-     * Sincroniza o estado de "favorito" desta receita para o usuário logado.
-     * - Se não houver usuário logado → não faz nada (não é erro).
+     * Sincroniza o estado de favorito da receita atual com o nó /favorites/{uid}.
      */
     fun syncFavoriteState() {
         viewModelScope.launch {
-            val currentRecipeId = _uiState.value.currentRecipeId ?: return@launch
+            val user = authRepository.getCurrentUser()
+            val recipeId = _uiState.value.currentRecipeId
 
-            val user = authRepository.getCurrentUser() ?: return@launch
+            if (user == null || recipeId == null) {
+                _uiState.update { it.copy(isFavorite = false) }
+                return@launch
+            }
 
-            val result = favoritesRepository.getFavoriteRecipeIds(user.uid)
+            val favResult = favoritesRepository.getFavoriteRecipeIds(user.uid)
 
-            result
+            favResult
                 .onSuccess { ids ->
-                    _uiState.update {
-                        it.copy(isFavorite = ids.contains(currentRecipeId))
-                    }
+                    val isFav = ids.contains(recipeId)
+                    _uiState.update { it.copy(isFavorite = isFav) }
                 }
-                .onFailure { throwable ->
-                    // Erro técnico ao sincronizar favoritos
-                    _uiState.update {
-                        it.copy(
-                            errorMessage = throwable.message ?: "FAVORITE_SYNC_ERROR"
-                        )
-                    }
+                .onFailure {
+                    // Erro de rede: não marca favorito e não quebra a tela.
                 }
         }
     }
 
     /**
-     * Alterna o estado de favorito:
-     * - Se usuário NÃO estiver autorizado (sem login ou sem plano) → seta erro específico.
-     * - Se autorizado → adiciona/remove em /favorites/{uid}.
+     * Alterna o favorito da receita atual.
+     * - Se usuário não tiver login ou plano: erro de regra de negócio.
+     * - Caso contrário: adiciona/remove de /favorites/{uid}/{recipeId}
+     *   e preenche lastFavoriteAction para Snackbar de sucesso.
      */
     fun toggleFavorite() {
         viewModelScope.launch {
-            val currentRecipeId = _uiState.value.currentRecipeId ?: return@launch
+            val state = _uiState.value
+            val session = state.sessionState
+            val recipe = state.recipe
+            val recipeId = state.currentRecipeId
 
-            val session = _uiState.value.sessionState
-
-            val isAuthorized =
-                session.authState == AuthState.LOGADO &&
-                        session.planState == PlanState.COM_PLANO
-
-            if (!isAuthorized) {
-                // Situação de regra de negócio → mensagem específica na UI
-                _uiState.update {
-                    it.copy(errorMessage = ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN)
-                }
+            if (recipeId == null || recipe == null) {
                 return@launch
             }
 
             val user = authRepository.getCurrentUser()
-            if (user == null) {
-                // Segurança extra: se por algum motivo não houver usuário, trata igual
+            val isAuthorized =
+                user != null &&
+                        session.authState == AuthState.LOGADO &&
+                        session.planState == PlanState.COM_PLANO
+
+            if (!isAuthorized) {
                 _uiState.update {
                     it.copy(errorMessage = ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN)
                 }
                 return@launch
             }
 
-            val isCurrentlyFavorite = _uiState.value.isFavorite
-
-            val result = if (isCurrentlyFavorite) {
-                favoritesRepository.removeFavorite(user.uid, currentRecipeId)
+            if (state.isFavorite) {
+                // Remover dos favoritos
+                val result = favoritesRepository.removeFavorite(user!!.uid, recipeId)
+                result
+                    .onSuccess {
+                        _uiState.update {
+                            it.copy(
+                                isFavorite = false,
+                                lastFavoriteAction = RecipeFavoriteAction.REMOVED
+                            )
+                        }
+                    }
+                    .onFailure { throwable ->
+                        _uiState.update {
+                            it.copy(
+                                errorMessage = throwable.message ?: ERROR_GENERIC
+                            )
+                        }
+                    }
             } else {
-                favoritesRepository.addFavorite(user.uid, currentRecipeId)
+                // Adicionar aos favoritos
+                val result = favoritesRepository.addFavorite(user!!.uid, recipeId)
+                result
+                    .onSuccess {
+                        _uiState.update {
+                            it.copy(
+                                isFavorite = true,
+                                lastFavoriteAction = RecipeFavoriteAction.ADDED
+                            )
+                        }
+                    }
+                    .onFailure { throwable ->
+                        _uiState.update {
+                            it.copy(
+                                errorMessage = throwable.message ?: ERROR_GENERIC
+                            )
+                        }
+                    }
             }
-
-            result
-                .onSuccess {
-                    _uiState.update {
-                        it.copy(
-                            isFavorite = !isCurrentlyFavorite,
-                            errorMessage = null
-                        )
-                    }
-                }
-                .onFailure { throwable ->
-                    // Aqui é ERRO TÉCNICO (Firebase, rede, permissão inesperada etc.)
-                    _uiState.update {
-                        it.copy(
-                            errorMessage = throwable.message ?: "FAVORITE_GENERIC_ERROR"
-                        )
-                    }
-                }
         }
     }
 
-    /**
-     * Limpa o erro atual para evitar que a tela fique repetindo Snackbar.
-     */
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+
+    fun clearFavoriteAction() {
+        _uiState.update { it.copy(lastFavoriteAction = null) }
     }
 }
 
 /**
- * Estado da UI para a tela de detalhes da receita.
+ * Ação de favorito para exibir Snackbar de sucesso na UI.
+ */
+enum class RecipeFavoriteAction {
+    ADDED,
+    REMOVED
+}
+
+/**
+ * Estado da UI de detalhes da receita.
  */
 data class RecipeDetailUiState(
     val isLoading: Boolean = false,
@@ -218,5 +219,6 @@ data class RecipeDetailUiState(
     val recipe: Recipe? = null,
     val isFavorite: Boolean = false,
     val sessionState: UserSessionState,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val lastFavoriteAction: RecipeFavoriteAction? = null
 )

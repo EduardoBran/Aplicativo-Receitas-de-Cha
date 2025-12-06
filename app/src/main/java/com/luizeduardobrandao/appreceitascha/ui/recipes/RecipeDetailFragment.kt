@@ -91,10 +91,9 @@ class RecipeDetailFragment : Fragment() {
                         updateFavoriteIcon(state.isFavorite)
                     }
 
-                    // Tratamento de erros / avisos
-                    if (state.errorMessage != null) {
-                        when (state.errorMessage) {
-                            // Caso de regra de negócio: usuário sem login ou sem plano
+                    // Erros / avisos (regra de negócio x erro técnico)
+                    state.errorMessage?.let { error ->
+                        when (error) {
                             RecipeDetailViewModel.ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN -> {
                                 SnackbarFragment.showWarning(
                                     requireView(),
@@ -102,7 +101,6 @@ class RecipeDetailFragment : Fragment() {
                                 )
                             }
 
-                            // Qualquer outro texto em errorMessage é tratado como erro técnico genérico
                             else -> {
                                 SnackbarFragment.showError(
                                     requireView(),
@@ -110,9 +108,21 @@ class RecipeDetailFragment : Fragment() {
                                 )
                             }
                         }
-
-                        // Limpa o erro depois de exibir o Snackbar
                         viewModel.clearError()
+                    }
+
+                    // ✅ Sucesso ao adicionar ou remover favorito
+                    state.lastFavoriteAction?.let { action ->
+                        val title = state.recipe?.title.orEmpty()
+                        val message = when (action) {
+                            RecipeFavoriteAction.ADDED ->
+                                getString(R.string.recipe_favorite_added_success, title)
+                            RecipeFavoriteAction.REMOVED ->
+                                getString(R.string.recipe_favorite_removed_success, title)
+                        }
+
+                        SnackbarFragment.showSuccess(requireView(), message)
+                        viewModel.clearFavoriteAction()
                     }
                 }
             }
