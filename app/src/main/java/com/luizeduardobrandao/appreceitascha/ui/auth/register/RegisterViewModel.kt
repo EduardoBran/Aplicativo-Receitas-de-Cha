@@ -74,17 +74,34 @@ class RegisterViewModel @Inject constructor(
      * Inicializa o modo de edição carregando os dados do usuário atual
      */
     fun initEditMode() {
-        val currentUser = authRepository.getCurrentUser()
-        if (currentUser != null) {
-            _uiState.update { current ->
-                current.copy(
-                    isEditMode = true,
-                    currentUserId = currentUser.uid,
-                    name = currentUser.name ?: "",
-                    email = currentUser.email,
-                    phone = formatPhoneForDisplay(currentUser.phone)
-                )
-            }
+        val currentUser = authRepository.getCurrentUser() ?: return
+
+        // 1) Preenche rápido com o que vier do Auth (nome/email)
+        _uiState.update { current ->
+            current.copy(
+                isEditMode = true,
+                currentUserId = currentUser.uid,
+                name = currentUser.name ?: "",
+                email = currentUser.email,
+                phone = "" // será preenchido pelo DB abaixo
+            )
+        }
+
+        // 2) Busca perfil real do Realtime DB (/users/{uid}) para pegar telefone
+        viewModelScope.launch {
+            authRepository.getUserProfile(currentUser.uid)
+                .onSuccess { profile ->
+                    if (profile != null) {
+                        _uiState.update { current ->
+                            current.copy(
+                                name = profile.name ?: current.name,
+                                // mantém email da sessão, mas poderia usar profile.email se quiser
+                                phone = formatPhoneForDisplay(profile.phone)
+                            )
+                        }
+                    }
+                }
+            // se falhar, ignora: não quebra a tela, só não preenche o phone
         }
     }
 

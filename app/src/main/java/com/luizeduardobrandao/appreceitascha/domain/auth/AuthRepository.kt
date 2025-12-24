@@ -33,6 +33,9 @@ interface AuthRepository {
      *  - Esta operação é síncrona porque o Firebase mantém o usuário em memória localmente. */
     fun getCurrentUser(): User?
 
+    /** Lê o perfil em /users/{uid} (nome/telefone/emailVerified etc). */
+    suspend fun getUserProfile(uid: String): Result<User?>
+
     /** Efetua logout do usuário atual. Também é uma operação síncrona no FirebaseAuth. */
     fun logout()
 

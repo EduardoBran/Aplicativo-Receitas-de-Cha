@@ -139,6 +139,50 @@ class AuthRepositoryImpl @Inject constructor(
         return firebaseUser?.toDomainUser()
     }
 
+    override suspend fun getUserProfile(uid: String): Result<User?> {
+        return try {
+            val ref = database.getReference("users").child(uid)
+            val snapshot = ref.get().await()
+
+            if (!snapshot.exists()) {
+                return Result.success(null)
+            }
+
+            val name = snapshot.child("name").getValue(String::class.java)
+            val emailFromDb = snapshot.child("email").getValue(String::class.java)
+            val phoneFromDb = snapshot.child("phone").getValue(String::class.java)
+            val emailVerifiedFromDb = snapshot.child("emailVerified").getValue(Boolean::class.java)
+
+            val firebaseUser = authDataSource.getCurrentFirebaseUser()
+            val provider = firebaseUser?.providerData
+                ?.firstOrNull { it.providerId != "firebase" }
+                ?.providerId
+
+            val safeEmail = emailFromDb
+                ?: firebaseUser?.email
+                ?: ""
+
+            val safeEmailVerified = emailVerifiedFromDb
+                ?: firebaseUser?.isEmailVerified
+                ?: false
+
+            val phoneOrNull = phoneFromDb?.takeIf { it.isNotBlank() }
+
+            Result.success(
+                User(
+                    uid = uid,
+                    name = name,
+                    email = safeEmail,
+                    phone = phoneOrNull,
+                    isEmailVerified = safeEmailVerified,
+                    provider = provider
+                )
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     /** Efetua logout delegando ao DataSource. */
     override fun logout() {
         authDataSource.logout()
