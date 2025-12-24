@@ -55,10 +55,20 @@ class MainViewModel @Inject constructor(
      */
     private fun startPeriodicCheck() {
         viewModelScope.launch {
+            var lastUid: String? = null
+
             while (true) {
-                delay(500) // Verifica a cada 500ms
-                _currentUser.value = authRepository.getCurrentUser()
-                // Aqui NÃO chamamos getCurrentUserSessionState() para não sobrecarregar o Realtime Database.
+                delay(500)
+
+                val user = authRepository.getCurrentUser()
+                _currentUser.value = user
+
+                val newUid = user?.uid
+                if (newUid != lastUid) {
+                    lastUid = newUid
+                    // Isso atualiza _sessionState também (e vai virar NAO_LOGADO ao deslogar)
+                    refreshAuthAndSession()
+                }
             }
         }
     }

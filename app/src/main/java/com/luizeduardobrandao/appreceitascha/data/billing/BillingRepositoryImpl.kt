@@ -14,8 +14,6 @@ import com.luizeduardobrandao.appreceitascha.domain.billing.BillingPlan
 import com.luizeduardobrandao.appreceitascha.domain.billing.BillingProductsIds
 import com.luizeduardobrandao.appreceitascha.domain.billing.BillingPurchaseResult
 import com.luizeduardobrandao.appreceitascha.domain.billing.BillingRepository
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -77,48 +75,28 @@ class BillingRepositoryImpl @Inject constructor(
      *
      * - Se planId → NONE ou desconhecido, cai em SEM_PLANO.
      * - Se for vitalício → expiresAtMillis = null, isLifetime = true.
-     * - Se for temporal (3, 6, 12 meses) → calcula expiresAtMillis somando meses à data atual.
-     *
-     * OBS: esse cálculo de meses pressupõe que você está usando desugaring de Java Time.
      */
-    private suspend fun persistPlanForCurrentUser(
-        planId: String,
-        isLifetime: Boolean,
-        durationMonths: Int?
-    ): Result<Unit> {
+    private suspend fun persistPlanForCurrentUser(planId: String): Result<Unit> {
         val currentUser = authRepository.getCurrentUser()
-            ?: return Result.failure(
-                IllegalStateException("Usuário não autenticado ao salvar plano.")
-            )
+            ?: return Result.failure(IllegalStateException("Usuário não autenticado ao salvar plano."))
 
         val planType = planId.toPlanType()
 
-        // Segurança: se ID não mapeia para um plano conhecido, grava SEM_PLANO.
-        if (planType == PlanType.NONE) {
-            val userPlan = UserPlan(
+        val userPlan = if (planType == PlanType.PLAN_LIFE) {
+            UserPlan(
+                uid = currentUser.uid,
+                planType = PlanType.PLAN_LIFE,
+                expiresAtMillis = null,
+                isLifetime = true
+            )
+        } else {
+            UserPlan(
                 uid = currentUser.uid,
                 planType = PlanType.NONE,
                 expiresAtMillis = null,
                 isLifetime = false
             )
-            return authRepository.updateUserPlan(userPlan)
         }
-
-        val expiresAtMillis: Long? = if (isLifetime) {
-            null
-        } else {
-            durationMonths?.let { months ->
-                val now = Instant.now()
-                now.plus(months.toLong(), ChronoUnit.MONTHS).toEpochMilli()
-            }
-        }
-
-        val userPlan = UserPlan(
-            uid = currentUser.uid,
-            planType = planType,
-            expiresAtMillis = expiresAtMillis,
-            isLifetime = isLifetime
-        )
 
         return authRepository.updateUserPlan(userPlan)
     }
@@ -190,11 +168,7 @@ class BillingRepositoryImpl @Inject constructor(
                     }
 
                     // Atualiza /userPlans/{uid}
-                    val persistResult = persistPlanForCurrentUser(
-                        planId = meta.planId,
-                        isLifetime = meta.isLifetime,
-                        durationMonths = meta.months
-                    )
+                    val persistResult = persistPlanForCurrentUser(planId = meta.planId)
 
                     if (persistResult.isFailure) {
                         _purchaseResults.emit(
@@ -242,34 +216,12 @@ class BillingRepositoryImpl @Inject constructor(
 
     private fun mapProductIdToMeta(productId: String): PlanMeta? {
         return when (productId) {
-            BillingProductsIds.PLAN_3_MONTHS -> PlanMeta(
-                planId = BillingProductsIds.PLAN_3_MONTHS,
-                isSubscription = true,
-                months = 3,
-                isLifetime = false
-            )
-
-            BillingProductsIds.PLAN_6_MONTHS -> PlanMeta(
-                planId = BillingProductsIds.PLAN_6_MONTHS,
-                isSubscription = true,
-                months = 6,
-                isLifetime = false
-            )
-
-            BillingProductsIds.PLAN_12_MONTHS -> PlanMeta(
-                planId = BillingProductsIds.PLAN_12_MONTHS,
-                isSubscription = true,
-                months = 12,
-                isLifetime = false
-            )
-
             BillingProductsIds.PLAN_LIFETIME -> PlanMeta(
                 planId = BillingProductsIds.PLAN_LIFETIME,
                 isSubscription = false,
                 months = null,
                 isLifetime = true
             )
-
             else -> null
         }
     }
@@ -279,32 +231,21 @@ class BillingRepositoryImpl @Inject constructor(
      * converte para [BillingPlan] com dados amigáveis.
      */
     override suspend fun loadAvailablePlans(): List<BillingPlan> = withContext(Dispatchers.IO) {
-        val subsDetails = billingDataSource.querySubscriptionProductDetails(
-            BillingProductsIds.SUBSCRIPTION_IDS
-        )
-        val inAppDetails = billingDataSource.queryInAppProductDetails(
-            BillingProductsIds.INAPP_IDS
-        )
+        val inAppDetails = billingDataSource.queryInAppProductDetails(BillingProductsIds.INAPP_IDS)
 
-        val allDetails = subsDetails + inAppDetails
-        cachedProductDetails = allDetails.associateBy { it.productId }
+        cachedProductDetails = inAppDetails.associateBy { it.productId }
 
-        allDetails.mapNotNull { pd ->
+        inAppDetails.mapNotNull { pd ->
             val meta = mapProductIdToMeta(pd.productId) ?: return@mapNotNull null
-
-            val formattedPrice = extractFormattedPrice(pd)
             BillingPlan(
                 planId = meta.planId,
                 title = pd.title,
                 description = pd.description,
-                formattedPrice = formattedPrice,
-                isSubscription = meta.isSubscription,
-                durationMonths = meta.months,
-                isLifetime = meta.isLifetime
+                formattedPrice = extractFormattedPrice(pd),
+                isSubscription = false,
+                durationMonths = null,
+                isLifetime = true
             )
-        }.sortedBy { plan ->
-            // Vitalício (months = null) vai para o final da lista
-            plan.durationMonths ?: Int.MAX_VALUE
         }
     }
 
@@ -312,19 +253,7 @@ class BillingRepositoryImpl @Inject constructor(
      * Extrai o preço formatado do [ProductDetails], seja SUBS ou INAPP.
      */
     private fun extractFormattedPrice(productDetails: ProductDetails): String {
-        // INAPP
-        productDetails.oneTimePurchaseOfferDetails?.let { oneTime ->
-            return oneTime.formattedPrice
-        }
-
-        // SUBS
-        val subOffer = productDetails.subscriptionOfferDetails
-            ?.firstOrNull()
-            ?.pricingPhases
-            ?.pricingPhaseList
-            ?.firstOrNull()
-
-        return subOffer?.formattedPrice ?: ""
+        return productDetails.oneTimePurchaseOfferDetails?.formattedPrice ?: ""
     }
 
     /**
@@ -346,11 +275,7 @@ class BillingRepositoryImpl @Inject constructor(
             )
         }
 
-        val flowParams = buildBillingFlowParams(pd, plan.isSubscription)
-            ?: return@withContext BillingLaunchResult.Error(
-                message = "Não foi possível montar os parâmetros de compra para ${plan.planId}.",
-                responseCode = null
-            )
+        val flowParams = buildBillingFlowParams(pd)
 
         val result = billingDataSource.launchBillingFlow(activity, flowParams)
 
@@ -368,48 +293,27 @@ class BillingRepositoryImpl @Inject constructor(
      * Recarrega detalhes de um único produto se o cache estiver vazio para ele.
      */
     private suspend fun reloadSingleProductDetails(planId: String): ProductDetails? {
-        val meta = mapProductIdToMeta(planId) ?: return null
-
-        val list = if (meta.isSubscription) {
-            billingDataSource.querySubscriptionProductDetails(listOf(planId))
-        } else {
-            billingDataSource.queryInAppProductDetails(listOf(planId))
-        }
-
-        if (list.isEmpty()) return null
-
-        // Atualiza cache
-        cachedProductDetails = cachedProductDetails + list.associateBy { it.productId }
-
-        return list.firstOrNull()
+        val list = billingDataSource.queryInAppProductDetails(listOf(planId))
+        val pd = list.firstOrNull()
+        if (pd != null) cachedProductDetails = cachedProductDetails + (pd.productId to pd)
+        return pd
     }
 
     /**
      * Monta [BillingFlowParams] adequados para SUBS ou INAPP.
      */
-    private fun buildBillingFlowParams(
-        productDetails: ProductDetails,
-        isSubscription: Boolean
-    ): BillingFlowParams? {
-        val productParamsBuilder = BillingFlowParams.ProductDetailsParams.newBuilder()
+    private fun buildBillingFlowParams(productDetails: ProductDetails): BillingFlowParams {
+        val params = BillingFlowParams.ProductDetailsParams.newBuilder()
             .setProductDetails(productDetails)
-
-        if (isSubscription) {
-            val offerDetails = productDetails.subscriptionOfferDetails?.firstOrNull()
-                ?: return null
-
-            productParamsBuilder.setOfferToken(offerDetails.offerToken)
-        }
-
-        val productParams = productParamsBuilder.build()
+            .build()
 
         return BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(listOf(productParams))
+            .setProductDetailsParamsList(listOf(params))
             .build()
     }
 
     /**
-     * Lê compras ativas (SUBS + INAPP) e emite eventos em [purchaseResults].
+     * Lê compras ativas (INAPP) e emite eventos em [purchaseResults].
      * Útil para restaurar compras em novo dispositivo.
      */
     override suspend fun refreshActivePurchases() {

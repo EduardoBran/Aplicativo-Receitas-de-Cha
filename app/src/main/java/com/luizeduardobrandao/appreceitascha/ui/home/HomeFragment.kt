@@ -197,9 +197,6 @@ class HomeFragment : Fragment() {
             val userPlan = uiState.userPlan
 
             val planName = when (userPlan?.planType) {
-                PlanType.PLAN_3M -> getString(R.string.home_plan_3m)
-                PlanType.PLAN_6M -> getString(R.string.home_plan_6m)
-                PlanType.PLAN_12M -> getString(R.string.home_plan_12m)
                 PlanType.PLAN_LIFE -> getString(R.string.home_plan_life)
                 PlanType.NONE, null -> getString(R.string.home_plan_unknown)
             }

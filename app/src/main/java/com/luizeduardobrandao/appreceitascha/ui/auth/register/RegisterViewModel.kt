@@ -94,7 +94,7 @@ class RegisterViewModel @Inject constructor(
         return when {
             digits.isEmpty() -> ""
             digits.length <= 2 -> "(${digits}"
-            else -> "(${digits.substring(0, 2)}) ${digits.substring(2)}"
+            else -> "(${digits.take(2)}) ${digits.substring(2)}"
         }
     }
 

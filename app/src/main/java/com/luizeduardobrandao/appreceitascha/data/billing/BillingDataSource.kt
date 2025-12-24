@@ -84,7 +84,7 @@ class BillingDataSource(
     private suspend fun ensureConnected() {
         if (isConnected && billingClient.isReady) return
 
-        suspendCancellableCoroutine<Unit> { cont ->
+        suspendCancellableCoroutine { cont ->
             billingClient.startConnection(object : BillingClientStateListener {
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     if (billingResult.responseCode == BillingResponseCode.OK) {
@@ -119,38 +119,6 @@ class BillingDataSource(
                     billingResult = billingResult,
                     purchases = purchases.orEmpty()
                 )
-            )
-        }
-    }
-
-    /**
-     * Busca detalhes de produtos de ASSINATURA (SUBS) na Play Store.
-     */
-    suspend fun querySubscriptionProductDetails(
-        productIds: List<String>
-    ): List<ProductDetails> {
-        if (productIds.isEmpty()) return emptyList()
-
-        ensureConnected()
-
-        val params = QueryProductDetailsParams.newBuilder()
-            .setProductList(
-                productIds.map { productId ->
-                    QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId(productId)
-                        .setProductType(ProductType.SUBS)
-                        .build()
-                }
-            )
-            .build()
-
-        // Função suspensa da billing-ktx
-        val result = billingClient.queryProductDetails(params)
-        if (result.billingResult.responseCode == BillingResponseCode.OK) {
-            return result.productDetailsList.orEmpty()
-        } else {
-            throw IllegalStateException(
-                "Erro ao buscar produtos SUBS: ${result.billingResult.debugMessage}"
             )
         }
     }
@@ -219,48 +187,30 @@ class BillingDataSource(
     }
 
     /**
-     * Busca todas as compras ativas (SUBS + INAPP).
+     * Busca todas as compras ativas (INAPP).
      * Útil para restaurar acesso em novo dispositivo ou após reinstalação.
      */
     suspend fun queryAllActivePurchases(): List<Purchase> {
         ensureConnected()
 
-        val subs = suspendCancellableCoroutine<List<Purchase>> { cont ->
-            billingClient.queryPurchasesAsync(
-                QueryPurchasesParams.newBuilder()
-                    .setProductType(ProductType.SUBS)
-                    .build()
-            ) { result, purchases ->
-                if (result.responseCode == BillingResponseCode.OK) {
-                    cont.resume(purchases)
+        val params = QueryPurchasesParams.newBuilder()
+            .setProductType(ProductType.INAPP)
+            .build()
+
+        return suspendCancellableCoroutine { cont ->
+            billingClient.queryPurchasesAsync(params) { billingResult, purchasesList ->
+                if (!cont.isActive) return@queryPurchasesAsync
+
+                if (billingResult.responseCode == BillingResponseCode.OK) {
+                    cont.resume(purchasesList)
                 } else {
                     cont.resumeWithException(
                         IllegalStateException(
-                            "Erro ao buscar compras SUBS: ${result.debugMessage}"
+                            "Erro ao buscar compras INAPP: ${billingResult.debugMessage}"
                         )
                     )
                 }
             }
         }
-
-        val inapps = suspendCancellableCoroutine<List<Purchase>> { cont ->
-            billingClient.queryPurchasesAsync(
-                QueryPurchasesParams.newBuilder()
-                    .setProductType(ProductType.INAPP)
-                    .build()
-            ) { result, purchases ->
-                if (result.responseCode == BillingResponseCode.OK) {
-                    cont.resume(purchases)
-                } else {
-                    cont.resumeWithException(
-                        IllegalStateException(
-                            "Erro ao buscar compras INAPP: ${result.debugMessage}"
-                        )
-                    )
-                }
-            }
-        }
-
-        return subs + inapps
     }
 }

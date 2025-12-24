@@ -22,14 +22,10 @@ enum class AuthState {
 
 /**
  * Tipo de plano disponível no app.
- *
- * NONE representa SEM_PLANO (nunca comprou ou plano expirado).
+ * NONE representa SEM_PLANO (nunca comprou).
  */
 enum class PlanType {
     NONE,
-    PLAN_3M,
-    PLAN_6M,
-    PLAN_12M,
     PLAN_LIFE
 }
 
