@@ -27,7 +27,7 @@
         style="@style/Widget.AppReceitasCha.BottomNav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/surface_card_background"
+        android:elevation="8dp"
         app:itemActiveIndicatorStyle="@style/Widget.AppReceitasCha.BottomNav.ActiveIndicator"
         app:itemIconTint="@color/bottom_nav_icon_tint"
         app:itemTextColor="@color/bottom_nav_icon_tint"

@@ -9,7 +9,6 @@
     android:paddingBottom="8dp"
     tools:context=".ui.categories.CategoriesFragment">
 
-    <!-- Título da tela -->
     <TextView
         android:id="@+id/textCategoriesTitle"
         android:layout_width="0dp"
@@ -19,17 +18,18 @@
         android:textAlignment="center"
         android:textAppearance="?attr/textAppearanceHeadline5"
         android:textColor="@color/colorOnBackground"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Lista de categorias -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCategories"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingTop="8dp"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +37,6 @@
         app:layout_constraintTop_toBottomOf="@id/textCategoriesTitle"
         tools:listitem="@layout/item_category" />
 
-    <!-- Estado vazio (quando não há categorias) -->
     <TextView
         android:id="@+id/textCategoriesEmptyState"
         android:layout_width="0dp"
@@ -54,7 +53,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Overlay de loading com Lottie + texto centralizado -->
     <LinearLayout
         android:id="@+id/categoriesLoadingOverlay"
         android:layout_width="0dp"

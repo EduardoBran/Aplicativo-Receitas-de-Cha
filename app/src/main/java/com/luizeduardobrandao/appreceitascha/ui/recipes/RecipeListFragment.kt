@@ -181,7 +181,6 @@ class RecipeListFragment : Fragment() {
     private fun hideAllContent() {
         val binding = _binding ?: return
         binding.recyclerViewRecipes.isVisible = false
-        binding.textRecipesEmptyState.isVisible = false
     }
 
     private fun renderNonLoadingUi(state: RecipeListUiState) {
@@ -196,7 +195,6 @@ class RecipeListFragment : Fragment() {
             state.recipes.isEmpty() &&
                     state.errorMessage == null
 
-        binding.textRecipesEmptyState.isVisible = showEmpty
 
         // Erro → Snackbar com texto vindo de strings.xml
         if (state.errorMessage != null) {

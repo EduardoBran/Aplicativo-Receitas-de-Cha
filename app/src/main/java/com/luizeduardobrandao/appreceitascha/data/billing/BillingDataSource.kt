@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -40,8 +41,8 @@ import kotlin.coroutines.resumeWithException
  *      • acknowledgePurchase
  *      • fluxo bruto de atualizações de compra.
  */
-class BillingDataSource(
-    application: Application
+class BillingDataSource @Inject constructor(
+    private val application: Application
 ) : PurchasesUpdatedListener {
 
     /**
@@ -213,4 +214,6 @@ class BillingDataSource(
             }
         }
     }
+
+    fun getPackageName(): String = application.packageName
 }

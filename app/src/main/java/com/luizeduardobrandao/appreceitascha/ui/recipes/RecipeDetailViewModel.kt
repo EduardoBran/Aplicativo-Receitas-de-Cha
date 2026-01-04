@@ -28,7 +28,6 @@ class RecipeDetailViewModel @Inject constructor(
     companion object {
         const val ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN =
             "ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN"
-
         private const val ERROR_GENERIC = "RECIPE_DETAIL_GENERIC_ERROR"
     }
 
@@ -44,7 +43,12 @@ class RecipeDetailViewModel @Inject constructor(
     val uiState: StateFlow<RecipeDetailUiState> = _uiState.asStateFlow()
 
     /**
-     * Carrega a receita pelo ID e guarda o recipeId atual no estado.
+     * Carrega a receita pelo ID.
+     *
+     * ✅ SEM VALIDAÇÃO DE ACESSO:
+     * - RecipeListFragment já validou antes de navegar
+     * - FavoritesFragment já validou antes de navegar
+     * - Validação em 3 lugares é redundante e causa problemas de timing
      */
     fun loadRecipe(recipeId: String) {
         viewModelScope.launch {
@@ -59,6 +63,16 @@ class RecipeDetailViewModel @Inject constructor(
             val result = recipeRepository.getRecipeById(recipeId)
             result
                 .onSuccess { recipe ->
+                    if (recipe == null) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "Receita não encontrada."
+                            )
+                        }
+                        return@onSuccess
+                    }
+
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -153,7 +167,7 @@ class RecipeDetailViewModel @Inject constructor(
 
             if (state.isFavorite) {
                 // Remover dos favoritos
-                val result = favoritesRepository.removeFavorite(user!!.uid, recipeId)
+                val result = favoritesRepository.removeFavorite(user.uid, recipeId)
                 result
                     .onSuccess {
                         _uiState.update {
@@ -172,7 +186,7 @@ class RecipeDetailViewModel @Inject constructor(
                     }
             } else {
                 // Adicionar aos favoritos
-                val result = favoritesRepository.addFavorite(user!!.uid, recipeId)
+                val result = favoritesRepository.addFavorite(user.uid, recipeId)
                 result
                     .onSuccess {
                         _uiState.update {

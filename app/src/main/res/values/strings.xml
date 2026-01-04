@@ -103,37 +103,20 @@
 
 
     <!-- ======== HomeFragment ========-->
+    <string name="home_free_title">Sua conta é gratuita</string>
+    <string name="home_free_subtitle">Você tem acesso limitado. Desbloqueie todas as receitas de chás e benefícios para sempre com um único pagamento.</string>
+    <string name="home_free_btn_upgrade">Obter Acesso Vitalício</string>
+    <string name="home_free_btn_recipes">Ver receitas gratuitas</string>
 
-    <!-- Home - cards de estado -->
-    <string name="snackbar_success_welcome">Bem-vindo %1$s!</string>
-    <string name="home_guest_title">Crie sua conta gratuita</string>
-    <string name="home_guest_body">
-        Experimente uma receita gratuita em cada categoria.
-        Para liberar o botão Comprar e ter acesso às receitas completas, crie sua conta com e-mail e senha.
-    </string>
-    <string name="home_guest_primary_action">Fazer login / Cadastre-se</string>
+    <string name="home_guest_title">Bem-vindo(a)</string>
+    <string name="home_guest_subtitle">Faça login para salvar seus favoritos ou adquira o acesso vitalício para ver todas as receitas.</string>
+    <string name="home_guest_btn_login">Fazer Login</string>
+    <string name="home_guest_btn_recipes">Espiar receitas</string>
 
-    <string name="home_free_title">Você está no modo gratuito</string>
-    <string name="home_free_body">
-        Você pode ver uma receita gratuita em cada categoria.
-        Para liberar todas as receitas, escolha um dos nossos planos.
-    </string>
-    <string name="home_free_plans_summary">Planos de 3, 6, 12 meses ou acesso vitalício.</string>
-    <string name="home_free_primary_action">Comprar</string>
-
-    <string name="home_premium_title">Seu plano atual</string>
-    <string name="home_premium_plan_label">Plano: %1$s</string>
-    <string name="home_plan_3m">Plano 3 meses</string>
-    <string name="home_plan_6m">Plano 6 meses</string>
-    <string name="home_plan_12m">Plano 12 meses</string>
-    <string name="home_plan_life">Acesso vitalício</string>
-    <string name="home_plan_unknown">Plano desconhecido</string>
-    <string name="home_plan_no_expiration">Sem data de expiração</string>
-    <string name="home_plan_expires_at">Expira em %1$s</string>
-    <string name="home_premium_details_button">Ver detalhes do plano</string>
-
-    <!-- Home - ações comuns -->
-    <string name="home_common_see_recipes">Ver receitas</string>
+    <string name="home_premium_title">Você é Premium</string>
+    <string name="home_premium_subtitle">Você tem acesso ilimitado a todas as receitas de chás. Aproveite seus favoritos sem restrições.</string>
+    <string name="home_premium_recipes_button">Ver todas as receitas</string>
+    <string name="home_premium_details_button">Gerenciar acesso</string>
 
 
     <!-- ======== CategoriesFragment ========-->
@@ -157,7 +140,6 @@
     <string name="recipe_detail_section_modo_preparo">Modo de preparo</string>
     <string name="recipe_detail_section_beneficios">Benefícios</string>
     <string name="recipe_detail_section_observacoes">Observações e cuidados</string>
-
     <string name="recipe_detail_error_generic">
         Ocorreu um erro ao carregar os detalhes da receita. Tente novamente.
     </string>
@@ -184,59 +166,41 @@
     <string name="favorites_title">Favoritos</string>
     <string name="favorites_empty_state">Você ainda não tem receitas favoritas.</string>
     <string name="favorites_error_generic">Ocorreu um erro ao carregar seus favoritos.</string>
-    <string name="favorites_requires_plan_or_login">Esta área é exclusiva para usuários com plano ativo. Faça login e contrate um plano para usar favoritos.</string>
-    <string name="favorites_remove_content_description">Remover de favoritos.</string>
-    <string name="favorites_open_recipe_content_description">Receita desbloqueada.</string>
     <string name="favorites_cont_empty">Sem receitas na lista de favoritos.</string>
     <string name="recipe_favorite_added_success">%1$s adicionada aos favoritos.</string>
     <string name="recipe_favorite_removed_success">%1$s removida de favoritos.</string>
     <string name="favorites_loading_message">Carregando lista de favoritas…</string>
 
 
-    <!-- ======== PlansFragment ========-->
-    <string name="plans_title">Planos Nature Chá</string>
-    <string name="plans_subtitle">Escolha o plano ideal para acessar todas as receitas.</string>
-
-    <string name="plans_plan_3m_name">Plano 3 meses</string>
-    <string name="plans_plan_6m_name">Plano 6 meses</string>
-    <string name="plans_plan_12m_name">Plano 12 meses</string>
-    <string name="plans_plan_life_name">Plano vitalício</string>
-
-    <!-- Valores fixos exibidos na UI (devem bater com a Play Store) -->
-    <string name="plans_plan_3m_price">R$ 9,90</string>
-    <string name="plans_plan_6m_price">R$ 29,90</string>
-    <string name="plans_plan_12m_price">R$ 49,90</string>
-    <string name="plans_plan_life_price">R$ 69,90</string>
-
-    <string name="plans_plan_3m_description">Acesse todas as receitas por 3 meses, ideal para experimentar o Nature Chá.</string>
-    <string name="plans_plan_6m_description">Plano semestral para quem quer cuidar da saúde por mais tempo.</string>
-    <string name="plans_plan_12m_description">Um ano inteiro de acesso às receitas completas do Nature Chá.</string>
-    <string name="plans_plan_life_description">Acesso vitalício a todas as receitas, em um único pagamento.</string>
-
+    <!-- ======== PlansFragment ======== -->
+    <string name="plans_hero_title">Desbloqueie o Potencial Completo</string>
+    <string name="plans_hero_subtitle">Tenha acesso ilimitado a todas as receitas e benefícios exclusivos para sempre.</string>
+    <string name="benefit_all_recipes">Acesso a todas as receitas de chás</string>
+    <string name="benefit_favorites">Salve seus favoritos ilimitados</string>
+    <string name="benefit_updates">Novas receitas gratuitamente</string>
+    <string name="benefit_one_time">Pagamento único, sem mensalidade</string>
+    <string name="plans_btn_buy">Obter Acesso Vitalício</string>
+    <string name="plans_btn_restore">Já comprou? Restaurar acesso</string>
+    <string name="plans_disclaimer">Compra segura via Google Play</string>
+    <string name="plans_plan_life_price">R$ 29,90</string>
     <string name="plans_buy_button">Comprar</string>
 
     <!-- Mensagens genéricas de erro/sucesso de planos (usadas na ViewModel) -->
-    <string name="plans_loading_error">Não foi possível carregar os planos. Tente novamente mais tarde.</string>
-    <string name="plans_purchase_success">Plano ativado com sucesso! Aproveite as receitas completas.</string>
-    <string name="plans_purchase_pending">Pagamento pendente de confirmação. Assim que for aprovado, seu plano será liberado.</string>
-    <string name="plans_purchase_cancelled">Compra cancelada. Você pode tentar novamente quando quiser.</string>
-    <string name="plans_purchase_error">Erro ao processar a compra. Tente novamente mais tarde.</string>
+    <string name="home_plan_no_expiration">Acesso permanente</string>
+    <string name="msg_purchase_pending">Compra pendente. Aguarde a confirmação.</string>
+    <string name="msg_purchase_cancelled">Compra cancelada pelo usuário.</string>
+    <string name="msg_purchase_error">Erro na compra: %s</string>
+    <string name="msg_purchase_success">Premium liberado com sucesso! Aproveite.</string>
+    <string name="msg_restore_success">Suas compras foram restauradas.</string>
+    <string name="msg_restore_empty">Nenhuma compra ativa encontrada.</string>
+    <string name="msg_restore_owned">Você já possui este item. Restaurando...</string>
 
-    <!-- Home: botão de gerenciar planos (caso queira ajustar o texto do botão no XML) -->
-    <string name="home_manage_plans">Gerenciar planos</string>
 
-    <!-- Tela de Gerenciar Plano -->
-    <string name="manage_plan_title">Gerenciar plano</string>
-    <string name="manage_plan_not_logged">Faça login para gerenciar seu plano.</string>
-    <string name="manage_plan_no_plan">Você não possui um plano ativo no momento.</string>
-    <string name="manage_plan_current_plan_label">Seu plano atual</string>
-    <string name="manage_plan_expires_label">Válido até %s</string>
-    <string name="manage_plan_lifetime_label">Plano vitalício — pagamento único, sem renovação automática.</string>
-
-    <string name="manage_plan_cancel_button">Cancelar plano na Google Play</string>
-    <string name="manage_plan_see_plans_button">Ver planos</string>
-    <string name="manage_plan_go_to_login_button">Ir para login</string>
-    <string name="manage_plan_play_unavailable">Não foi possível abrir a tela de assinaturas da Google Play.</string>
+    <!-- ======== ManagePlanFragment ======== -->
+    <string name="manage_status_active">Membro Premium Ativo</string>
+    <string name="manage_status_desc">Você possui acesso vitalício. Aproveite todos os benefícios sem preocupações.</string>
+    <string name="manage_btn_support">Suporte / Dúvidas</string>
+    <string name="manage_btn_back">Voltar para o Início</string>
 
 
     <!-- ======== Bottom Navigation Icons ========-->
@@ -246,9 +210,8 @@
     <string name="bottom_nav_login">Login</string>
     <string name="bottom_nav_profile">Perfil</string>
 
+
     <!-- OAuth Client ID - será substituído pelo google-services.json -->
     <string name="default_web_client_id" translatable="false">your_web_client_id_here</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

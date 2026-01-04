@@ -1,150 +1,166 @@
 package com.luizeduardobrandao.appreceitascha.data.billing
 
 import android.app.Activity
-import com.android.billingclient.api.BillingClient.BillingResponseCode
+import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
+import com.google.firebase.functions.FirebaseFunctions
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
-import com.luizeduardobrandao.appreceitascha.domain.auth.PlanType
-import com.luizeduardobrandao.appreceitascha.domain.auth.UserPlan
-import com.luizeduardobrandao.appreceitascha.domain.auth.toPlanType
 import com.luizeduardobrandao.appreceitascha.domain.billing.BillingLaunchResult
 import com.luizeduardobrandao.appreceitascha.domain.billing.BillingPlan
 import com.luizeduardobrandao.appreceitascha.domain.billing.BillingProductsIds
 import com.luizeduardobrandao.appreceitascha.domain.billing.BillingPurchaseResult
 import com.luizeduardobrandao.appreceitascha.domain.billing.BillingRepository
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
-/**
- * Implementação concreta de [BillingRepository].
- *
- * Responsável por:
- *  - Orquestrar [BillingDataSource].
- *  - Mapear ProductDetails → [BillingPlan].
- *  - Tratar compras:
- *      • acknowledge automático em PURCHASED.
- *      • atualização de /userPlans/{uid} via [AuthRepository].
- *      • emissão de [BillingPurchaseResult] pronto para ViewModels.
- */
 @Singleton
 class BillingRepositoryImpl @Inject constructor(
     private val billingDataSource: BillingDataSource,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val firebaseFunctions: FirebaseFunctions
 ) : BillingRepository {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    // Cache em memória: productId -> ProductDetails
-    private var cachedProductDetails: Map<String, ProductDetails> = emptyMap()
+    private val _purchaseResults = MutableSharedFlow<BillingPurchaseResult>(extraBufferCapacity = 1)
+    override val purchaseResults: SharedFlow<BillingPurchaseResult> = _purchaseResults.asSharedFlow()
 
-    private val _purchaseResults = MutableSharedFlow<BillingPurchaseResult>(
-        replay = 0,
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    override val purchaseResults: SharedFlow<BillingPurchaseResult> =
-        _purchaseResults.asSharedFlow()
+    private val productDetailsCache = mutableMapOf<String, ProductDetails>()
 
     init {
-        // Converte eventos crus do BillingDataSource em resultados de domínio.
         scope.launch {
-            billingDataSource.purchaseUpdates.collectLatest { raw ->
-                handleRawPurchaseUpdate(
-                    responseCode = raw.billingResult.responseCode,
-                    debugMessage = raw.billingResult.debugMessage,
-                    purchases = raw.purchases
-                )
+            billingDataSource.purchaseUpdates.collectLatest { update ->
+                when (val code = update.billingResult.responseCode) {
+                    BillingClient.BillingResponseCode.OK -> {
+                        // OK pode vir com lista vazia em alguns casos.
+                        handlePurchasesList(update.purchases)
+                    }
+
+                    BillingClient.BillingResponseCode.USER_CANCELED -> {
+                        _purchaseResults.tryEmit(BillingPurchaseResult.Cancelled)
+                    }
+
+                    else -> {
+                        _purchaseResults.tryEmit(
+                            BillingPurchaseResult.Error(
+                                message = update.billingResult.debugMessage,
+                                responseCode = code
+                            )
+                        )
+                    }
+                }
             }
         }
     }
 
-    /**
-     * Persiste o plano comprado em /userPlans/{uid} usando o [AuthRepository].
-     *
-     * - Se planId → NONE ou desconhecido, cai em SEM_PLANO.
-     * - Se for vitalício → expiresAtMillis = null, isLifetime = true.
-     */
-    private suspend fun persistPlanForCurrentUser(planId: String): Result<Unit> {
-        val currentUser = authRepository.getCurrentUser()
-            ?: return Result.failure(IllegalStateException("Usuário não autenticado ao salvar plano."))
+    override suspend fun loadAvailablePlans(): List<BillingPlan> {
+        // Pelo contrato do domínio: em erro, lança exceção (tratar no ViewModel) :contentReference[oaicite:3]{index=3}
+        val details = billingDataSource.queryInAppProductDetails(BillingProductsIds.INAPP_IDS)
 
-        val planType = planId.toPlanType()
+        details.forEach { pd ->
+            productDetailsCache[pd.productId] = pd
+        }
 
-        val userPlan = if (planType == PlanType.PLAN_LIFE) {
-            UserPlan(
-                uid = currentUser.uid,
-                planType = PlanType.PLAN_LIFE,
-                expiresAtMillis = null,
+        return details.map { pd ->
+            val formattedPrice = pd.oneTimePurchaseOfferDetails?.formattedPrice.orEmpty()
+
+            // Seu app hoje só oferece vitalício (INAPP não-consumível) :contentReference[oaicite:4]{index=4}
+            BillingPlan(
+                planId = pd.productId,
+                title = pd.name,
+                description = pd.description,
+                formattedPrice = formattedPrice,
+                isSubscription = false,
+                durationMonths = null,
                 isLifetime = true
             )
-        } else {
-            UserPlan(
-                uid = currentUser.uid,
-                planType = PlanType.NONE,
-                expiresAtMillis = null,
-                isLifetime = false
+        }
+    }
+
+    override suspend fun launchPurchase(activity: Activity, plan: BillingPlan): BillingLaunchResult {
+        if (authRepository.getCurrentUser() == null) {
+            return BillingLaunchResult.Error(
+                responseCode = -1,
+                debugMessage = "Usuário não logado."
             )
         }
 
-        return authRepository.updateUserPlan(userPlan)
-    }
+        val pd = productDetailsCache[plan.planId]
+            ?: return BillingLaunchResult.Error(
+                responseCode = -1,
+                debugMessage = "Produto não carregado. Reabra a tela."
+            )
 
-    /**
-     * Converte o resultado bruto da BillingLibrary em [BillingPurchaseResult].
-     */
-    private suspend fun handleRawPurchaseUpdate(
-        responseCode: Int,
-        debugMessage: String,
-        purchases: List<Purchase>
-    ) {
-        when (responseCode) {
-            BillingResponseCode.OK -> handlePurchasesList(purchases)
-            BillingResponseCode.USER_CANCELED -> {
-                _purchaseResults.emit(BillingPurchaseResult.Cancelled)
-            }
-            else -> {
-                _purchaseResults.emit(
-                    BillingPurchaseResult.Error(
-                        message = debugMessage,
-                        responseCode = responseCode
-                    )
-                )
-            }
+        val flowParams = buildInAppFlowParams(pd)
+        val billingResult = billingDataSource.launchBillingFlow(activity, flowParams)
+
+        return when (billingResult.responseCode) {
+            BillingClient.BillingResponseCode.OK -> BillingLaunchResult.LaunchStarted
+            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> BillingLaunchResult.AlreadyOwned
+            BillingClient.BillingResponseCode.USER_CANCELED -> BillingLaunchResult.Canceled
+            else -> BillingLaunchResult.Error(
+                responseCode = billingResult.responseCode,
+                debugMessage = billingResult.debugMessage
+            )
         }
     }
 
-    /**
-     * Trata compras vindas de:
-     *  - onPurchasesUpdated (código OK).
-     *  - queryAllActivePurchases() (restauração).
-     */
+    override suspend fun refreshActivePurchases() {
+        try {
+            val purchases = billingDataSource.queryAllActivePurchases()
+            handlePurchasesList(purchases)
+        } catch (e: Exception) {
+            _purchaseResults.tryEmit(
+                BillingPurchaseResult.Error(
+                    message = e.message ?: "Falha ao restaurar compras.",
+                    responseCode = -1
+                )
+            )
+        }
+    }
+
+    private fun buildInAppFlowParams(pd: ProductDetails): BillingFlowParams {
+        val productParams = BillingFlowParams.ProductDetailsParams.newBuilder()
+            .setProductDetails(pd)
+            .build()
+
+        return BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(listOf(productParams))
+            .build()
+    }
+
     private suspend fun handlePurchasesList(purchases: List<Purchase>) {
         if (purchases.isEmpty()) {
-            _purchaseResults.emit(BillingPurchaseResult.Empty)
+            _purchaseResults.tryEmit(BillingPurchaseResult.Empty)
             return
         }
 
         for (purchase in purchases) {
             when (purchase.purchaseState) {
                 Purchase.PurchaseState.PURCHASED -> {
-                    // Confirma compra se ainda não foi confirmada
+                    val purchaseToken = purchase.purchaseToken
+                    val orderId = purchase.orderId
+                    val productId = purchase.products.firstOrNull() ?: BillingProductsIds.PLAN_LIFETIME
+
+                    // Só processa o produto esperado (vitalício)
+                    if (productId != BillingProductsIds.PLAN_LIFETIME) continue
+
+                    // Acknowledge obrigatório para INAPP não-consumível
                     if (!purchase.isAcknowledged) {
-                        val ackResult =
-                            billingDataSource.acknowledgePurchase(purchase.purchaseToken)
-                        if (ackResult.responseCode != BillingResponseCode.OK) {
-                            _purchaseResults.emit(
+                        val ackResult = billingDataSource.acknowledgePurchase(purchaseToken)
+                        if (ackResult.responseCode != BillingClient.BillingResponseCode.OK) {
+                            _purchaseResults.tryEmit(
                                 BillingPurchaseResult.Error(
                                     message = "Falha ao confirmar compra: ${ackResult.debugMessage}",
                                     responseCode = ackResult.responseCode
@@ -154,170 +170,78 @@ class BillingRepositoryImpl @Inject constructor(
                         }
                     }
 
-                    val productId = purchase.products.firstOrNull()
-                    val meta = productId?.let { mapProductIdToMeta(it) }
-
-                    if (productId == null || meta == null) {
-                        _purchaseResults.emit(
+                    val currentUser = authRepository.getCurrentUser()
+                    if (currentUser == null) {
+                        _purchaseResults.tryEmit(
                             BillingPurchaseResult.Error(
-                                message = "Produto desconhecido na compra.",
-                                responseCode = null
+                                message = "Faça login para validar a compra.",
+                                responseCode = -1
                             )
                         )
                         continue
                     }
 
-                    // Atualiza /userPlans/{uid}
-                    val persistResult = persistPlanForCurrentUser(planId = meta.planId)
-
-                    if (persistResult.isFailure) {
-                        _purchaseResults.emit(
-                            BillingPurchaseResult.Error(
-                                message = "Compra confirmada, mas falhou ao salvar plano do usuário.",
-                                responseCode = null
-                            )
-                        )
-                        continue
-                    }
-
-                    // Tudo certo: plano salvo e compra confirmada.
-                    _purchaseResults.emit(
-                        BillingPurchaseResult.Success(
-                            planId = meta.planId,
-                            isSubscription = meta.isSubscription,
-                            durationMonths = meta.months,
-                            isLifetime = meta.isLifetime,
-                            purchaseToken = purchase.purchaseToken,
-                            orderId = purchase.orderId
-                        )
+                    // Validação via Cloud Function (server-side)
+                    val syncResult = verifyAndGrantLifetime(
+                        packageName = billingDataSource.getPackageName(),
+                        productId = productId,
+                        purchaseToken = purchaseToken
                     )
+
+                    if (syncResult.isSuccess) {
+                        _purchaseResults.tryEmit(
+                            BillingPurchaseResult.Success(
+                                planId = productId,
+                                isSubscription = false,
+                                durationMonths = null,
+                                isLifetime = true,
+                                purchaseToken = purchaseToken,
+                                orderId = orderId
+                            )
+                        )
+                    } else {
+                        val msg = syncResult.exceptionOrNull()?.message
+                            ?: "Falha ao validar compra no servidor."
+                        _purchaseResults.tryEmit(
+                            BillingPurchaseResult.Error(
+                                message = msg,
+                                responseCode = -1
+                            )
+                        )
+                    }
                 }
 
                 Purchase.PurchaseState.PENDING -> {
-                    _purchaseResults.emit(BillingPurchaseResult.Pending)
+                    _purchaseResults.tryEmit(BillingPurchaseResult.Pending)
                 }
 
-                Purchase.PurchaseState.UNSPECIFIED_STATE -> {
-                    // Ignorado.
+                else -> {
+                    _purchaseResults.tryEmit(BillingPurchaseResult.Cancelled)
                 }
             }
         }
     }
 
-    /**
-     * Metadados internos para mapear productId → regra de negócio.
-     */
-    private data class PlanMeta(
-        val planId: String,
-        val isSubscription: Boolean,
-        val months: Int?,
-        val isLifetime: Boolean
-    )
-
-    private fun mapProductIdToMeta(productId: String): PlanMeta? {
-        return when (productId) {
-            BillingProductsIds.PLAN_LIFETIME -> PlanMeta(
-                planId = BillingProductsIds.PLAN_LIFETIME,
-                isSubscription = false,
-                months = null,
-                isLifetime = true
+    private suspend fun verifyAndGrantLifetime(
+        packageName: String,
+        productId: String,
+        purchaseToken: String
+    ): Result<Unit> {
+        return try {
+            val data = hashMapOf(
+                "packageName" to packageName,
+                "productId" to productId,
+                "purchaseToken" to purchaseToken
             )
-            else -> null
+
+            firebaseFunctions
+                .getHttpsCallable("verifyAndGrantLifetime")
+                .call(data)
+                .await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
-    }
-
-    /**
-     * Carrega todos os planos configurados na Play Store e
-     * converte para [BillingPlan] com dados amigáveis.
-     */
-    override suspend fun loadAvailablePlans(): List<BillingPlan> = withContext(Dispatchers.IO) {
-        val inAppDetails = billingDataSource.queryInAppProductDetails(BillingProductsIds.INAPP_IDS)
-
-        cachedProductDetails = inAppDetails.associateBy { it.productId }
-
-        inAppDetails.mapNotNull { pd ->
-            val meta = mapProductIdToMeta(pd.productId) ?: return@mapNotNull null
-            BillingPlan(
-                planId = meta.planId,
-                title = pd.title,
-                description = pd.description,
-                formattedPrice = extractFormattedPrice(pd),
-                isSubscription = false,
-                durationMonths = null,
-                isLifetime = true
-            )
-        }
-    }
-
-    /**
-     * Extrai o preço formatado do [ProductDetails], seja SUBS ou INAPP.
-     */
-    private fun extractFormattedPrice(productDetails: ProductDetails): String {
-        return productDetails.oneTimePurchaseOfferDetails?.formattedPrice ?: ""
-    }
-
-    /**
-     * Inicia o fluxo de compra.
-     *
-     * A resposta detalhada virá depois em [purchaseResults].
-     */
-    override suspend fun launchPurchase(
-        activity: Activity,
-        plan: BillingPlan
-    ): BillingLaunchResult = withContext(Dispatchers.IO) {
-        val cached = cachedProductDetails[plan.planId]
-        val pd = cached ?: reloadSingleProductDetails(plan.planId)
-
-        if (pd == null) {
-            return@withContext BillingLaunchResult.Error(
-                message = "Plano não encontrado na Google Play para o id: ${plan.planId}",
-                responseCode = null
-            )
-        }
-
-        val flowParams = buildBillingFlowParams(pd)
-
-        val result = billingDataSource.launchBillingFlow(activity, flowParams)
-
-        if (result.responseCode == BillingResponseCode.OK) {
-            BillingLaunchResult.LaunchStarted
-        } else {
-            BillingLaunchResult.Error(
-                message = "Falha ao iniciar compra: ${result.debugMessage}",
-                responseCode = result.responseCode
-            )
-        }
-    }
-
-    /**
-     * Recarrega detalhes de um único produto se o cache estiver vazio para ele.
-     */
-    private suspend fun reloadSingleProductDetails(planId: String): ProductDetails? {
-        val list = billingDataSource.queryInAppProductDetails(listOf(planId))
-        val pd = list.firstOrNull()
-        if (pd != null) cachedProductDetails = cachedProductDetails + (pd.productId to pd)
-        return pd
-    }
-
-    /**
-     * Monta [BillingFlowParams] adequados para SUBS ou INAPP.
-     */
-    private fun buildBillingFlowParams(productDetails: ProductDetails): BillingFlowParams {
-        val params = BillingFlowParams.ProductDetailsParams.newBuilder()
-            .setProductDetails(productDetails)
-            .build()
-
-        return BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(listOf(params))
-            .build()
-    }
-
-    /**
-     * Lê compras ativas (INAPP) e emite eventos em [purchaseResults].
-     * Útil para restaurar compras em novo dispositivo.
-     */
-    override suspend fun refreshActivePurchases() {
-        val purchases = billingDataSource.queryAllActivePurchases()
-        handlePurchasesList(purchases)
     }
 }

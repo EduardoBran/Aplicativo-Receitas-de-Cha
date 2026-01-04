@@ -36,11 +36,16 @@ class FavoritesViewModel @Inject constructor(
     )
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
 
+    init {
+        loadFavorites()
+    }
+
     /**
      * Carrega a lista de receitas favoritas do usuário.
      *
-     * - Se não for LOGADO + COM_PLANO → não libera feature.
-     * - Se for LOGADO + COM_PLANO → marca feature disponível e tenta carregar favoritos.
+     * ✅ REGRA 4 IMPLEMENTADA:
+     * - Filtra apenas receitas que o usuário pode acessar
+     * - Se perder plano, receitas premium favoritadas ficam ocultas
      */
     fun loadFavorites() {
         viewModelScope.launch {
@@ -81,60 +86,79 @@ class FavoritesViewModel @Inject constructor(
                 return@launch
             }
 
-            // Aqui user já foi validado como não-null no if acima
-            val favResult = user?.let { favoritesRepository.getFavoriteRecipeIds(it.uid) }
+            val favResult = user.let { favoritesRepository.getFavoriteRecipeIds(it.uid) }
 
-            if (favResult != null) {
-                favResult.onSuccess { ids ->
-                    if (ids.isEmpty()) {
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                recipes = emptyList(),
-                                isFeatureAvailable = true,
-                                errorMessage = null
-                            )
-                        }
-                        return@onSuccess
-                    }
-
-                    val loadedRecipes = mutableListOf<Recipe>()
-                    var hadError = false
-
-                    for (recipeId in ids) {
-                        val recipeResult = recipeRepository.getRecipeById(recipeId)
-                        recipeResult
-                            .onSuccess { recipe ->
-                                if (recipe != null) loadedRecipes.add(recipe)
-                            }
-                            .onFailure {
-                                hadError = true
-                            }
-                    }
-
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            recipes = loadedRecipes,
-                            isFeatureAvailable = true,
-                            errorMessage = if (hadError) {
-                                "FAVORITES_PARTIAL_LOAD_ERROR"
-                            } else {
-                                null
-                            }
-                        )
-                    }
-                }.onFailure { throwable ->
+            favResult.onSuccess { ids ->
+                if (ids.isEmpty()) {
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             recipes = emptyList(),
                             isFeatureAvailable = true,
-                            errorMessage = throwable.message ?: "FAVORITES_GENERIC_ERROR"
+                            errorMessage = null
                         )
                     }
+                    return@onSuccess
+                }
+
+                val loadedRecipes = mutableListOf<Recipe>()
+                var hadError = false
+
+                for (recipeId in ids) {
+                    val recipeResult = recipeRepository.getRecipeById(recipeId)
+                    recipeResult
+                        .onSuccess { recipe ->
+                            // ✅ CRÍTICO: Filtra apenas receitas acessíveis
+                            if (recipe != null && canAccessRecipe(recipe, session)) {
+                                loadedRecipes.add(recipe)
+                            }
+                        }
+                        .onFailure {
+                            hadError = true
+                        }
+                }
+
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        recipes = loadedRecipes,
+                        isFeatureAvailable = true,
+                        errorMessage = if (hadError) {
+                            "FAVORITES_PARTIAL_LOAD_ERROR"
+                        } else {
+                            null
+                        }
+                    )
+                }
+            }.onFailure { throwable ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        recipes = emptyList(),
+                        isFeatureAvailable = true,
+                        errorMessage = throwable.message ?: "FAVORITES_GENERIC_ERROR"
+                    )
                 }
             }
+        }
+    }
+
+    /**
+     * ✅ CRÍTICO: Valida se o usuário pode acessar uma receita específica.
+     *
+     * Regras de Acesso:
+     * - LOGADO + COM_PLANO → pode acessar qualquer receita (free ou premium)
+     * - NAO_LOGADO ou LOGADO + SEM_PLANO → apenas receitas com isFreePreview = true
+     *
+     * Esta função é a implementação da REGRA 4:
+     * "Receitas bloqueadas voltam a ficar bloqueadas" após perda de plano.
+     */
+    private fun canAccessRecipe(recipe: Recipe, session: UserSessionState): Boolean {
+        return when {
+            session.authState == AuthState.LOGADO &&
+                    session.planState == PlanState.COM_PLANO -> true
+
+            else -> recipe.isFreePreview
         }
     }
 

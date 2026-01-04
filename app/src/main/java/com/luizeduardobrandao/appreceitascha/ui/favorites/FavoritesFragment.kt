@@ -1,9 +1,7 @@
 package com.luizeduardobrandao.appreceitascha.ui.favorites
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentFavoritesBinding
+import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
+import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
 import com.luizeduardobrandao.appreceitascha.domain.recipes.Recipe
 import com.luizeduardobrandao.appreceitascha.ui.common.animation.LottieLoadingController
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
@@ -21,43 +21,24 @@ import com.luizeduardobrandao.appreceitascha.ui.favorites.adapter.FavoritesAdapt
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-/**
- * Tela que exibe as receitas favoritas do usuário.
- *
- * - Somente LOGADO + COM_PLANO pode ter lista.
- * - Cada card mostra título + subtítulo e ícone de ir para detalhes.
- */
 @AndroidEntryPoint
-class FavoritesFragment : Fragment() {
+class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
 
     private var _binding: FragmentFavoritesBinding? = null
-    private val binding: FragmentFavoritesBinding
-        get() = _binding!!
+    private val binding get() = _binding!!
 
     private val viewModel: FavoritesViewModel by viewModels()
-
-    private lateinit var favoritesAdapter: FavoritesAdapter
-
-    // Controller para animação de loading com Lottie
+    private lateinit var adapter: FavoritesAdapter
     private lateinit var lottieController: LottieLoadingController
 
-    // Controle de tempo mínimo da animação de loading
+    // Controle de tempo mínimo
     private var isShowingLoadingOverlay: Boolean = false
     private var loadingStartTime: Long = 0L
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentFavoritesBinding.bind(view)
 
-        // Instancia o controlador de loading com Lottie centralizado
         lottieController = LottieLoadingController(
             overlay = binding.favoritesLoadingOverlay,
             lottieView = binding.lottieFavorites
@@ -65,152 +46,114 @@ class FavoritesFragment : Fragment() {
 
         setupRecyclerView()
         observeUiState()
-
-        // Carrega favoritos ao abrir a tela
-        viewModel.loadFavorites()
     }
 
     private fun setupRecyclerView() {
-        favoritesAdapter = FavoritesAdapter(
-            onOpenRecipe = { recipe ->
-                openRecipeDetails(recipe)
-            }
+        // Agora passamos também a lógica 'canOpenRecipe'
+        adapter = FavoritesAdapter(
+            canOpenRecipe = { recipe -> canAccessRecipe(recipe) },
+            onOpenRecipe = { recipe -> openRecipeDetails(recipe) }
         )
+        binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewFavorites.adapter = adapter
+    }
 
-        binding.recyclerViewFavorites.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = favoritesAdapter
-            setHasFixedSize(true)
+    /**
+     * Verifica visualmente se o usuário tem permissão para esta receita
+     */
+    private fun canAccessRecipe(recipe: Recipe): Boolean {
+        val sessionState = viewModel.uiState.value.sessionState
+        return when {
+            sessionState.authState == AuthState.LOGADO &&
+                    sessionState.planState == PlanState.COM_PLANO -> true
+
+            else -> recipe.isFreePreview
+        }
+    }
+
+    private fun openRecipeDetails(recipe: Recipe) {
+        if (canAccessRecipe(recipe)) {
+            val action = FavoritesFragmentDirections
+                .actionFavoritesFragmentToRecipeDetailFragment(
+                    recipeId = recipe.id
+                )
+            findNavController().navigate(action)
+        } else {
+            SnackbarFragment.showWarning(
+                requireView(),
+                getString(R.string.recipe_locked_requires_plan_or_login)
+            )
         }
     }
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    renderUi(state)
+                viewModel.uiState.collect { uiState ->
+                    handleLoadingState(uiState)
                 }
             }
         }
     }
 
-    private fun renderUi(state: FavoritesUiState) {
-        // Se a view já foi destruída, não tenta renderizar nada
+    private fun handleLoadingState(state: FavoritesUiState) {
         if (_binding == null) return
 
         if (state.isLoading) {
-            // Início de um novo ciclo de loading
             if (!isShowingLoadingOverlay) {
                 isShowingLoadingOverlay = true
                 loadingStartTime = System.currentTimeMillis()
                 lottieController.showLoading()
             }
-
-            // Enquanto estiver carregando, esconde lista e estado vazio
-            hideAllContent()
+            binding.recyclerViewFavorites.isVisible = false
             return
         }
 
-        // Aqui, state.isLoading == false.
-        // Garante que o Lottie fique visível por pelo menos MIN_FAVORITES_LOADING_LOTTIE_MS.
         if (isShowingLoadingOverlay) {
             val elapsed = System.currentTimeMillis() - loadingStartTime
             if (elapsed < MIN_FAVORITES_LOADING_LOTTIE_MS) {
-                // Ainda não atingiu o tempo mínimo: mantém overlay e conteúdo ocultos.
-                hideAllContent()
-
                 val delay = MIN_FAVORITES_LOADING_LOTTIE_MS - elapsed
-
                 binding.root.postDelayed({
                     if (!isAdded) return@postDelayed
                     if (_binding == null) return@postDelayed
                     if (!isShowingLoadingOverlay) return@postDelayed
-
-                    isShowingLoadingOverlay = false
-                    lottieController.hide()
-                    renderNonLoadingUi(state)
+                    finishLoadingAndRender(state)
                 }, delay)
-
                 return
-            } else {
-                // Já passou do tempo mínimo: pode esconder overlay imediatamente.
-                isShowingLoadingOverlay = false
-                lottieController.hide()
             }
         }
 
-        // Não está mais carregando e o overlay já foi tratado: renderiza normalmente.
-        renderNonLoadingUi(state)
+        finishLoadingAndRender(state)
     }
 
-    private fun hideAllContent() {
-        val binding = _binding ?: return
-        binding.recyclerViewFavorites.isVisible = false
-        binding.imageFavoritesEmptyIcon.isVisible = false
-        binding.textFavoritesEmptyState.isVisible = false
-    }
+    private fun finishLoadingAndRender(state: FavoritesUiState) {
+        isShowingLoadingOverlay = false
+        lottieController.hide()
 
-    private fun renderNonLoadingUi(state: FavoritesUiState) {
-        val binding = _binding ?: return
+        // Verifica se a lista está vazia
+        val isEmpty = state.recipes.isEmpty()
 
-        // Lista
-        favoritesAdapter.submitList(state.recipes)
+        // Alterna visibilidade
+        binding.recyclerViewFavorites.isVisible = !isEmpty
+        binding.textFavoritesEmpty.isVisible = isEmpty
 
-        // Calcula o showEmpty conforme a regra
-        val showEmpty = state.recipes.isEmpty()
+        adapter.submitList(state.recipes)
 
-        binding.recyclerViewFavorites.isVisible = state.recipes.isNotEmpty()
-
-        // Ícone + texto acompanham o mesmo estado vazio
-        binding.imageFavoritesEmptyIcon.isVisible = showEmpty
-        binding.textFavoritesEmptyState.isVisible = showEmpty
-
-        // Snackbar de remoção com sucesso
-        state.lastRemovedRecipeTitle?.let { title ->
-            val message = getString(
-                R.string.recipe_favorite_removed_success,
-                title
-            )
-            SnackbarFragment.showSuccess(requireView(), message)
-            viewModel.clearLastRemovedRecipeTitle()
-        }
-
-        // Erros / avisos reais (se houver)
         state.errorMessage?.let {
-            SnackbarFragment.showError(
-                requireView(),
-                getString(R.string.favorites_error_generic)
-            )
+            SnackbarFragment.showError(binding.root, it)
             viewModel.clearError()
         }
     }
 
-    /**
-     * Abre a tela de detalhes da receita favoritada.
-     */
-    private fun openRecipeDetails(recipe: Recipe) {
-        val action = FavoritesFragmentDirections
-            .actionFavoritesFragmentToRecipeDetailFragment(
-                recipeId = recipe.id
-            )
-        findNavController().navigate(action)
-    }
-
     override fun onDestroyView() {
-        _binding?.root?.let { root ->
-            SnackbarFragment.cancelPendingSnackbars(root)
-        }
-
         if (::lottieController.isInitialized) {
             lottieController.clear()
         }
-
         _binding = null
         super.onDestroyView()
     }
 
     companion object {
-        /** Tempo mínimo em ms que o Lottie deve permanecer visível na tela de favoritos. */
         private const val MIN_FAVORITES_LOADING_LOTTIE_MS: Long = 1000L
     }
 }

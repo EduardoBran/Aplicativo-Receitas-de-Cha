@@ -34,19 +34,10 @@ data class BillingPlan(
  * Resultado de iniciar o fluxo de compra (abrir UI da Google Play).
  */
 sealed class BillingLaunchResult {
-    /** A tela de compra foi aberta com sucesso. O resultado virá em [BillingPurchaseResult] via Flow. */
     data object LaunchStarted : BillingLaunchResult()
-
-    /**
-     * A compra não pôde ser iniciada (erro técnico ou configuração de produto).
-     *
-     * @param message Mensagem para log / debug, você pode transformar em algo amigável na UI.
-     * @param responseCode Código de resposta da BillingLibrary (BillingClient.BillingResponseCode).
-     */
-    data class Error(
-        val message: String,
-        val responseCode: Int?
-    ) : BillingLaunchResult()
+    data object AlreadyOwned : BillingLaunchResult()
+    data object Canceled : BillingLaunchResult()
+    data class Error(val responseCode: Int, val debugMessage: String) : BillingLaunchResult()
 }
 
 /**

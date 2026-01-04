@@ -102,26 +102,7 @@ class AuthRepositoryImpl @Inject constructor(
             // Salva perfil
             userRef.setValue(userData).await()
 
-            // 4) /userPlans/{uid} -> pré-cadastra SEM_PLANO
-            // Regra de negócio:
-            // - Usuário recém-cadastrado = LOGADO + SEM_PLANO.
-            // - Representamos SEM_PLANO no banco como:
-            //     planId = "none"
-            //     expiresAt = null
-            //     isLifetime = false
-            // Quando o Billing aprovar uma compra, "updateUserPlan(...)
-            // vai sobrescrever esses campos com o plano real.
-            val userPlanRef = database.getReference("userPlans")
-                .child(user.uid)
-
-            val initialPlanData = mapOf(
-                "planId" to PlanConstants.PLAN_ID_NONE,
-                "expiresAt" to null,
-                "isLifetime" to false
-            )
-            userPlanRef.setValue(initialPlanData).await()
-
-            // 5) Retorna sucesso com User
+            // Retorna sucesso com User
             Result.success(user)
         } catch (e: Exception) {
             Result.failure(e)
@@ -199,20 +180,23 @@ class AuthRepositoryImpl @Inject constructor(
             val snapshot = ref.get().await()
 
             if (!snapshot.exists()) {
-                // Usuário ainda não possui plano cadastrado
                 Result.success(null)
             } else {
                 val planId = snapshot.child("planId").getValue(String::class.java)
-                val expiresAt = snapshot.child("expiresAt").getValue(Long::class.java)
-                val isLifetime = snapshot.child("isLifetime").getValue(Boolean::class.java) ?: false
 
+                // Preferir o campo novo; fallback pro antigo por compatibilidade.
+                val expiresAtMillis =
+                    snapshot.child("expiresAtMillis").getValue(Long::class.java)
+                        ?: snapshot.child("expiresAt").getValue(Long::class.java)
+
+                val isLifetime = snapshot.child("isLifetime").getValue(Boolean::class.java) ?: false
                 val planType = planId.toPlanType()
 
                 Result.success(
                     UserPlan(
                         uid = uid,
                         planType = planType,
-                        expiresAtMillis = expiresAt,
+                        expiresAtMillis = expiresAtMillis,
                         isLifetime = isLifetime
                     )
                 )
@@ -222,23 +206,15 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+
     /** Atualiza /userPlans/{uid} com os dados de [UserPlan].
      * Será chamado após uma compra aprovada ou sincronização com a Play Store. */
     override suspend fun updateUserPlan(plan: UserPlan): Result<Unit> {
-        return try {
-            val ref = database.getReference("userPlans").child(plan.uid)
-
-            val data = hashMapOf<String, Any?>(
-                "planId" to plan.planType.toPlanId(),        // SEM_PLANO -> "none"
-                "expiresAt" to plan.expiresAtMillis,         // null para vitalício ou NONE
-                "isLifetime" to plan.isLifetime              // false para NONE / planos temporários
+        return Result.failure(
+            UnsupportedOperationException(
+                "updateUserPlan desativado no cliente: /userPlans é escrito apenas via backend (Cloud Functions)."
             )
-
-            ref.setValue(data).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        )
     }
 
     /** Retorna a combinação de estados (autenticação + plano) para a sessão atual. */
@@ -373,15 +349,6 @@ class AuthRepositoryImpl @Inject constructor(
                     "emailVerified" to true // Google já verifica
                 )
                 userRef.setValue(userData).await()
-
-                // Criar plano inicial
-                val userPlanRef = database.getReference("userPlans").child(user.uid)
-                val initialPlanData = mapOf(
-                    "planId" to PlanConstants.PLAN_ID_NONE,
-                    "expiresAt" to null,
-                    "isLifetime" to false
-                )
-                userPlanRef.setValue(initialPlanData).await()
             }
 
             Result.success(user)

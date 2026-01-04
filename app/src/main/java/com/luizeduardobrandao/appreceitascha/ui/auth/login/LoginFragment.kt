@@ -27,8 +27,6 @@ import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidatio
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
-import java.util.UUID
 
 /**
  * Fragment responsável pela tela de Login.
@@ -61,7 +59,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        credentialManager = CredentialManager.create(requireContext())
+        credentialManager = CredentialManager.create(requireActivity())
 
         setupListeners()
         observeUiState()
@@ -173,51 +171,44 @@ class LoginFragment : Fragment() {
     private fun startGoogleSignIn() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                // Gera um nonce aleatório para segurança
-                val rawNonce = UUID.randomUUID().toString()
-                val hashedNonce = hashNonce(rawNonce)
+                val webClientId = getString(R.string.default_web_client_id).trim()
 
-                // Configura as opções do Google ID
                 val googleIdOption = GetGoogleIdOption.Builder()
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(getString(R.string.default_web_client_id))
-                    .setNonce(hashedNonce)
+                    .setServerClientId(webClientId)
                     .setAutoSelectEnabled(false)
                     .build()
 
-                // Cria a request de credenciais
                 val request = GetCredentialRequest.Builder()
                     .addCredentialOption(googleIdOption)
                     .build()
 
-                // Solicita as credenciais
                 val result = credentialManager.getCredential(
                     request = request,
-                    context = requireContext()
+                    context = requireActivity()
                 )
 
                 handleSignInResult(result)
 
             } catch (e: GetCredentialCancellationException) {
-                // Usuário cancelou o fluxo
                 SnackbarFragment.showWarning(
                     binding.root,
                     getString(R.string.google_sign_in_cancelled)
                 )
+
             } catch (e: NoCredentialException) {
-                // Nenhuma credencial disponível
                 SnackbarFragment.showError(
                     binding.root,
-                    getString(R.string.error_google_signin_generic)
+                    "Nenhuma conta Google disponível (ou Play Services/Google Play desatualizados)."
                 )
+
             } catch (e: GetCredentialException) {
-                // Erro ao obter credenciais
                 SnackbarFragment.showError(
                     binding.root,
-                    getString(R.string.error_google_signin_generic)
+                    "Falha no login Google: ${e.message ?: "erro do provedor"}"
                 )
+
             } catch (e: Exception) {
-                // Erro inesperado
                 SnackbarFragment.showError(
                     binding.root,
                     getString(R.string.error_google_signin_generic)
@@ -257,16 +248,6 @@ class LoginFragment : Fragment() {
                 showSnackbar(getString(R.string.error_google_signin_generic))
             }
         }
-    }
-
-    /**
-     * Gera um hash SHA-256 do nonce para segurança adicional
-     */
-    private fun hashNonce(nonce: String): String {
-        val bytes = nonce.toByteArray()
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
 
     private fun observeUiState() {

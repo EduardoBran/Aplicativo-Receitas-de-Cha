@@ -91,7 +91,7 @@ class RecipeDetailFragment : Fragment() {
                         updateFavoriteIcon(state.isFavorite)
                     }
 
-                    // Erros / avisos (regra de negócio x erro técnico)
+                    // Erros / avisos
                     state.errorMessage?.let { error ->
                         when (error) {
                             RecipeDetailViewModel.ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN -> {

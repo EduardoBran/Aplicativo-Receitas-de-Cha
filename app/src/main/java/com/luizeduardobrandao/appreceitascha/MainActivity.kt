@@ -1,11 +1,13 @@
 package com.luizeduardobrandao.appreceitascha
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,6 +16,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.luizeduardobrandao.appreceitascha.databinding.ActivityMainBinding
+import com.luizeduardobrandao.appreceitascha.utils.SecurityHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,6 +36,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // ✅ VERIFICAÇÃO DE SEGURANÇA DO DISPOSITIVO
+        if (!SecurityHelper.isDeviceSecure(this)) {
+            AlertDialog.Builder(this)
+                .setTitle("Dispositivo não seguro")
+                .setMessage("Este app não pode ser executado em dispositivos com root ou modificados por questões de segurança.")
+                .setCancelable(false)
+                .setPositiveButton("Sair") { _, _ ->
+                    finish()
+                }
+                .show()
+            return
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -94,10 +110,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Edge-to-edge respeitando status/navigation bar
+        // Edge-to-edge: aplica inset no TOP (conteúdo) e usa margin no BottomNav (não empurra a barra)
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+
+            // Root: só topo/laterais
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+
+            // BottomNav: desenha até o fim e protege ícones com padding
+            binding.bottomNav.updatePadding(bottom = systemBars.bottom)
+
             insets
         }
     }

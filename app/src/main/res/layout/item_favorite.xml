@@ -5,65 +5,74 @@
     android:id="@+id/cardFavoriteRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     app:cardBackgroundColor="@color/surface_card_background"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:cardUseCompatPadding="true"
-    app:strokeColor="@color/colorSurface"
+    app:strokeColor="#1F000000"
     app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="80dp"
         android:padding="16dp">
 
-        <!-- Título da receita -->
+        <ImageView
+            android:id="@+id/imageArrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:alpha="0.9"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_arrow_right_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_primary_base" />
+
+        <ImageView
+            android:id="@+id/imageFavoriteLock"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageArrow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_primary_base"
+            tools:srcCompat="@drawable/ic_recipe_lock_open_24" />
+
         <TextView
             android:id="@+id/textFavoriteTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:textColor="@color/colorOnSurface"
-            app:layout_constraintEnd_toStartOf="@id/imageButtonOpenRecipe"
+            android:textColor="@color/color_primary_dark"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/imageFavoriteLock"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Chá de Camomila Clássico" />
+            tools:text="Chá de Hortelã" />
 
-        <!-- Subtítulo / descrição curta -->
         <TextView
             android:id="@+id/textFavoriteSubtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:alpha="0.8"
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="@color/colorOnSurface"
-            app:layout_constraintEnd_toStartOf="@id/imageButtonOpenRecipe"
+            app:layout_constraintEnd_toStartOf="@+id/imageFavoriteLock"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textFavoriteTitle"
-            tools:text="A Rainha da Tranquilidade" />
-
-        <!-- Ícone de "ir" para detalhes -->
-        <ImageView
-            android:id="@+id/imageButtonOpenRecipe"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:contentDescription="@string/recipes_item_icon_go_content_description"
-            android:padding="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_right_24"
-            app:tint="@color/colorPrimary" />
+            app:layout_constraintTop_toBottomOf="@+id/textFavoriteTitle"
+            tools:text="Refrescante e digestivo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

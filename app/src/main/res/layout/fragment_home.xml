@@ -8,258 +8,240 @@
     android:background="@color/app_background"
     tools:context=".ui.home.HomeFragment">
 
-    <!-- Card 1: Visitante (NAO_LOGADO + SEM_PLANO) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/group_guest"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="24dp"
         app:cardBackgroundColor="@color/surface_card_background"
-        app:cardCornerRadius="16dp"
+        app:cardCornerRadius="24dp"
         app:cardElevation="4dp"
-        app:cardUseCompatPadding="true"
+        app:contentPadding="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3">
+        app:layout_constraintVertical_bias="0.4">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_recipe_lock_24"
+                app:tint="@color/color_primary_light" />
 
             <TextView
-                android:id="@+id/tvGuestTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="@string/home_guest_title"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/text_primary" />
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/color_primary_dark"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvGuestBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/home_guest_subtitle"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="@color/colorOnSurface" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuestLogin"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/home_guest_btn_login"
+                app:cornerRadius="28dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuestSeeRecipes"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/home_guest_body"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                android:textColor="@color/text_secondary" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGuestPrimary"
-                    style="@style/Widget.MaterialComponents.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/button_primary_background"
-                    android:text="@string/home_guest_primary_action"
-                    android:textColor="@color/button_primary_text" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGuestSeeRecipes"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/home_common_see_recipes" />
-            </LinearLayout>
-
+                android:text="@string/home_guest_btn_recipes"
+                android:textColor="@color/color_primary_base" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Card 2: Logado + SEM_PLANO -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/group_free"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="24dp"
         android:visibility="gone"
         app:cardBackgroundColor="@color/surface_card_background"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="6dp"
+        app:contentPadding="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3">
+        app:layout_constraintVertical_bias="0.4"
+        tools:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_account_circle_24"
+                app:tint="@color/color_primary_base" />
 
             <TextView
                 android:id="@+id/tvFreeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/home_free_title"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/text_primary" />
-
-            <TextView
-                android:id="@+id/tvFreeBody"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/home_free_body"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                android:textColor="@color/text_secondary" />
-
-            <TextView
-                android:id="@+id/tvFreePlansSummary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/home_free_plans_summary"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                android:textColor="@color/text_secondary" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:orientation="vertical">
+                android:text="@string/home_free_title"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/color_primary_dark"
+                android:textStyle="bold" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnFreeBuyPlan"
-                    style="@style/Widget.MaterialComponents.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/button_primary_background"
-                    android:text="@string/home_free_primary_action"
-                    android:textColor="@color/button_primary_text" />
+            <TextView
+                android:id="@+id/tvFreeSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/home_free_subtitle"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="@color/colorOnSurface" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnFreeSeeRecipes"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/home_common_see_recipes" />
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFreeBuyPlan"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/color_primary_base"
+                android:text="@string/home_free_btn_upgrade"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="28dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFreeSeeRecipes"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/home_free_btn_recipes"
+                android:textColor="@color/color_primary_base"
+                app:cornerRadius="28dp"
+                app:strokeColor="@color/color_primary_base" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Card 3: Logado + COM_PLANO -->
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/group_premium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="24dp"
         android:visibility="gone"
         app:cardBackgroundColor="@color/surface_card_background"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:contentPadding="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3">
+        app:layout_constraintVertical_bias="0.4"
+        app:strokeColor="#FFD700"
+        app:strokeWidth="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_star_premium_24"
+                app:tint="#FFD700" />
 
             <TextView
                 android:id="@+id/tvPremiumTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="@string/home_premium_title"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="@color/text_primary" />
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/color_primary_dark"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvPremiumPlanName"
+                android:id="@+id/tvPremiumSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/home_premium_subtitle"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="@color/colorOnSurface" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPremiumSeeRecipes"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/color_primary_base"
+                android:text="@string/home_premium_recipes_button"
+                android:textColor="@color/white"
+                app:cornerRadius="28dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPremiumPlanDetails"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textColor="@color/text_primary"
-                tools:text="Plano: Plano 6 meses" />
-
-            <TextView
-                android:id="@+id/tvPremiumPlanExpires"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                android:textColor="@color/text_secondary"
-                tools:text="Expira em 12/03/2026" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPremiumSeeRecipes"
-                    style="@style/Widget.MaterialComponents.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/button_primary_background"
-                    android:text="@string/home_common_see_recipes"
-                    android:textColor="@color/button_primary_text" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPremiumPlanDetails"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/home_premium_details_button" />
-            </LinearLayout>
+                android:text="@string/home_premium_details_button"
+                android:textColor="@color/color_primary_base" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Overlay de loading com Lottie centralizado -->
     <FrameLayout
         android:id="@+id/homeLoadingOverlay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/app_background"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        tools:visibility="gone">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottieHome"
-            android:layout_width="260dp"
-            android:layout_height="260dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_gravity="center"
-            android:contentDescription="@null"
-            android:importantForAccessibility="no"
-            app:lottie_rawRes="@raw/lottie_cup_of_tea"
+            app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_renderMode="software"
-            app:lottie_speed="1.0" />
+            app:lottie_rawRes="@raw/lottie_cup_of_tea" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

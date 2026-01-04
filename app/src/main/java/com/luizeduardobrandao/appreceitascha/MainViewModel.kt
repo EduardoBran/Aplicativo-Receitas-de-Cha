@@ -81,17 +81,29 @@ class MainViewModel @Inject constructor(
      * - pode ser chamado também após login/cadastro/pagamento, se necessário.
      */
     private suspend fun refreshAuthAndSession() {
-        // Usuário atual (FirebaseAuth em memória)
-        _currentUser.value = authRepository.getCurrentUser()
+        val currentUser = authRepository.getCurrentUser()
+        _currentUser.value = currentUser
 
-        // Estado de sessão completo (lê /userPlans/{uid} quando necessário)
         val result = authRepository.getCurrentUserSessionState()
+
         result.onSuccess { state ->
+
             _sessionState.value = state
-        }.onFailure {
-            // Em caso de erro, mantemos o estado anterior para não quebrar a UI.
-            // Opcionalmente, você poderia forçar:
-            // _sessionState.value = UserSessionState(AuthState.NAO_LOGADO, PlanState.SEM_PLANO, PlanType.NONE)
+        }.onFailure { error ->
+
+            if (currentUser != null) {
+                _sessionState.value = UserSessionState(
+                    authState = AuthState.LOGADO,
+                    planState = PlanState.SEM_PLANO,
+                    planType = PlanType.NONE
+                )
+            } else {
+                _sessionState.value = UserSessionState(
+                    authState = AuthState.NAO_LOGADO,
+                    planState = PlanState.SEM_PLANO,
+                    planType = PlanType.NONE
+                )
+            }
         }
     }
 
