@@ -3,7 +3,6 @@ package com.luizeduardobrandao.appreceitascha.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
-import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
 import com.luizeduardobrandao.appreceitascha.domain.auth.UserPlan
 import com.luizeduardobrandao.appreceitascha.domain.auth.UserSessionState
@@ -14,16 +13,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * ViewModel da Home.
- *
- * - Consulta o estado da sessão (NAO_LOGADO / LOGADO + SEM_PLANO / COM_PLANO).
- * - Quando COM_PLANO, carrega também o UserPlan para exibir nome do plano e expiração.
- */
 data class HomeUiState(
     val isLoading: Boolean = true,
     val sessionState: UserSessionState? = null,
     val userPlan: UserPlan? = null,
+    val userName: String? = null,
     val errorMessage: String? = null
 )
 
@@ -35,54 +29,42 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    init {
-        refreshSession()
-    }
-
-    /**
-     * Recarrega o estado da sessão e, se for LOGADO + COM_PLANO, carrega o UserPlan.
-     */
     fun refreshSession() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            _uiState.value = _uiState.value.copy(isLoading = true)
 
+            // 1. Busca Usuário e Sessão
+            val currentUser = authRepository.getCurrentUser()
             val sessionResult = authRepository.getCurrentUserSessionState()
 
             sessionResult.fold(
                 onSuccess = { session ->
-                    // Se não está logado ou não tem plano, não precisamos buscar /userPlans.
-                    if (session.authState != AuthState.LOGADO ||
-                        session.planState != PlanState.COM_PLANO
-                    ) {
+                    // ✅ Pega o nome atualizado do usuário
+                    val currentName = currentUser?.name
+
+                    if (session.planState == PlanState.SEM_PLANO) {
                         _uiState.value = HomeUiState(
                             isLoading = false,
                             sessionState = session,
                             userPlan = null,
+                            userName = currentName, // ✅ Passa o nome
                             errorMessage = null
                         )
                         return@fold
                     }
 
-                    // LOGADO + COM_PLANO → buscar UserPlan no Realtime Database
-                    val currentUser = authRepository.getCurrentUser()
-                    if (currentUser == null) {
-                        _uiState.value = HomeUiState(
-                            isLoading = false,
-                            sessionState = session,
-                            userPlan = null,
-                            errorMessage = null
-                        )
-                        return@fold
+                    // Se tem plano, busca detalhes do plano
+                    val planResult = currentUser?.uid?.let { uid ->
+                        authRepository.getUserPlan(uid)
                     }
 
-                    val planResult = authRepository.getUserPlan(currentUser.uid)
-
-                    val userPlan = planResult.getOrNull()
+                    val userPlan = planResult?.getOrNull()
 
                     _uiState.value = HomeUiState(
                         isLoading = false,
                         sessionState = session,
                         userPlan = userPlan,
+                        userName = currentName, // ✅ Passa o nome
                         errorMessage = null
                     )
                 },
@@ -91,7 +73,8 @@ class HomeViewModel @Inject constructor(
                         isLoading = false,
                         sessionState = null,
                         userPlan = null,
-                        errorMessage = error.message ?: "Erro ao carregar estado do usuário."
+                        userName = null,
+                        errorMessage = error.message ?: "Erro ao carregar estado."
                     )
                 }
             )

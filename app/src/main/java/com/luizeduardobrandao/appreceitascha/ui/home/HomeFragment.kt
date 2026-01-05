@@ -2,7 +2,7 @@ package com.luizeduardobrandao.appreceitascha.ui.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -24,13 +24,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // ViewModel local para dados específicos da Home
     private val homeViewModel: HomeViewModel by viewModels()
-
-    // Controller para animação de loading com Lottie (Lógica recuperada)
     private lateinit var lottieController: LottieLoadingController
 
-    // Controle de tempo mínimo da animação de loading (Lógica recuperada)
     private var isShowingLoadingOverlay: Boolean = false
     private var loadingStartTime: Long = 0L
 
@@ -38,7 +34,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
 
-        // Instancia o controlador de loading com Lottie centralizado
         lottieController = LottieLoadingController(
             overlay = binding.homeLoadingOverlay,
             lottieView = binding.lottieHome
@@ -50,34 +45,74 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onResume() {
         super.onResume()
-        // Garante que os dados estejam frescos ao voltar
-        homeViewModel.refreshSession() // Ajustado para refreshData() conforme o padrão do HomeViewModel
+        homeViewModel.refreshSession()
     }
 
     private fun setupListeners() {
-        // --- CARTÃO 1: VISITANTE (Guest) ---
-        binding.btnGuestLogin.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-        }
-        binding.btnGuestSeeRecipes.setOnClickListener {
+        binding.viewSearchBar.setOnClickListener {
             findNavController().navigate(R.id.categoriesFragment)
         }
 
-        // --- CARTÃO 2: LOGADO / GRATUITO (Free) ---
-        binding.btnFreeBuyPlan.setOnClickListener {
-            findNavController().navigate(R.id.plansFragment)
-        }
-        binding.btnFreeSeeRecipes.setOnClickListener {
-            findNavController().navigate(R.id.categoriesFragment)
+        binding.btnBannerAction.setOnClickListener {
+            val state = homeViewModel.uiState.value.sessionState
+            val authState = state?.authState ?: AuthState.NAO_LOGADO
+            val planState = state?.planState ?: PlanState.SEM_PLANO
+
+            when (authState) {
+                AuthState.NAO_LOGADO -> {
+                    findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+                }
+
+                AuthState.LOGADO if planState == PlanState.SEM_PLANO -> {
+                    findNavController().navigate(R.id.plansFragment)
+                }
+
+                else -> {
+                    findNavController().navigate(R.id.categoriesFragment)
+                }
+            }
         }
 
-        // --- CARTÃO 3: PREMIUM (Lifetime) ---
-        binding.btnPremiumSeeRecipes.setOnClickListener {
-            findNavController().navigate(R.id.categoriesFragment)
+        // --- ✅ CORREÇÃO 2: Navegação do Ícone de Perfil ---
+        binding.ivProfileAvatar.setOnClickListener {
+            val state = homeViewModel.uiState.value.sessionState
+
+            if (state?.authState == AuthState.NAO_LOGADO) {
+                // Visitante -> Vai para Login
+                findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+            } else {
+                // Logado (Free ou Premium) -> Vai para Perfil (Modo Edição)
+                val args = Bundle().apply {
+                    putBoolean("isEditMode", true)
+                }
+                // Navega para o RegisterFragment com argumentos
+                findNavController().navigate(R.id.registerFragment, args)
+            }
         }
-        binding.btnPremiumPlanDetails.setOnClickListener {
-            findNavController().navigate(R.id.managePlanFragment)
+
+        // Navegações de categoria (mantidas igual ao seu código anterior)
+        binding.btnCatCalm.setOnClickListener { navigateToCategory("calmante", "Chás Calmantes") }
+        binding.btnCatEnergy.setOnClickListener {
+            navigateToCategory(
+                "energizante",
+                "Energia e Foco"
+            )
         }
+        binding.btnCatDetox.setOnClickListener {
+            navigateToCategory(
+                "digestivo",
+                "Detox e Digestão"
+            )
+        }
+        binding.btnCatMore.setOnClickListener { findNavController().navigate(R.id.categoriesFragment) }
+    }
+
+    private fun navigateToCategory(id: String, name: String) {
+        val action = HomeFragmentDirections.actionHomeFragmentToRecipeListFragment(
+            categoryId = id,
+            categoryName = name
+        )
+        findNavController().navigate(action)
     }
 
     private fun observeState() {
@@ -90,100 +125,184 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    /**
-     * Gerencia a lógica de tempo mínimo do Lottie para evitar "flickering" na tela.
-     */
     private fun handleLoadingState(state: HomeUiState) {
-        // Se a view já foi destruída, não faz nada
         if (_binding == null) return
 
         if (state.isLoading) {
-            // Início de um novo ciclo de loading
             if (!isShowingLoadingOverlay) {
                 isShowingLoadingOverlay = true
                 loadingStartTime = System.currentTimeMillis()
                 lottieController.showLoading()
             }
-            // Esconde tudo enquanto carrega
-            hideAllCards()
             return
         }
 
-        // Aqui, state.isLoading == false.
-        // Verifica se o tempo mínimo foi atingido.
         if (isShowingLoadingOverlay) {
             val elapsed = System.currentTimeMillis() - loadingStartTime
             if (elapsed < MIN_HOME_LOADING_LOTTIE_MS) {
-                // Ainda não atingiu o tempo mínimo: mantém overlay e cards ocultos e agenda o fim.
-                hideAllCards()
-
                 val delay = MIN_HOME_LOADING_LOTTIE_MS - elapsed
-
                 binding.root.postDelayed({
-                    if (!isAdded) return@postDelayed
-                    if (_binding == null) return@postDelayed
-                    // Verifica se ainda devemos estar mostrando (o estado pode ter mudado novamente)
-                    if (!isShowingLoadingOverlay) return@postDelayed
-
+                    if (!isAdded || _binding == null) return@postDelayed
                     finishLoadingAndRender(state)
                 }, delay)
                 return
             }
         }
-
-        // Se não estava carregando ou já passou do tempo, renderiza direto.
         finishLoadingAndRender(state)
     }
 
-    /**
-     * Finaliza a animação e exibe os dados reais.
-     */
     private fun finishLoadingAndRender(state: HomeUiState) {
         isShowingLoadingOverlay = false
         lottieController.hide()
 
-        // 1. Tratamento de Erro
         state.errorMessage?.let { msg ->
             SnackbarFragment.showError(binding.root, msg)
         }
 
-        // 2. Controle de Visibilidade dos Cards
         if (state.sessionState != null) {
-            updateCardsVisibility(
+            updateDashboardUI(
                 state.sessionState.authState,
-                state.sessionState.planState
+                state.sessionState.planState,
+                state.userName // ✅ Agora passamos o nome vindo da ViewModel
             )
         }
     }
 
-    private fun hideAllCards() {
-        binding.groupGuest.isVisible = false
-        binding.groupFree.isVisible = false
-        binding.groupPremium.isVisible = false
-    }
-
-    private fun updateCardsVisibility(authState: AuthState, planState: PlanState) {
-        // Lógica de decisão
+    private fun updateDashboardUI(
+        authState: AuthState,
+        planState: PlanState,
+        userName: String?
+    ) {
+        val context = requireContext()
         val isGuest = authState == AuthState.NAO_LOGADO
-        val isFree = authState == AuthState.LOGADO && planState == PlanState.SEM_PLANO
         val isPremium = authState == AuthState.LOGADO && planState == PlanState.COM_PLANO
 
-        // Aplicação na UI
-        binding.groupGuest.isVisible = isGuest
-        binding.groupFree.isVisible = isFree
-        binding.groupPremium.isVisible = isPremium
+        // --- HEADER ---
+        if (isGuest) {
+            binding.tvGreetingTitle.text = getString(R.string.home_hello_guest)
+            binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_guest)
+
+            // Ícone Padrão Visitante
+            binding.ivProfileAvatar.setImageResource(R.drawable.ic_account_circle_24)
+            binding.ivProfileAvatar.setColorFilter(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_primary_base
+                )
+            )
+            binding.ivProfileAvatar.alpha = 0.6f
+        } else {
+            // ✅ CORREÇÃO 1: Usa o nome do usuário ou "Membro" como fallback
+            val displayName = if (!userName.isNullOrBlank()) userName else "Membro"
+            binding.tvGreetingTitle.text = getString(R.string.home_hello_user, displayName)
+
+            // ✅ CORREÇÃO 3: Padronização do Ícone
+            // Mantemos SEMPRE o ic_account_circle_24 para consistência
+            binding.ivProfileAvatar.setImageResource(R.drawable.ic_account_circle_24)
+            binding.ivProfileAvatar.alpha = 1f
+
+            if (isPremium) {
+                binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_premium)
+                binding.tvGreetingSubtitle.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.color_primary_base
+                    )
+                )
+
+                // Premium: Ícone DOURADO
+                binding.ivProfileAvatar.setColorFilter(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.warning_color
+                    )
+                )
+            } else {
+                binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_free)
+                binding.tvGreetingSubtitle.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.text_secondary
+                    )
+                )
+
+                // Free: Ícone VERDE PADRÃO
+                binding.ivProfileAvatar.setColorFilter(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.color_primary_base
+                    )
+                )
+            }
+        }
+
+        // --- BANNER HERO (Lógica Mantida) ---
+        if (isGuest) {
+            binding.cardBanner.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_primary_base
+                )
+            )
+            binding.tvBannerTitle.text = getString(R.string.banner_guest_title)
+            binding.tvBannerDesc.text = getString(R.string.banner_guest_desc)
+            binding.btnBannerAction.text = getString(R.string.banner_guest_btn)
+            binding.btnBannerAction.visibility = View.VISIBLE
+            binding.ivBannerIcon.setImageResource(R.drawable.ic_recipe_lock_24)
+            binding.ivBannerIcon.imageTintList =
+                androidx.core.content.res.ResourcesCompat.getColorStateList(
+                    resources,
+                    R.color.white,
+                    null
+                )?.withAlpha(128)
+
+        } else if (isPremium) {
+            binding.cardBanner.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_primary_dark
+                )
+            )
+            binding.tvBannerTitle.text = getString(R.string.banner_premium_title)
+            binding.tvBannerDesc.text = getString(R.string.banner_premium_desc)
+            binding.btnBannerAction.text = getString(R.string.banner_premium_btn)
+            binding.btnBannerAction.visibility = View.VISIBLE
+            binding.ivBannerIcon.setImageResource(R.drawable.ic_whatshot_24)
+            binding.ivBannerIcon.imageTintList =
+                androidx.core.content.res.ResourcesCompat.getColorStateList(
+                    resources,
+                    R.color.white,
+                    null
+                )?.withAlpha(128)
+
+        } else {
+            binding.cardBanner.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_primary_base
+                )
+            )
+            binding.tvBannerTitle.text = getString(R.string.banner_free_title)
+            binding.tvBannerDesc.text = getString(R.string.banner_free_desc)
+            binding.btnBannerAction.text = getString(R.string.banner_free_btn)
+            binding.btnBannerAction.visibility = View.VISIBLE
+            binding.ivBannerIcon.setImageResource(R.drawable.ic_star_premium_24)
+            binding.ivBannerIcon.imageTintList =
+                androidx.core.content.res.ResourcesCompat.getColorStateList(
+                    resources,
+                    R.color.white,
+                    null
+                )?.withAlpha(128)
+        }
     }
 
     override fun onDestroyView() {
-        if (::lottieController.isInitialized) {
-            lottieController.clear()
-        }
+        if (::lottieController.isInitialized) lottieController.clear()
         _binding = null
         super.onDestroyView()
     }
 
     companion object {
-        /** Tempo mínimo em ms que o Lottie deve permanecer visível na Home. */
         private const val MIN_HOME_LOADING_LOTTIE_MS: Long = 1000L
     }
 }

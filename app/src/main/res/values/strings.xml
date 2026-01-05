@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Nature Chá</string>
 
 
@@ -103,25 +103,35 @@
 
 
     <!-- ======== HomeFragment ========-->
-    <string name="home_free_title">Sua conta é gratuita</string>
-    <string name="home_free_subtitle">Você tem acesso limitado. Desbloqueie todas as receitas de chás e benefícios para sempre com um único pagamento.</string>
-    <string name="home_free_btn_upgrade">Obter Acesso Vitalício</string>
-    <string name="home_free_btn_recipes">Ver receitas gratuitas</string>
+    <string name="home_hello_guest">Olá, Visitante</string>
+    <string name="home_hello_user">Olá, %s</string>
+    <string name="home_subtitle_guest">Explore o poder dos chás naturais.</string>
+    <string name="home_search_hint">Buscar receitas de chá…</string>
+    <string name="home_subtitle_free">Você está no plano Gratuito.</string>
+    <string name="home_subtitle_premium">Membro Premium Vitalício.</string>
 
-    <string name="home_guest_title">Bem-vindo(a)</string>
-    <string name="home_guest_subtitle">Faça login para salvar seus favoritos ou adquira o acesso vitalício para ver todas as receitas.</string>
-    <string name="home_guest_btn_login">Fazer Login</string>
-    <string name="home_guest_btn_recipes">Espiar receitas</string>
+    <string name="banner_guest_title">Crie sua conta Grátis</string>
+    <string name="banner_guest_desc">Salve favoritos e acesse conteúdos exclusivos.</string>
+    <string name="banner_guest_btn">Cadastrar Agora</string>
 
-    <string name="home_premium_title">Você é Premium</string>
-    <string name="home_premium_subtitle">Você tem acesso ilimitado a todas as receitas de chás. Aproveite seus favoritos sem restrições.</string>
-    <string name="home_premium_recipes_button">Ver todas as receitas</string>
-    <string name="home_premium_details_button">Gerenciar acesso</string>
+    <string name="banner_free_title">Desbloqueie Tudo</string>
+    <string name="banner_free_desc">Tenha acesso ilimitado e vitalício a todas as receitas.</string>
+    <string name="banner_free_btn">Ser Premium</string>
+
+    <string name="banner_premium_title">Receita em Destaque</string>
+    <string name="banner_premium_desc">Descubra novos sabores para o seu dia.</string>
+    <string name="banner_premium_btn">Ver Receitas</string>
+
+    <string name="section_categories">O que você busca hoje?</string>
+    <string name="cat_calm">Dormir\nBem</string>
+    <string name="cat_energy">Energia\nFoco</string>
+    <string name="cat_detox">Detox\nLeveza</string>
+    <string name="cat_more">Ver\nTodos</string>
 
 
     <!-- ======== CategoriesFragment ========-->
     <string name="categories_title">Categorias de Chás</string>
-    <string name="categories_empty_state">Não encontramos nenhuma categoria no momento.\nTente novamente mais tarde.</string>
+    <string name="categories_empty_state" tools:ignore="Typos">Não encontramos nenhuma categoria no momento.\nTente novamente mais tarde.</string>
     <string name="categories_error_generic">Ocorreu um erro ao carregar as categorias. Por favor, tente novamente.</string>
     <string name="categories_item_icon_go_content_description">Ver receitas desta categoria.</string>
     <string name="categories_loading_message">Carregando as categorias…</string>
@@ -193,7 +203,7 @@
     <string name="msg_purchase_success">Premium liberado com sucesso! Aproveite.</string>
     <string name="msg_restore_success">Suas compras foram restauradas.</string>
     <string name="msg_restore_empty">Nenhuma compra ativa encontrada.</string>
-    <string name="msg_restore_owned">Você já possui este item. Restaurando...</string>
+    <string name="msg_restore_owned">Você já possui este item. Restaurando…</string>
 
 
     <!-- ======== ManagePlanFragment ======== -->
@@ -201,6 +211,9 @@
     <string name="manage_status_desc">Você possui acesso vitalício. Aproveite todos os benefícios sem preocupações.</string>
     <string name="manage_btn_support">Suporte / Dúvidas</string>
     <string name="manage_btn_back">Voltar para o Início</string>
+
+
+    <!-- ======== SearchFragment ======== -->
 
 
     <!-- ======== Bottom Navigation Icons ========-->
