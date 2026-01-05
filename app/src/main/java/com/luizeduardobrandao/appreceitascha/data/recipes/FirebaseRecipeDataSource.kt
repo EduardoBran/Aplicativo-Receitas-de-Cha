@@ -59,4 +59,14 @@ class FirebaseRecipeDataSource @Inject constructor(
             .get()
             .await()
     }
+
+    /**
+     * Retorna o snapshot bruto de TODAS as receitas em /recipes.
+     *
+     * Usado por [RecipeRepositoryImpl] em:
+     * - searchRecipes(query) -> Para filtrar client-side.
+     */
+    suspend fun getAllRecipesSnapshot(): DataSnapshot {
+        return recipesRef.get().await()
+    }
 }

@@ -25,6 +25,22 @@
         <action
             android:id="@+id/action_homeFragment_to_recipeListFragment"
             app:destination="@id/recipeListFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+
+    <!-- ======== Tela Search ======== -->
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.luizeduardobrandao.appreceitascha.ui.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+
+        <action
+            android:id="@+id/action_searchFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment" />
     </fragment>
 
     <!-- ======== Tela Categorias Chá ======== -->

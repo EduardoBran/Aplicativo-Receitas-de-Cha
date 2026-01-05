@@ -118,4 +118,76 @@ class RecipeRepositoryImpl @Inject constructor(
             )
         }
     }
+
+    // ✅ IMPLEMENTAÇÃO DA NOVA BUSCA
+    override suspend fun searchRecipes(query: String): Result<List<Recipe>> {
+        return try {
+            // 1. Busca todas as receitas do DataSource
+            val snapshot = firebaseRecipeDataSource.getAllRecipesSnapshot()
+
+            // 2. Converte Snapshot -> List<Recipe> usando a função auxiliar
+            val allRecipes = snapshot.children.mapNotNull { child ->
+                child.toDomainRecipe()
+            }
+
+            // 3. Filtra localmente pelo título (ignora maiúsculas/minúsculas)
+            val filteredList = allRecipes.filter { recipe ->
+                recipe.title.contains(query, ignoreCase = true)
+            }
+
+            Result.success(filteredList)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // =========================================================================
+    // ✅ FUNÇÃO AUXILIAR PARA BUSCA (Adicione no final da classe)
+    // =========================================================================
+    /**
+     * Converte um DataSnapshot (nó de receita) para o objeto de domínio [Recipe].
+     * Retorna null se faltar campos obrigatórios.
+     */
+    private fun DataSnapshot.toDomainRecipe(): Recipe? {
+        // Tenta pegar o ID do campo "id", se não tiver, usa a chave do nó (key)
+        val idFromField = child("id").getValue(String::class.java)
+        val id = if (!idFromField.isNullOrBlank()) idFromField else key
+
+        val categoryId = child("categoryId").getValue(String::class.java)
+        val title = child("title").getValue(String::class.java)
+        val subtitle = child("subtitle").getValue(String::class.java)
+        val shortDescription = child("shortDescription").getValue(String::class.java)
+        val modoDePreparo = child("modoDePreparo").getValue(String::class.java)
+        val beneficios = child("beneficios").getValue(String::class.java)
+        val observacoes = child("observacoes").getValue(String::class.java)
+
+        // Se isFreePreview não existir no banco, assume false (bloqueado)
+        val isFreePreview = child("isFreePreview").getValue(Boolean::class.java) ?: false
+
+        // Validação de campos obrigatórios
+        return if (
+            id.isNullOrBlank() ||
+            categoryId.isNullOrBlank() ||
+            title.isNullOrBlank() ||
+            subtitle.isNullOrBlank() ||
+            shortDescription.isNullOrBlank() ||
+            modoDePreparo.isNullOrBlank() ||
+            beneficios.isNullOrBlank() ||
+            observacoes.isNullOrBlank()
+        ) {
+            null
+        } else {
+            Recipe(
+                id = id,
+                categoryId = categoryId,
+                title = title,
+                subtitle = subtitle,
+                shortDescription = shortDescription,
+                modoDePreparo = modoDePreparo,
+                beneficios = beneficios,
+                observacoes = observacoes,
+                isFreePreview = isFreePreview
+            )
+        }
+    }
 }

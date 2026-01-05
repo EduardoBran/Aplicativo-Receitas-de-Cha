@@ -50,7 +50,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun setupListeners() {
         binding.viewSearchBar.setOnClickListener {
-            findNavController().navigate(R.id.categoriesFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
         }
 
         binding.btnBannerAction.setOnClickListener {

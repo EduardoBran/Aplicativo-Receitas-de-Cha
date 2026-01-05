@@ -214,7 +214,15 @@
 
 
     <!-- ======== SearchFragment ======== -->
-
+    <string name="search_hint">Buscar receitas…</string>
+    <string name="search_loading_message">Procurando a receita…</string>
+    <string name="search_error_min_chars">Digite pelo menos 3 caracteres para buscar.</string>
+    <string name="search_empty_title">Não encontramos nenhuma receita com este nome.</string>
+    <string name="search_btn_back">Voltar para o Início</string>
+    <string name="search_error_generic">Erro ao realizar a busca.</string>
+    <string name="search_recipe_unlocked">Receita liberada</string>
+    <string name="search_recipe_locked">Receita bloqueada</string>
+    <string name="search_category_header">Categoria: %s</string>
 
     <!-- ======== Bottom Navigation Icons ========-->
     <string name="bottom_nav_home">Início</string>

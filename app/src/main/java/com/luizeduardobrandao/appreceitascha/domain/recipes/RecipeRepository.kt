@@ -67,4 +67,10 @@ interface RecipeRepository {
      * - [Result.failure] em caso de erro de rede, permissão, parsing, etc.
      */
     suspend fun getRecipeById(recipeId: String): Result<Recipe?>
+
+    /**
+     * Busca receitas que contenham o termo [query] no título.
+     * Deve retornar também a lista de categorias para mapeamento de nomes.
+     */
+    suspend fun searchRecipes(query: String): Result<List<Recipe>>
 }
