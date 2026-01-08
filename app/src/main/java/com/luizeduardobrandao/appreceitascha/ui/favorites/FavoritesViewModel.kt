@@ -118,10 +118,10 @@ class FavoritesViewModel @Inject constructor(
                         }
                 }
 
-                _uiState.update {
+                _uiState.update { it ->
                     it.copy(
                         isLoading = false,
-                        recipes = loadedRecipes,
+                        recipes = loadedRecipes.sortedBy { it.title.lowercase() },
                         isFeatureAvailable = true,
                         errorMessage = if (hadError) {
                             "FAVORITES_PARTIAL_LOAD_ERROR"

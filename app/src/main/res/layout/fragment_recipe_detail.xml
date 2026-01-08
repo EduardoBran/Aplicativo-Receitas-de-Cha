@@ -80,6 +80,7 @@
                 android:textAppearance="?attr/textAppearanceCaption"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textRecipeSubtitle" />
@@ -96,33 +97,6 @@
                 app:layout_constraintTop_toBottomOf="@id/textLabelShortDescription"
                 tools:text="Resumo curto da receita..." />
 
-            <!-- Seção: Modo de preparo -->
-            <TextView
-                android:id="@+id/textLabelModoPreparo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/recipe_detail_section_modo_preparo"
-                android:textAllCaps="true"
-                android:textAppearance="?attr/textAppearanceCaption"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textRecipeShortDescription" />
-
-            <TextView
-                android:id="@+id/textRecipeModoPreparo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textAppearance="?attr/textAppearanceBody1"
-                android:textColor="@color/colorOnBackground"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textLabelModoPreparo"
-                tools:text="Modo de preparo completo..." />
-
             <!-- Seção: Benefícios -->
             <TextView
                 android:id="@+id/textLabelBeneficios"
@@ -134,9 +108,10 @@
                 android:textAppearance="?attr/textAppearanceCaption"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textRecipeModoPreparo" />
+                app:layout_constraintTop_toBottomOf="@id/textRecipeShortDescription" />
 
             <TextView
                 android:id="@+id/textRecipeBeneficios"
@@ -150,6 +125,34 @@
                 app:layout_constraintTop_toBottomOf="@id/textLabelBeneficios"
                 tools:text="Benefícios da receita..." />
 
+            <!-- Seção: Modo de preparo -->
+            <TextView
+                android:id="@+id/textLabelModoPreparo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/recipe_detail_section_modo_preparo"
+                android:textAllCaps="true"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textRecipeBeneficios" />
+
+            <TextView
+                android:id="@+id/textRecipeModoPreparo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textColor="@color/colorOnBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textLabelModoPreparo"
+                tools:text="Modo de preparo completo..." />
+
             <!-- Seção: Observações -->
             <TextView
                 android:id="@+id/textLabelObservacoes"
@@ -161,9 +164,10 @@
                 android:textAppearance="?attr/textAppearanceCaption"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textRecipeBeneficios" />
+                app:layout_constraintTop_toBottomOf="@id/textRecipeModoPreparo" />
 
             <TextView
                 android:id="@+id/textRecipeObservacoes"

@@ -3,16 +3,16 @@
 
 
     <!-- ======== Login Fragment ======== -->
-    <string name="login_title">Entre para continuar</string>
-    <string name="login_subtitle">Faça login para ver suas receitas e gerenciar seu plano.</string>
+    <string name="login_title">Acessar conta</string>
+    <string name="login_subtitle">Explore o poder dos chás e transforme sua rotina.</string>
     <string name="login_email_hint">E-mail</string>
     <string name="login_password_hint">Senha</string>
-    <string name="login_button_text">Entrar</string>
-    <string name="login_forgot_password_text">Esqueci minha senha</string>
-    <string name="login_or_continue_with">ou continue com</string>
-    <string name="login_google_button">Continuar com Google</string>
+    <string name="login_button_text">Acessar</string>
+    <string name="login_forgot_password_text">Esqueci a senha</string>
+    <string name="login_or_continue_with">ou entrar com</string>
+    <string name="login_google_button">Google</string>
     <string name="login_no_account">Não tem conta?</string>
-    <string name="login_create_account">Criar conta</string>
+    <string name="login_create_account">Criar conta grátis</string>
 
     <!-- Erros de login -->
     <string name="error_login_invalid_credentials">E-mail ou senha incorretos.</string>
@@ -125,7 +125,7 @@
     <string name="section_categories">O que você busca hoje?</string>
     <string name="cat_calm">Dormir\nBem</string>
     <string name="cat_energy">Energia\nFoco</string>
-    <string name="cat_detox">Detox\nLeveza</string>
+    <string name="cat_detox">Perder\nPeso</string>
     <string name="cat_more">Ver\nTodos</string>
 
 

@@ -17,21 +17,50 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="16dp">
+            android:paddingVertical="8dp">
+
+            <ImageView
+                android:id="@+id/ivAppLogo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_xicara_logo"
+                app:layout_constraintBottom_toTopOf="@+id/card_login"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/tvAppName"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginBottom="32dp"-->
+            <!--                android:letterSpacing="0.02"-->
+            <!--                android:text="@string/app_name"-->
+            <!--                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"-->
+            <!--                android:textColor="@color/color_primary_dark"-->
+            <!--                android:textSize="28sp"-->
+            <!--                android:textStyle="bold"-->
+            <!--                app:layout_constraintBottom_toTopOf="@+id/card_login"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toBottomOf="@id/ivAppLogo" />-->
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:backgroundTint="@color/surface_card_background"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/surface_card_background"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/layoutFooter"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_max="420dp">
+                app:layout_constraintTop_toBottomOf="@id/ivAppLogo"
+                app:layout_constraintWidth_max="400dp">
 
                 <LinearLayout
                     android:id="@+id/container_login"
@@ -39,34 +68,31 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingHorizontal="16dp"
-                    android:paddingVertical="32dp">
+                    android:paddingVertical="24dp">
 
-                    <!-- Título -->
                     <TextView
                         android:id="@+id/tvTitle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="8dp"
                         android:text="@string/login_title"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                         android:textColor="@color/text_primary"
+                        android:textSize="22sp"
                         android:textStyle="bold" />
 
-                    <!-- Subtítulo -->
                     <TextView
                         android:id="@+id/tvSubtitle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="24dp"
+                        android:lineSpacingExtra="4sp"
                         android:text="@string/login_subtitle"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                         android:textColor="@color/text_secondary" />
 
-                    <!-- Campo Email -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilEmail"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -97,13 +123,12 @@
                             android:textSize="16sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Campo Senha -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilPassword"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="8dp"
                         android:hint="@string/login_password_hint"
                         app:boxBackgroundColor="@color/edittext_background"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -130,23 +155,6 @@
                             android:textSize="16sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Botão Login -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnLogin"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginBottom="8dp"
-                        android:backgroundTint="@color/button_primary_background"
-                        android:enabled="false"
-                        android:text="@string/login_button_text"
-                        android:textAllCaps="false"
-                        android:textColor="@color/button_primary_text"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:cornerRadius="12dp" />
-
-                    <!-- Link Recuperar Senha -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnGoToResetPassword"
                         style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -154,14 +162,31 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_marginBottom="16dp"
+                        android:minWidth="0dp"
                         android:minHeight="0dp"
+                        android:paddingHorizontal="4dp"
+                        android:paddingVertical="8dp"
                         android:text="@string/login_forgot_password_text"
                         android:textAllCaps="false"
-                        android:textColor="@color/color_primary_base"
-                        android:textSize="14sp"
-                        app:icon="@drawable/ic_login_recover_pass_24" />
+                        android:textColor="@color/text_secondary"
+                        android:textSize="15sp" />
 
-                    <!-- ProgressBar -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLogin"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginBottom="16dp"
+                        android:backgroundTint="@color/button_primary_background"
+                        android:enabled="false"
+                        android:text="@string/login_button_text"
+                        android:textAllCaps="false"
+                        android:textColor="@color/button_primary_text"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp"
+                        app:elevation="0dp" />
+
                     <ProgressBar
                         android:id="@+id/progressLogin"
                         android:layout_width="32dp"
@@ -172,7 +197,6 @@
                         android:visibility="gone"
                         tools:visibility="gone" />
 
-                    <!-- Divisor -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -184,6 +208,7 @@
                             android:layout_width="0dp"
                             android:layout_height="1dp"
                             android:layout_weight="1"
+                            android:alpha="0.5"
                             android:background="@color/divider" />
 
                         <TextView
@@ -193,22 +218,21 @@
                             android:layout_marginEnd="12dp"
                             android:text="@string/login_or_continue_with"
                             android:textColor="@color/text_secondary"
-                            android:textSize="13sp" />
+                            android:textSize="15sp" />
 
                         <View
                             android:layout_width="0dp"
                             android:layout_height="1dp"
                             android:layout_weight="1"
+                            android:alpha="0.5"
                             android:background="@color/divider" />
                     </LinearLayout>
 
-                    <!-- Botão Google -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnGoogleSignIn"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:layout_marginBottom="24dp"
                         android:backgroundTint="@android:color/white"
                         android:text="@string/login_google_button"
                         android:textAllCaps="false"
@@ -217,44 +241,49 @@
                         app:cornerRadius="12dp"
                         app:icon="@drawable/ic_google_24"
                         app:iconGravity="textStart"
-                        app:iconPadding="8dp"
+                        app:iconPadding="12dp"
                         app:iconTint="@null"
                         app:strokeColor="@color/divider"
                         app:strokeWidth="1dp" />
 
-                    <!-- Texto Criar Conta -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/login_no_account"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnGoToRegister"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="0dp"
-                            android:text="@string/login_create_account"
-                            android:textAllCaps="false"
-                            android:textColor="@color/color_primary_base"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            app:icon="@drawable/ic_login_person_add_24" />
-                    </LinearLayout>
-
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:id="@+id/layoutFooter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_login">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_no_account"
+                    android:textColor="@color/color_primary_dark"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGoToRegister"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/login_create_account"
+                    android:textAllCaps="false"
+                    android:textColor="@color/color_primary_base"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

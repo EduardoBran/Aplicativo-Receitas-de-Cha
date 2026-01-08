@@ -91,17 +91,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         // Navegações de categoria (mantidas igual ao seu código anterior)
-        binding.btnCatCalm.setOnClickListener { navigateToCategory("calmante", "Chás Calmantes") }
+        binding.btnCatCalm.setOnClickListener {
+            navigateToCategory(
+                "calmante",
+                "Calmantes e Relaxamento"
+            )
+        }
         binding.btnCatEnergy.setOnClickListener {
             navigateToCategory(
                 "energizante",
-                "Energia e Foco"
+                "Energia e Foco Total"
             )
         }
         binding.btnCatDetox.setOnClickListener {
             navigateToCategory(
-                "digestivo",
-                "Detox e Digestão"
+                "emagrecimento",
+                "Emagrecimento e Equilíbrio"
             )
         }
         binding.btnCatMore.setOnClickListener { findNavController().navigate(R.id.categoriesFragment) }
@@ -163,7 +168,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             updateDashboardUI(
                 state.sessionState.authState,
                 state.sessionState.planState,
-                state.userName // ✅ Agora passamos o nome vindo da ViewModel
+                state.userName
             )
         }
     }

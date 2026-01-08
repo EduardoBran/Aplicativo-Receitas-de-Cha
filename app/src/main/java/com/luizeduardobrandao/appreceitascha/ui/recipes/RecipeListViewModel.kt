@@ -67,10 +67,10 @@ class RecipeListViewModel @Inject constructor(
 
             result
                 .onSuccess { recipes ->
-                    _uiState.update {
+                    _uiState.update { it ->
                         it.copy(
                             isLoading = false,
-                            recipes = recipes,
+                            recipes = recipes.sortedBy { it.title.lowercase() },
                             errorMessage = null
                         )
                     }
