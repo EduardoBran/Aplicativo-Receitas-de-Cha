@@ -2,6 +2,7 @@ package com.luizeduardobrandao.appreceitascha
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
@@ -10,7 +11,6 @@ import com.luizeduardobrandao.appreceitascha.domain.auth.User
 import com.luizeduardobrandao.appreceitascha.domain.auth.UserSessionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,9 +35,15 @@ class MainViewModel @Inject constructor(
     )
     val sessionState: StateFlow<UserSessionState> = _sessionState.asStateFlow()
 
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val authStateListener = FirebaseAuth.AuthStateListener {
+        // dispara em login/logout/troca de usuário
+        refreshAuthState()
+    }
+
     init {
         observeAuthAndSessionOnce()
-        startPeriodicCheck()
+        firebaseAuth.addAuthStateListener(authStateListener)
     }
 
     /**
@@ -49,29 +55,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Verifica periodicamente apenas o usuário logado.
-     * (Usado para manter ícone de login/perfil atualizado sem bombardear o Firebase.)
-     */
-    private fun startPeriodicCheck() {
-        viewModelScope.launch {
-            var lastUid: String? = null
 
-            while (true) {
-                delay(500)
-
-                val user = authRepository.getCurrentUser()
-                _currentUser.value = user
-
-                val newUid = user?.uid
-                if (newUid != lastUid) {
-                    lastUid = newUid
-                    // Isso atualiza _sessionState também (e vai virar NAO_LOGADO ao deslogar)
-                    refreshAuthAndSession()
-                }
-            }
-        }
-    }
 
     /**
      * Atualiza usuário atual + estado de sessão (auth + plano) de forma sincronizada.
@@ -89,7 +73,7 @@ class MainViewModel @Inject constructor(
         result.onSuccess { state ->
 
             _sessionState.value = state
-        }.onFailure { error ->
+        }.onFailure { _ ->
 
             if (currentUser != null) {
                 _sessionState.value = UserSessionState(
@@ -118,5 +102,10 @@ class MainViewModel @Inject constructor(
 
     fun isUserLoggedIn(): Boolean {
         return _currentUser.value != null
+    }
+
+    override fun onCleared() {
+        firebaseAuth.removeAuthStateListener(authStateListener)
+        super.onCleared()
     }
 }
