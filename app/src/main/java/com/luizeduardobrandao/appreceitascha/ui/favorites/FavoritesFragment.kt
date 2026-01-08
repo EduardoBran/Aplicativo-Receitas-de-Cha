@@ -48,6 +48,12 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
         observeUiState()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Força o recarregamento da lista sempre que a tela se torna visível novamente.
+        viewModel.loadFavorites()
+    }
+
     private fun setupRecyclerView() {
         // Agora passamos também a lógica 'canOpenRecipe'
         adapter = FavoritesAdapter(
@@ -130,14 +136,12 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
         isShowingLoadingOverlay = false
         lottieController.hide()
 
-        // Verifica se a lista está vazia
-        val isEmpty = state.recipes.isEmpty()
+        val isEmpty = state.favoriteListItems.isEmpty()
 
-        // Alterna visibilidade
         binding.recyclerViewFavorites.isVisible = !isEmpty
         binding.textFavoritesEmpty.isVisible = isEmpty
 
-        adapter.submitList(state.recipes)
+        adapter.submitList(state.favoriteListItems)
 
         state.errorMessage?.let {
             SnackbarFragment.showError(binding.root, it)

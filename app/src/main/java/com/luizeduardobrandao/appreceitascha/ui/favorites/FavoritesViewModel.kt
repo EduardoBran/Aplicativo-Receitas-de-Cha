@@ -8,6 +8,7 @@ import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanType
 import com.luizeduardobrandao.appreceitascha.domain.auth.UserSessionState
 import com.luizeduardobrandao.appreceitascha.domain.favorites.FavoritesRepository
+import com.luizeduardobrandao.appreceitascha.domain.recipes.Category
 import com.luizeduardobrandao.appreceitascha.domain.recipes.Recipe
 import com.luizeduardobrandao.appreceitascha.domain.recipes.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -78,7 +79,7 @@ class FavoritesViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        recipes = emptyList(),
+                        favoriteListItems = emptyList(),
                         isFeatureAvailable = false,
                         errorMessage = null
                     )
@@ -93,7 +94,7 @@ class FavoritesViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            recipes = emptyList(),
+                            favoriteListItems = emptyList(),
                             isFeatureAvailable = true,
                             errorMessage = null
                         )
@@ -118,10 +119,21 @@ class FavoritesViewModel @Inject constructor(
                         }
                 }
 
-                _uiState.update { it ->
+                // Carregamos as categorias para pegar os nomes
+                val categoriesResult = recipeRepository.getCategories()
+                val categories = categoriesResult.getOrNull() ?: emptyList()
+
+                val groupedList = if (loadedRecipes.isEmpty()) {
+                    emptyList()
+                } else {
+                    buildGroupedFavorites(loadedRecipes, categories)
+                }
+
+                // CORREÇÃO 3: Removido o "it ->" redundante
+                _uiState.update {
                     it.copy(
                         isLoading = false,
-                        recipes = loadedRecipes.sortedBy { it.title.lowercase() },
+                        favoriteListItems = groupedList,
                         isFeatureAvailable = true,
                         errorMessage = if (hadError) {
                             "FAVORITES_PARTIAL_LOAD_ERROR"
@@ -134,13 +146,50 @@ class FavoritesViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        recipes = emptyList(),
+                        favoriteListItems = emptyList(),
                         isFeatureAvailable = true,
                         errorMessage = throwable.message ?: "FAVORITES_GENERIC_ERROR"
                     )
                 }
             }
         }
+    }
+
+    private fun buildGroupedFavorites(
+        recipes: List<Recipe>,
+        categories: List<Category>
+    ): List<FavoriteListItem> {
+        val uiList = mutableListOf<FavoriteListItem>()
+
+        // Mapa para pegar o nome da categoria pelo ID
+        val catMap = categories.associateBy { it.id }
+
+        // Agrupa as receitas favoritas por ID da categoria
+        val recipesByCatId = recipes.groupBy { it.categoryId }
+
+        // Ordena as categorias por Nome
+        val sortedCategories = recipesByCatId.keys
+            .mapNotNull { catId -> catMap[catId] }
+            .sortedBy { it.name }
+
+        sortedCategories.forEachIndexed { index, category ->
+            val catRecipes = recipesByCatId[category.id] ?: return@forEachIndexed
+
+            // Ordena as receitas dentro da categoria
+            val sortedRecipes = catRecipes.sortedBy { it.title.lowercase() }
+
+            // Lógica do Divider: Não mostra no primeiro grupo
+            val showDivider = index > 0
+
+            // Adiciona Header
+            uiList.add(FavoriteListItem.Header(category.name, showDivider))
+
+            // Adiciona Receitas
+            sortedRecipes.forEach { recipe ->
+                uiList.add(FavoriteListItem.RecipeItem(recipe))
+            }
+        }
+        return uiList
     }
 
     /**
@@ -165,10 +214,14 @@ class FavoritesViewModel @Inject constructor(
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
     }
+}
 
-    fun clearLastRemovedRecipeTitle() {
-        _uiState.update { it.copy(lastRemovedRecipeTitle = null) }
-    }
+/**
+ * Define os tipos de itens para a lista de favoritos: Cabeçalho ou Receita.
+ */
+sealed class FavoriteListItem {
+    data class Header(val categoryName: String, val showDivider: Boolean) : FavoriteListItem()
+    data class RecipeItem(val recipe: Recipe) : FavoriteListItem()
 }
 
 /**
@@ -176,7 +229,7 @@ class FavoritesViewModel @Inject constructor(
  */
 data class FavoritesUiState(
     val isLoading: Boolean = false,
-    val recipes: List<Recipe> = emptyList(),
+    val favoriteListItems: List<FavoriteListItem> = emptyList(),
     val isFeatureAvailable: Boolean = false,
     val sessionState: UserSessionState,
     val errorMessage: String? = null,
