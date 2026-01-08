@@ -12,6 +12,8 @@ import com.luizeduardobrandao.appreceitascha.domain.recipes.Category
 import com.luizeduardobrandao.appreceitascha.domain.recipes.Recipe
 import com.luizeduardobrandao.appreceitascha.domain.recipes.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.Collator
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -161,6 +163,11 @@ class FavoritesViewModel @Inject constructor(
     ): List<FavoriteListItem> {
         val uiList = mutableListOf<FavoriteListItem>()
 
+        // 1. Configura a Ordenação
+        val collator = Collator.getInstance(Locale.getDefault()).apply {
+            strength = Collator.SECONDARY // Ignora case e acentos na comparação
+        }
+
         // Mapa para pegar o nome da categoria pelo ID
         val catMap = categories.associateBy { it.id }
 
@@ -175,8 +182,10 @@ class FavoritesViewModel @Inject constructor(
         sortedCategories.forEachIndexed { index, category ->
             val catRecipes = recipesByCatId[category.id] ?: return@forEachIndexed
 
-            // Ordena as receitas dentro da categoria
-            val sortedRecipes = catRecipes.sortedBy { it.title.lowercase() }
+            // 2. Ordena as receitas usando o Collator
+            val sortedRecipes = catRecipes.sortedWith { a, b ->
+                collator.compare(a.title, b.title)
+            }
 
             // Lógica do Divider: Não mostra no primeiro grupo
             val showDivider = index > 0

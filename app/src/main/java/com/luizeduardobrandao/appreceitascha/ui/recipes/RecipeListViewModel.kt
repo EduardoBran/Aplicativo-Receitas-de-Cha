@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import java.text.Collator
+import java.util.Locale
 
 /**
  * ViewModel responsável pela lista de receitas de uma categoria.
@@ -67,10 +69,19 @@ class RecipeListViewModel @Inject constructor(
 
             result
                 .onSuccess { recipes ->
-                    _uiState.update { it ->
+                    val collator = Collator.getInstance(Locale.getDefault()).apply {
+                        // Ignora maiúsc/minúsc, mas considera acentos (bom para PT-BR)
+                        strength = Collator.SECONDARY
+                    }
+
+                    val sorted = recipes.sortedWith { a, b ->
+                        collator.compare(a.title, b.title)
+                    }
+
+                    _uiState.update {
                         it.copy(
                             isLoading = false,
-                            recipes = recipes.sortedBy { it.title.lowercase() },
+                            recipes = sorted,
                             errorMessage = null
                         )
                     }
