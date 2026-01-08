@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_background">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skAvatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:alpha="0.08"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skTitle"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="16dp"
+        android:alpha="0.08"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="9dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toStartOf="@id/skAvatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/skAvatar" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="14dp"
+        android:layout_marginTop="8dp"
+        android:alpha="0.08"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="7dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="@id/skTitle"
+        app:layout_constraintStart_toStartOf="@id/skTitle"
+        app:layout_constraintTop_toBottomOf="@id/skTitle" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skSearch"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:alpha="0.06"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/skAvatar" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skBanner"
+        android:layout_width="0dp"
+        android:layout_height="156dp"
+        android:layout_marginTop="24dp"
+        android:alpha="0.06"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="@id/skSearch"
+        app:layout_constraintStart_toStartOf="@id/skSearch"
+        app:layout_constraintTop_toBottomOf="@id/skSearch" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skSectionTitle"
+        android:layout_width="140dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="32dp"
+        android:alpha="0.08"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="@id/skBanner"
+        app:layout_constraintTop_toBottomOf="@id/skBanner" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skCard1"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="4dp"
+        android:alpha="0.06"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toStartOf="@id/skCard2"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="@id/skBanner"
+        app:layout_constraintTop_toBottomOf="@id/skSectionTitle" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skCard2"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:alpha="0.06"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toStartOf="@id/skCard3"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/skCard1"
+        app:layout_constraintTop_toTopOf="@id/skCard1" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skCard3"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:alpha="0.06"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toStartOf="@id/skCard4"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/skCard2"
+        app:layout_constraintTop_toTopOf="@id/skCard1" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/skCard4"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="4dp"
+        android:alpha="0.06"
+        app:cardBackgroundColor="@color/text_primary"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="@id/skBanner"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/skCard3"
+        app:layout_constraintTop_toTopOf="@id/skCard1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

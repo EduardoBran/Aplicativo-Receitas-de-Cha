@@ -2,6 +2,7 @@ package com.luizeduardobrandao.appreceitascha.ui.home
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewStub
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,8 +15,9 @@ import com.luizeduardobrandao.appreceitascha.databinding.FragmentHomeBinding
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
-import com.luizeduardobrandao.appreceitascha.ui.common.animation.LottieLoadingController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -25,19 +27,83 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val binding get() = _binding!!
 
     private val homeViewModel: HomeViewModel by viewModels()
-    private lateinit var lottieController: LottieLoadingController
 
-    private var isShowingLoadingOverlay: Boolean = false
-    private var loadingStartTime: Long = 0L
+    private var hasRenderedOnce: Boolean = false
+    private var skeletonView: View? = null
+
+    private var isShowingLoadingUi: Boolean = false
+    private var loadingUiStartTime: Long = 0L
+    private var finishJob: Job? = null
+
+    private fun ensureSkeletonVisible() {
+        if (_binding == null) return
+
+        if (skeletonView == null) {
+            val stub: ViewStub = binding.homeSkeletonStub
+            skeletonView = stub.inflate()
+        }
+
+        skeletonView?.apply {
+            alpha = 1f
+            visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideSkeletonImmediate() {
+        skeletonView?.visibility = View.GONE
+    }
+
+    private fun crossfadeSkeletonToContent() {
+        val sk = skeletonView ?: run {
+            // fallback seguro
+            binding.homeContentScroll.visibility = View.VISIBLE
+            binding.homeContentScroll.alpha = 1f
+            return
+        }
+
+        // prepara conteúdo “por trás”
+        binding.homeContentScroll.apply {
+            alpha = 0f
+            visibility = View.VISIBLE
+        }
+
+        sk.animate().cancel()
+        binding.homeContentScroll.animate().cancel()
+
+        sk.animate()
+            .alpha(0f)
+            .setDuration(SKELETON_CROSSFADE_MS)
+            .withEndAction {
+                sk.visibility = View.GONE
+                sk.alpha = 1f
+            }
+            .start()
+
+        binding.homeContentScroll.animate()
+            .alpha(1f)
+            .setDuration(SKELETON_CROSSFADE_MS)
+            .start()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_HAS_RENDERED_ONCE, hasRenderedOnce)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
 
-        lottieController = LottieLoadingController(
-            overlay = binding.homeLoadingOverlay,
-            lottieView = binding.lottieHome
-        )
+        hasRenderedOnce = savedInstanceState?.getBoolean(KEY_HAS_RENDERED_ONCE, false) ?: false
+
+        // Cold start: mostra skeleton, esconde conteúdo (zero flash)
+        if (!hasRenderedOnce) {
+            ensureSkeletonVisible()
+            binding.homeContentScroll.visibility = View.INVISIBLE
+        } else {
+            // Se veio de volta (instância preservada), conteúdo pode ficar visível até loading começar
+            binding.homeContentScroll.visibility = View.VISIBLE
+        }
 
         setupListeners()
         observeState()
@@ -59,38 +125,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             val planState = state?.planState ?: PlanState.SEM_PLANO
 
             when (authState) {
-                AuthState.NAO_LOGADO -> {
-                    findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-                }
+                AuthState.NAO_LOGADO -> findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+                AuthState.LOGADO if planState == PlanState.SEM_PLANO -> findNavController().navigate(
+                    R.id.plansFragment
+                )
 
-                AuthState.LOGADO if planState == PlanState.SEM_PLANO -> {
-                    findNavController().navigate(R.id.plansFragment)
-                }
-
-                else -> {
-                    findNavController().navigate(R.id.categoriesFragment)
-                }
+                else -> findNavController().navigate(R.id.categoriesFragment)
             }
         }
 
-        // --- ✅ CORREÇÃO 2: Navegação do Ícone de Perfil ---
         binding.ivProfileAvatar.setOnClickListener {
             val state = homeViewModel.uiState.value.sessionState
-
             if (state?.authState == AuthState.NAO_LOGADO) {
-                // Visitante -> Vai para Login
                 findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
             } else {
-                // Logado (Free ou Premium) -> Vai para Perfil (Modo Edição)
-                val args = Bundle().apply {
-                    putBoolean("isEditMode", true)
-                }
-                // Navega para o RegisterFragment com argumentos
+                val args = Bundle().apply { putBoolean("isEditMode", true) }
                 findNavController().navigate(R.id.registerFragment, args)
             }
         }
 
-        // Navegações de categoria (mantidas igual ao seu código anterior)
         binding.btnCatCalm.setOnClickListener {
             navigateToCategory(
                 "calmante",
@@ -133,61 +186,80 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun handleLoadingState(state: HomeUiState) {
         if (_binding == null) return
 
+        // cancela qualquer finalização pendente ao receber novo estado
+        finishJob?.cancel()
+        finishJob = null
+
         if (state.isLoading) {
-            if (!isShowingLoadingOverlay) {
-                isShowingLoadingOverlay = true
-                loadingStartTime = System.currentTimeMillis()
-                lottieController.showLoading()
+            // Sempre que estiver carregando:
+            // - skeleton visível
+            // - conteúdo invisível (evita mostrar estado antigo por 1 frame)
+            ensureSkeletonVisible()
+            binding.homeContentScroll.visibility = View.INVISIBLE
+
+            if (!isShowingLoadingUi) {
+                isShowingLoadingUi = true
+                loadingUiStartTime = System.currentTimeMillis()
             }
             return
         }
 
-        if (isShowingLoadingOverlay) {
-            val elapsed = System.currentTimeMillis() - loadingStartTime
-            if (elapsed < MIN_HOME_LOADING_LOTTIE_MS) {
-                val delay = MIN_HOME_LOADING_LOTTIE_MS - elapsed
-                binding.root.postDelayed({
-                    if (!isAdded || _binding == null) return@postDelayed
-                    finishLoadingAndRender(state)
-                }, delay)
-                return
+        // Se saiu do loading, respeita um tempo mínimo do skeleton para evitar flicker
+        val elapsed =
+            if (isShowingLoadingUi) (System.currentTimeMillis() - loadingUiStartTime) else Long.MAX_VALUE
+        val remaining = MIN_SKELETON_VISIBLE_MS - elapsed
+
+        if (isShowingLoadingUi && remaining > 0) {
+            finishJob = viewLifecycleOwner.lifecycleScope.launch {
+                delay(remaining)
+                if (!isAdded || _binding == null) return@launch
+                finishLoadingAndRender(state)
             }
+            return
         }
+
         finishLoadingAndRender(state)
     }
 
     private fun finishLoadingAndRender(state: HomeUiState) {
-        isShowingLoadingOverlay = false
-        lottieController.hide()
+        if (_binding == null) return
 
         state.errorMessage?.let { msg ->
             SnackbarFragment.showError(binding.root, msg)
         }
 
-        if (state.sessionState != null) {
+        state.sessionState?.let { ss ->
             updateDashboardUI(
-                state.sessionState.authState,
-                state.sessionState.planState,
-                state.userName
+                authState = ss.authState,
+                planState = ss.planState,
+                userName = state.userName
             )
         }
+
+        // Cold start: crossfade skeleton -> conteúdo
+        if (!hasRenderedOnce) {
+            hasRenderedOnce = true
+            isShowingLoadingUi = false
+            crossfadeSkeletonToContent()
+            return
+        }
+
+        // Refresh: some skeleton e mostra conteúdo (tudo já renderizado “por trás”)
+        isShowingLoadingUi = false
+        hideSkeletonImmediate()
+        binding.homeContentScroll.alpha = 1f
+        binding.homeContentScroll.visibility = View.VISIBLE
     }
 
-    private fun updateDashboardUI(
-        authState: AuthState,
-        planState: PlanState,
-        userName: String?
-    ) {
+    private fun updateDashboardUI(authState: AuthState, planState: PlanState, userName: String?) {
         val context = requireContext()
         val isGuest = authState == AuthState.NAO_LOGADO
         val isPremium = authState == AuthState.LOGADO && planState == PlanState.COM_PLANO
 
-        // --- HEADER ---
         if (isGuest) {
             binding.tvGreetingTitle.text = getString(R.string.home_hello_guest)
             binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_guest)
 
-            // Ícone Padrão Visitante
             binding.ivProfileAvatar.setImageResource(R.drawable.ic_account_circle_24)
             binding.ivProfileAvatar.setColorFilter(
                 ContextCompat.getColor(
@@ -197,12 +269,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             )
             binding.ivProfileAvatar.alpha = 0.6f
         } else {
-            // ✅ CORREÇÃO 1: Usa o nome do usuário ou "Membro" como fallback
             val displayName = if (!userName.isNullOrBlank()) userName else "Membro"
             binding.tvGreetingTitle.text = getString(R.string.home_hello_user, displayName)
 
-            // ✅ CORREÇÃO 3: Padronização do Ícone
-            // Mantemos SEMPRE o ic_account_circle_24 para consistência
             binding.ivProfileAvatar.setImageResource(R.drawable.ic_account_circle_24)
             binding.ivProfileAvatar.alpha = 1f
 
@@ -214,8 +283,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         R.color.color_primary_base
                     )
                 )
-
-                // Premium: Ícone DOURADO
                 binding.ivProfileAvatar.setColorFilter(
                     ContextCompat.getColor(
                         context,
@@ -230,8 +297,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         R.color.text_secondary
                     )
                 )
-
-                // Free: Ícone VERDE PADRÃO
                 binding.ivProfileAvatar.setColorFilter(
                     ContextCompat.getColor(
                         context,
@@ -241,7 +306,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         }
 
-        // --- BANNER HERO (Lógica Mantida) ---
         if (isGuest) {
             binding.cardBanner.setCardBackgroundColor(
                 ContextCompat.getColor(
@@ -302,12 +366,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     override fun onDestroyView() {
-        if (::lottieController.isInitialized) lottieController.clear()
+        finishJob?.cancel()
+        finishJob = null
+
+        // cancela animações para não segurar referência da View
+        skeletonView?.animate()?.cancel()
+        if (_binding != null) {
+            binding.homeContentScroll.animate().cancel()
+        }
+
+        skeletonView = null
         _binding = null
         super.onDestroyView()
     }
 
     companion object {
-        private const val MIN_HOME_LOADING_LOTTIE_MS: Long = 1000L
+        private const val KEY_HAS_RENDERED_ONCE = "KEY_HAS_RENDERED_ONCE"
+        private const val MIN_SKELETON_VISIBLE_MS: Long = 220L
+        private const val SKELETON_CROSSFADE_MS: Long = 180L
     }
 }

@@ -55,8 +55,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-
-
     /**
      * Atualiza usuário atual + estado de sessão (auth + plano) de forma sincronizada.
      * Chamado:

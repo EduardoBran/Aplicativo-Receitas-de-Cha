@@ -125,4 +125,9 @@
     <color name="colorError">@color/text_error</color>
     <color name="colorOnError">@color/color_on_primary_base</color>
     <color name="warning_color">#FB9908</color> <!-- Laranja para avisos -->
+
+    <!-- Card HomeFragment Icons -->
+    <color name="card_sleep">#5E35B1</color>
+    <color name="card_energy">#F57C00</color>
+    <color name="card_weight">#22A06B</color>
 </resources>

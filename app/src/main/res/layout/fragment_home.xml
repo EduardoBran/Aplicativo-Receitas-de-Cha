@@ -9,6 +9,7 @@
     tools:context=".ui.home.HomeFragment">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/homeContentScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -66,9 +67,9 @@
                 app:cardBackgroundColor="#F0F4F3"
                 app:cardCornerRadius="25dp"
                 app:cardElevation="0dp"
+                app:layout_constraintTop_toBottomOf="@id/tvGreetingSubtitle"
                 app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp"
-                app:layout_constraintTop_toBottomOf="@id/tvGreetingSubtitle">
+                app:strokeWidth="1dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -188,8 +189,8 @@
                     android:text="@string/cat_calm"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp"
-                    app:drawableTint="@color/color_primary_light"
-                    app:drawableTopCompat="@drawable/ic_bedtime_24" />
+                    app:drawableTint="@color/card_sleep"
+                    app:drawableTopCompat="@drawable/ic_bedtime_stars_24" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -217,8 +218,8 @@
                     android:text="@string/cat_energy"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp"
-                    app:drawableTint="@color/warning_color"
-                    app:drawableTopCompat="@drawable/ic_whatshot_24" />
+                    app:drawableTint="@color/card_energy"
+                    app:drawableTopCompat="@drawable/ic_rocket_launch_24" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -246,8 +247,8 @@
                     android:text="@string/cat_detox"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp"
-                    app:drawableTint="@color/color_primary_base"
-                    app:drawableTopCompat="@drawable/ic_spa_24" />
+                    app:drawableTint="@color/card_weight"
+                    app:drawableTopCompat="@drawable/ic_monitor_weight_24" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -283,24 +284,12 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <FrameLayout
-        android:id="@+id/homeLoadingOverlay"
+    <ViewStub
+        android:id="@+id/homeSkeletonStub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/app_background"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone"
-        tools:visibility="gone">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieHome"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/lottie_cup_of_tea" />
-    </FrameLayout>
+        android:inflatedId="@+id/homeSkeleton"
+        android:layout="@layout/view_home_skeleton"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -123,4 +123,9 @@
 
     <color name="warning_color">#FB9908</color> <!-- Laranja para avisos -->
 
+    <!-- Card HomeFragment Icons -->
+    <color name="card_sleep">#9575CD</color>
+    <color name="card_energy">#FFB74D</color>
+    <color name="card_weight">#86EFAC</color>
+
 </resources>
