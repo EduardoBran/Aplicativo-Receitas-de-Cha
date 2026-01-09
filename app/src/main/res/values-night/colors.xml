@@ -128,4 +128,14 @@
     <color name="card_energy">#FFB74D</color>
     <color name="card_weight">#86EFAC</color>
 
+    <!-- Card CategoryFragment Icons -->
+    <color name="category_icon_background">#1C3A32</color>
+    <color name="category_icon_tint">@color/color_primary_light</color>
+
+    <!-- RecipeDetailFragment -->
+    <color name="bg_card_benefits">#152D25</color>
+    <color name="bg_card_warning">#2E2208</color>
+    <color name="detail_section_icon_tint">@color/color_primary_light</color>
+    <color name="color_warning_accent">#FFB74D</color>
+    <color name="color_favorite_active">#F48FB1</color>
 </resources>

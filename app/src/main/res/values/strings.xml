@@ -146,17 +146,20 @@
 
 
     <!-- ======== RecipesDetailFragment ========-->
-    <string name="recipe_detail_section_short_description">Resumo</string>
-    <string name="recipe_detail_section_modo_preparo">Modo de preparo</string>
-    <string name="recipe_detail_section_beneficios">Benefícios</string>
-    <string name="recipe_detail_section_observacoes">Observações e cuidados</string>
-    <string name="recipe_detail_error_generic">
-        Ocorreu um erro ao carregar os detalhes da receita. Tente novamente.
-    </string>
+    <string name="recipe_detail_section_benefits">Benefícios</string>
+    <string name="recipe_detail_section_preparation">Modo de Preparo</string>
+    <string name="recipe_detail_section_notes">Observações</string>
+
+    <string name="cd_decorative_tea_bg">Ilustração decorativa de chá ao fundo</string>
+    <string name="cd_icon_benefits">Ícone ilustrativo de benefícios</string>
+    <string name="cd_icon_preparation">Ícone ilustrativo de relógio</string>
+    <string name="cd_icon_notes">Ícone ilustrativo de informação</string>
+    <string name="cd_favorite_add">Adicionar aos favoritos</string>
+    <string name="cd_favorite_remove">Remover dos favoritos</string>
 
     <!-- Favoritos na tela de detalhe -->
     <string name="recipe_favorite_requires_plan_or_login">
-        Para favoritar receitas, você precisa estar logado e ter um plano ativo.
+        Para favoritar receitas, você precisa estar logado e ter acesso vitalício.
     </string>
     <string name="recipe_favorite_add_content_description">
         Adicionar receita aos favoritos

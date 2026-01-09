@@ -1,8 +1,11 @@
 package com.luizeduardobrandao.appreceitascha.ui.search.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -17,6 +20,8 @@ class SearchAdapter(
     private val canOpenRecipe: (Recipe) -> Boolean,
     private val onRecipeClick: (Recipe) -> Unit
 ) : ListAdapter<SearchListItem, RecyclerView.ViewHolder>(SearchDiffCallback()) {
+
+    private var lastAnimatedPosition = -1
 
     companion object {
         const val TYPE_HEADER = 0
@@ -48,6 +53,21 @@ class SearchAdapter(
             is SearchListItem.Header -> (holder as HeaderViewHolder).bind(item)
             is SearchListItem.RecipeItem -> (holder as RecipeViewHolder).bind(item.recipe)
         }
+        setEnterAnimation(holder.itemView, position)
+    }
+
+    private fun setEnterAnimation(viewToAnimate: View, position: Int) {
+        if (position > lastAnimatedPosition) {
+            val animation =
+                AnimationUtils.loadAnimation(viewToAnimate.context, android.R.anim.slide_in_left)
+            animation.duration = 350
+            viewToAnimate.startAnimation(animation)
+            lastAnimatedPosition = position
+        }
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        holder.itemView.clearAnimation()
     }
 
     // --- ViewHolders ---
@@ -86,7 +106,24 @@ class SearchAdapter(
             binding.imageRecipeLock.setImageResource(iconRes)
             binding.imageRecipeLock.contentDescription = desc
 
-            binding.cardRecipe.setOnClickListener { onRecipeClick(recipe) }
+            setupClickAnimation(binding.cardRecipe, recipe)
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        private fun setupClickAnimation(view: View, recipe: Recipe) {
+            view.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start()
+                    }
+
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
+                    }
+                }
+                false
+            }
+            view.setOnClickListener { onRecipeClick(recipe) }
         }
     }
 }

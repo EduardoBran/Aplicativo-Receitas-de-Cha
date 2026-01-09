@@ -5,10 +5,9 @@
     android:id="@+id/cardCategory"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
+    android:layout_marginBottom="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
     app:cardBackgroundColor="@color/surface_card_background"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
@@ -18,43 +17,64 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="80dp"
-        android:padding="16dp">
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/imageCategoryIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_circle_icon_category"
+            android:contentDescription="@null"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/category_icon_tint"
+            tools:src="@drawable/ic_spa_24" />
 
         <TextView
             android:id="@+id/textCategoryName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
-            android:maxLines="2"
-            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:maxLines="1"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
             android:textColor="@color/colorOnSurface"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/textCategoryDescription"
             app:layout_constraintEnd_toStartOf="@id/imageCategoryArrow"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageCategoryIcon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Chás Energizantes e Termogênicos" />
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Imunidade e Proteção Natural" />
 
         <TextView
             android:id="@+id/textCategoryDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
+            android:lineHeight="16sp"
             android:maxLines="3"
-            android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="@color/colorOnSurface"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/imageCategoryArrow"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageCategoryIcon"
             app:layout_constraintTop_toBottomOf="@id/textCategoryName"
-            app:layout_goneMarginTop="0dp"
-            tools:text="Encontre paz e tranquilidade através de receitas que acalmam a mente e nutrem o espírito." />
+            tools:text="Receitas para foco e disposição que trocam o cansaço por produtividade." />
 
         <ImageView
             android:id="@+id/imageCategoryArrow"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:contentDescription="@string/categories_item_icon_go_content_description"
-            android:padding="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

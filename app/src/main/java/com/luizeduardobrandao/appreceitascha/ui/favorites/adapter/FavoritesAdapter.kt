@@ -1,8 +1,11 @@
 package com.luizeduardobrandao.appreceitascha.ui.favorites.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -18,6 +21,8 @@ class FavoritesAdapter(
     private val onOpenRecipe: (Recipe) -> Unit
 ) : ListAdapter<FavoriteListItem, RecyclerView.ViewHolder>(FavoritesDiffCallback) {
 
+    private var lastAnimatedPosition = -1
+
     companion object {
         const val TYPE_HEADER = 0
         const val TYPE_ITEM = 1
@@ -32,7 +37,6 @@ class FavoritesAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TYPE_HEADER) {
-            // Reutiliza o layout de header da busca
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_search_header, parent, false)
             HeaderViewHolder(view)
@@ -49,6 +53,21 @@ class FavoritesAdapter(
             is FavoriteListItem.Header -> (holder as HeaderViewHolder).bind(item)
             is FavoriteListItem.RecipeItem -> (holder as RecipeViewHolder).bind(item.recipe)
         }
+        setEnterAnimation(holder.itemView, position)
+    }
+
+    private fun setEnterAnimation(viewToAnimate: View, position: Int) {
+        if (position > lastAnimatedPosition) {
+            val animation =
+                AnimationUtils.loadAnimation(viewToAnimate.context, android.R.anim.slide_in_left)
+            animation.duration = 350
+            viewToAnimate.startAnimation(animation)
+            lastAnimatedPosition = position
+        }
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        holder.itemView.clearAnimation()
     }
 
     // --- ViewHolders ---
@@ -81,7 +100,24 @@ class FavoritesAdapter(
             }
             binding.imageFavoriteLock.setImageResource(iconRes)
 
-            binding.cardFavoriteRoot.setOnClickListener {
+            setupClickAnimation(binding.cardFavoriteRoot, recipe)
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        private fun setupClickAnimation(view: View, recipe: Recipe) {
+            view.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start()
+                    }
+
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
+                    }
+                }
+                false
+            }
+            view.setOnClickListener {
                 onOpenRecipe(recipe)
             }
         }

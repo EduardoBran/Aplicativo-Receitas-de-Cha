@@ -1,9 +1,9 @@
 package com.luizeduardobrandao.appreceitascha.ui.recipes
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,111 +17,164 @@ import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-/**
- * Tela que exibe os detalhes de uma receita específica.
- *
- * - Carrega a receita pelo recipeId recebido via Safe Args.
- * - Mostra todos os textos (resumo, modo de preparo, benefícios, observações).
- * - Ícone de favorito no canto superior direito:
- *      • plus  → não favoritado
- *      • minus → já favoritado
- *   Apenas usuários LOGADO + COM_PLANO devem conseguir favoritar.
- */
 @AndroidEntryPoint
-class RecipeDetailFragment : Fragment() {
+class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
 
     private var _binding: FragmentRecipeDetailBinding? = null
-    private val binding: FragmentRecipeDetailBinding
-        get() = _binding!!
+    private val binding get() = _binding!!
 
     private val viewModel: RecipeDetailViewModel by viewModels()
     private val args: RecipeDetailFragmentArgs by navArgs()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentRecipeDetailBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentRecipeDetailBinding.bind(view)
 
-        observeUiState()
-        setupFavoriteClick()
+        // Prepara animações de entrada
+        prepareEntranceAnimations()
 
-        // Carrega a receita
+        // Carrega a receita uma única vez ao criar a view
         viewModel.loadRecipe(args.recipeId)
 
-        // Atualiza estado de sessão (auth + plano) e sincroniza favorito
+        setupObservers()
+        setupListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
         viewModel.refreshSessionState()
         viewModel.syncFavoriteState()
     }
 
     /**
-     * Clique no ícone de favorito:
-     * - Quem decide se pode ou não é o ViewModel (regra de negócio + sessão).
+     * Retorna a View raiz da Activity para ancorar o Snackbar.
+     * Isso corrige o problema de posição, evitando o comportamento flutuante
+     * padrão do CoordinatorLayout e garantindo que fique idêntico ao RecipeListFragment.
      */
-    private fun setupFavoriteClick() {
-        binding.imageRecipeFavorite.setOnClickListener {
+    private fun getSnackbarAnchorView(): View {
+        return requireActivity().findViewById(android.R.id.content) ?: requireView()
+    }
+
+    private fun prepareEntranceAnimations() {
+        binding.textShortDescription.alpha = 0f
+        binding.textShortDescription.translationY = 50f
+
+        binding.cardBenefits.alpha = 0f
+        binding.cardBenefits.translationY = 100f
+
+        binding.cardPrep.alpha = 0f
+        binding.cardPrep.translationY = 100f
+
+        binding.cardNotes.alpha = 0f
+        binding.cardNotes.translationY = 100f
+
+        binding.fabFavorite.scaleX = 0f
+        binding.fabFavorite.scaleY = 0f
+    }
+
+    private fun runEntranceAnimations() {
+        val interpolator = OvershootInterpolator()
+
+        binding.fabFavorite.animate()
+            .scaleX(1f).scaleY(1f)
+            .setDuration(400)
+            .setInterpolator(interpolator)
+            .setStartDelay(300)
+            .start()
+
+        binding.textShortDescription.animate()
+            .alpha(1f).translationY(0f)
+            .setDuration(500)
+            .setStartDelay(100)
+            .start()
+
+        binding.cardBenefits.animate()
+            .alpha(1f).translationY(0f)
+            .setDuration(500)
+            .setStartDelay(200)
+            .start()
+
+        binding.cardPrep.animate()
+            .alpha(1f).translationY(0f)
+            .setDuration(500)
+            .setStartDelay(300)
+            .start()
+
+        binding.cardNotes.animate()
+            .alpha(1f).translationY(0f)
+            .setDuration(500)
+            .setStartDelay(400)
+            .start()
+    }
+
+    private fun setupListeners() {
+        binding.fabFavorite.setOnClickListener {
+            // Micro-interação de "Pulo"
+            binding.fabFavorite.animate()
+                .scaleX(1.2f).scaleY(1.2f)
+                .setDuration(100)
+                .withEndAction {
+                    binding.fabFavorite.animate()
+                        .scaleX(1f).scaleY(1f)
+                        .setDuration(100)
+                        .start()
+                }
+                .start()
+
             viewModel.toggleFavorite()
         }
     }
 
-    private fun observeUiState() {
+    private fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progressBarRecipeDetail.isVisible = state.isLoading
 
-                    val recipe = state.recipe
-                    binding.scrollRecipeContent.isVisible =
-                        recipe != null && !state.isLoading
-
-                    if (recipe != null) {
+                    state.recipe?.let { recipe ->
                         binding.textRecipeTitle.text = recipe.title
                         binding.textRecipeSubtitle.text = recipe.subtitle
-                        binding.textRecipeShortDescription.text = recipe.shortDescription
+                        binding.textShortDescription.text = recipe.shortDescription
                         binding.textRecipeModoPreparo.text = recipe.modoDePreparo
                         binding.textRecipeBeneficios.text = recipe.beneficios
                         binding.textRecipeObservacoes.text = recipe.observacoes
 
-                        updateFavoriteIcon(state.isFavorite)
+                        // Executa animação apenas se ainda não foi exibida (alpha 0)
+                        if (binding.cardBenefits.alpha == 0f) {
+                            runEntranceAnimations()
+                        }
                     }
 
-                    // Erros / avisos
-                    state.errorMessage?.let { error ->
-                        when (error) {
-                            RecipeDetailViewModel.ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN -> {
-                                SnackbarFragment.showWarning(
-                                    requireView(),
-                                    getString(R.string.recipe_favorite_requires_plan_or_login)
-                                )
-                            }
+                    updateFavoriteIcon(state.isFavorite)
 
-                            else -> {
-                                SnackbarFragment.showError(
-                                    requireView(),
-                                    getString(R.string.recipe_detail_error_generic)
-                                )
-                            }
+                    state.errorMessage?.let { errorMsg ->
+                        // SOLUÇÃO 1: Verifica se é o erro de plano para mostrar LARANJA (Warning)
+                        // SOLUÇÃO 2: Usa getSnackbarAnchorView() para fixar no rodapé
+                        if (errorMsg == RecipeDetailViewModel.ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN) {
+                            SnackbarFragment.showWarning(
+                                getSnackbarAnchorView(),
+                                getString(R.string.recipe_favorite_requires_plan_or_login)
+                            )
+                        } else {
+                            SnackbarFragment.showError(
+                                getSnackbarAnchorView(),
+                                errorMsg
+                            )
                         }
                         viewModel.clearError()
                     }
 
-                    // ✅ Sucesso ao adicionar ou remover favorito
                     state.lastFavoriteAction?.let { action ->
                         val title = state.recipe?.title.orEmpty()
                         val message = when (action) {
                             RecipeFavoriteAction.ADDED ->
                                 getString(R.string.recipe_favorite_added_success, title)
+
                             RecipeFavoriteAction.REMOVED ->
                                 getString(R.string.recipe_favorite_removed_success, title)
                         }
-
-                        SnackbarFragment.showSuccess(requireView(), message)
+                        // Usa o anchorView para sucesso também, mantendo consistência
+                        SnackbarFragment.showSuccess(getSnackbarAnchorView(), message)
                         viewModel.clearFavoriteAction()
                     }
                 }
@@ -129,23 +182,21 @@ class RecipeDetailFragment : Fragment() {
         }
     }
 
-    /**
-     * Atualiza o ícone do botão de favorito:
-     * - plus  → não favoritado
-     * - minus → já favoritado
-     */
     private fun updateFavoriteIcon(isFavorite: Boolean) {
-        val iconRes = if (isFavorite) {
-            R.drawable.ic_recipe_favorite_minus_24
-        } else {
-            R.drawable.ic_recipe_favorite_plus_24
-        }
+        val context = requireContext()
 
-        binding.imageRecipeFavorite.setImageResource(iconRes)
-        binding.imageRecipeFavorite.contentDescription = if (isFavorite) {
-            getString(R.string.recipe_favorite_remove_content_description)
+        if (isFavorite) {
+            binding.fabFavorite.setImageResource(R.drawable.ic_favorite_24)
+            binding.fabFavorite.setColorFilter(
+                ContextCompat.getColor(context, R.color.color_favorite_active)
+            )
+            binding.fabFavorite.contentDescription = getString(R.string.cd_favorite_remove)
         } else {
-            getString(R.string.recipe_favorite_add_content_description)
+            binding.fabFavorite.setImageResource(R.drawable.ic_favorite_border_24)
+            binding.fabFavorite.setColorFilter(
+                ContextCompat.getColor(context, R.color.color_primary_base)
+            )
+            binding.fabFavorite.contentDescription = getString(R.string.cd_favorite_add)
         }
     }
 

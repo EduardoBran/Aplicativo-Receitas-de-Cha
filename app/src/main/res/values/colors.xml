@@ -130,4 +130,15 @@
     <color name="card_sleep">#5E35B1</color>
     <color name="card_energy">#F57C00</color>
     <color name="card_weight">#22A06B</color>
+
+    <!-- Card CategoryFragment Icons -->
+    <color name="category_icon_background">#EAF2EF</color>
+    <color name="category_icon_tint">@color/color_primary_base</color>
+
+    <!-- RecipeDetailFragment -->
+    <color name="bg_card_benefits">#F1F8F6</color>
+    <color name="bg_card_warning">#FFF8E1</color>
+    <color name="detail_section_icon_tint">@color/color_primary_base</color>
+    <color name="color_warning_accent">#FB9908</color>
+    <color name="color_favorite_active">#E91E63</color>
 </resources>
