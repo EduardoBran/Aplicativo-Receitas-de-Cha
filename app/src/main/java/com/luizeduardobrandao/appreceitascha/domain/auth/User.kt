@@ -23,5 +23,8 @@ data class User(
     val isEmailVerified: Boolean,
 
     /** Provider de autenticação: "password", "google.com", "facebook.com", etc. */
-    val provider: String? = null
+    val provider: String? = null,
+
+    /** URL da foto ao realizar login via Google (quando existir) */
+    val photoUrl: String? = null
 )

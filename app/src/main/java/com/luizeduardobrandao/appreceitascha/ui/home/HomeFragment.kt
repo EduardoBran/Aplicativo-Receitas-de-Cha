@@ -1,5 +1,6 @@
 package com.luizeduardobrandao.appreceitascha.ui.home
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.view.ViewStub
@@ -10,6 +11,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentHomeBinding
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
@@ -232,7 +235,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             updateDashboardUI(
                 authState = ss.authState,
                 planState = ss.planState,
-                userName = state.userName
+                userName = state.userName,
+                avatarUrl = state.userAvatarUrl
             )
         }
 
@@ -251,61 +255,45 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.homeContentScroll.visibility = View.VISIBLE
     }
 
-    private fun updateDashboardUI(authState: AuthState, planState: PlanState, userName: String?) {
+    private fun updateDashboardUI(
+        authState: AuthState,
+        planState: PlanState,
+        userName: String?,
+        avatarUrl: String?
+    ) {
         val context = requireContext()
         val isGuest = authState == AuthState.NAO_LOGADO
         val isPremium = authState == AuthState.LOGADO && planState == PlanState.COM_PLANO
 
+        // 1. Centralizamos toda lógica de imagem aqui.
+        // NENHUM código abaixo deve alterar o ivProfileAvatar novamente.
+        applyAvatar(avatarUrl, isGuest, isPremium)
+
+        // Configuração de Textos
         if (isGuest) {
             binding.tvGreetingTitle.text = getString(R.string.home_hello_guest)
             binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_guest)
-
-            binding.ivProfileAvatar.setImageResource(R.drawable.ic_account_circle_24)
-            binding.ivProfileAvatar.setColorFilter(
-                ContextCompat.getColor(
-                    context,
-                    R.color.color_primary_base
-                )
-            )
-            binding.ivProfileAvatar.alpha = 0.6f
+            // REMOVIDO: Linhas que alteravam ivProfileAvatar aqui
         } else {
             val displayName = if (!userName.isNullOrBlank()) userName else "Membro"
             binding.tvGreetingTitle.text = getString(R.string.home_hello_user, displayName)
 
-            binding.ivProfileAvatar.setImageResource(R.drawable.ic_account_circle_24)
-            binding.ivProfileAvatar.alpha = 1f
-
             if (isPremium) {
                 binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_premium)
                 binding.tvGreetingSubtitle.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.color_primary_base
-                    )
+                    ContextCompat.getColor(context, R.color.color_primary_base)
                 )
-                binding.ivProfileAvatar.setColorFilter(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.warning_color
-                    )
-                )
+                // REMOVIDO: Linhas que alteravam ivProfileAvatar aqui
             } else {
                 binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_free)
                 binding.tvGreetingSubtitle.setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.text_secondary
-                    )
+                    ContextCompat.getColor(context, R.color.text_secondary)
                 )
-                binding.ivProfileAvatar.setColorFilter(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.color_primary_base
-                    )
-                )
+                // REMOVIDO: Linhas que alteravam ivProfileAvatar aqui
             }
         }
 
+        // Configuração do Banner (mantida igual, apenas removendo o que não mudou para brevidade)
         if (isGuest) {
             binding.cardBanner.setCardBackgroundColor(
                 ContextCompat.getColor(
@@ -324,7 +312,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     R.color.white,
                     null
                 )?.withAlpha(128)
-
         } else if (isPremium) {
             binding.cardBanner.setCardBackgroundColor(
                 ContextCompat.getColor(
@@ -343,7 +330,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     R.color.white,
                     null
                 )?.withAlpha(128)
-
         } else {
             binding.cardBanner.setCardBackgroundColor(
                 ContextCompat.getColor(
@@ -363,6 +349,46 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     null
                 )?.withAlpha(128)
         }
+    }
+
+    // Carregar imagem em autenticação via Google
+    private fun applyAvatar(avatarUrl: String?, isGuest: Boolean, isPremium: Boolean) {
+        val context = requireContext()
+        val hasGoogleAvatar = !avatarUrl.isNullOrBlank()
+
+        // REGRA 1: Se tiver foto (Google) -> Mostra foto SEM tint
+        if (hasGoogleAvatar) {
+            binding.ivProfileAvatar.imageTintList = null // Remove qualquer cor anterior
+            binding.ivProfileAvatar.alpha = 1f
+            binding.ivProfileAvatar.load(avatarUrl) {
+                crossfade(true)
+                transformations(CircleCropTransformation())
+                error(R.drawable.ic_account_circle_24)
+                placeholder(R.drawable.ic_account_circle_24)
+            }
+            return
+        }
+
+        // Se chegou aqui, não tem foto URL (Guest ou Email/Senha)
+        // Garante que o ícone padrão esteja setado
+        binding.ivProfileAvatar.setImageResource(R.drawable.ic_account_circle_24)
+
+        // REGRA 2: Visitante -> Mantém como está (alpha 0.6 + verde base)
+        if (isGuest) {
+            binding.ivProfileAvatar.alpha = 0.6f
+            val color = ContextCompat.getColor(context, R.color.color_primary_base)
+            binding.ivProfileAvatar.imageTintList = ColorStateList.valueOf(color)
+            return
+        }
+
+        // Usuário Logado sem foto (Login Email)
+        binding.ivProfileAvatar.alpha = 1f
+
+        // REGRA 3 (Premium) -> Laranja
+        // REGRA 4 (Não Premium) -> Verde Base
+        val colorRes = if (isPremium) R.color.warning_color else R.color.color_primary_base
+        val color = ContextCompat.getColor(context, colorRes)
+        binding.ivProfileAvatar.imageTintList = ColorStateList.valueOf(color)
     }
 
     override fun onDestroyView() {

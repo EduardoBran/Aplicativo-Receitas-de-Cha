@@ -111,8 +111,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     // Imagens
-    implementation("io.coil-kt:coil:2.6.0")
-    implementation("com.facebook.shimmer:shimmer:0.5.0")
+    implementation("io.coil-kt:coil:2.7.0")
 
     // Converter de kotlinx-serialization para Retrofit
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")

@@ -6,8 +6,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.luizeduardobrandao.appreceitascha.data.local.SessionManager
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanState
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanType
-import com.luizeduardobrandao.appreceitascha.domain.auth.PlanConstants
-import com.luizeduardobrandao.appreceitascha.domain.auth.toPlanId
 import com.luizeduardobrandao.appreceitascha.domain.auth.toPlanType
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
 import com.luizeduardobrandao.appreceitascha.domain.auth.AuthState
@@ -53,7 +51,7 @@ class AuthRepositoryImpl @Inject constructor(
                     userRef.child("emailVerified")
                         .setValue(user.isEmailVerified)
                         .await()
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     // Ignora qualquer falha aqui para NÃO quebrar o login.
                     // (Opcionalmente você poderia logar isso com Log.e, se quiser no futuro.)
                 }
@@ -156,7 +154,8 @@ class AuthRepositoryImpl @Inject constructor(
                     email = safeEmail,
                     phone = phoneOrNull,
                     isEmailVerified = safeEmailVerified,
-                    provider = provider
+                    provider = provider,
+                    photoUrl = firebaseUser?.photoUrl?.toString()
                 )
             )
         } catch (e: Exception) {
@@ -306,7 +305,7 @@ class AuthRepositoryImpl @Inject constructor(
                     val userRef = database.getReference("users").child(uid)
                     userRef.child("email").setValue(newEmail).await()
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // Ignora erro de atualização no database, pois o principal já foi feito
             }
         }
@@ -370,8 +369,6 @@ private fun FirebaseUser.toDomainUser(
     explicitName: String? = null,
     explicitPhone: String? = null
 ): User {
-    // Captura o provider principal do usuário
-    // providerData[0] é geralmente "firebase", então pegamos o primeiro provider real
     val provider = providerData.firstOrNull { it.providerId != "firebase" }?.providerId
 
     return User(
@@ -380,6 +377,7 @@ private fun FirebaseUser.toDomainUser(
         email = email.orEmpty(),
         phone = explicitPhone ?: phoneNumber,
         isEmailVerified = isEmailVerified,
-        provider = provider
+        provider = provider,
+        photoUrl = photoUrl?.toString()
     )
 }

@@ -18,6 +18,7 @@ data class HomeUiState(
     val sessionState: UserSessionState? = null,
     val userPlan: UserPlan? = null,
     val userName: String? = null,
+    val userAvatarUrl: String? = null,
     val errorMessage: String? = null
 )
 
@@ -35,6 +36,7 @@ class HomeViewModel @Inject constructor(
 
             // 1. Busca Usuário e Sessão
             val currentUser = authRepository.getCurrentUser()
+            val avatarUrl = currentUser?.photoUrl
             val sessionResult = authRepository.getCurrentUserSessionState()
 
             sessionResult.fold(
@@ -48,6 +50,7 @@ class HomeViewModel @Inject constructor(
                             sessionState = session,
                             userPlan = null,
                             userName = currentName, // ✅ Passa o nome
+                            userAvatarUrl = avatarUrl,
                             errorMessage = null
                         )
                         return@fold
@@ -65,6 +68,7 @@ class HomeViewModel @Inject constructor(
                         sessionState = session,
                         userPlan = userPlan,
                         userName = currentName, // ✅ Passa o nome
+                        userAvatarUrl = avatarUrl,
                         errorMessage = null
                     )
                 },

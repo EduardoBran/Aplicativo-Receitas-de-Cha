@@ -56,6 +56,7 @@ class FirebaseAuthDataSource @Inject constructor(
      * @param password Senha do usuário.
      * @param phone Telefone opcional (armazenamento ideal em Firestore/Realtime).
      */
+    @Suppress("unused")
     suspend fun signUp(
         name: String,
         email: String,
