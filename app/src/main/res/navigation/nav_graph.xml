@@ -36,7 +36,7 @@
         android:id="@+id/searchFragment"
         android:name="com.luizeduardobrandao.appreceitascha.ui.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" >
+        tools:layout="@layout/fragment_search">
 
         <action
             android:id="@+id/action_searchFragment_to_recipeDetailFragment"
@@ -73,7 +73,29 @@
         <action
             android:id="@+id/action_recipeListFragment_to_recipeDetailFragment"
             app:destination="@id/recipeDetailFragment" />
+
+        <action
+            android:id="@+id/action_recipeListFragment_to_lockedRecipeBottomSheet"
+            app:destination="@id/lockedRecipeBottomSheet" />
     </fragment>
+
+    <!-- ======== Dialog Receita Bloqueada -> PlansFragment ======== -->
+
+    <dialog
+        android:id="@+id/lockedRecipeBottomSheet"
+        android:name="com.luizeduardobrandao.appreceitascha.ui.recipes.LockedRecipeBottomSheet"
+        android:label="LockedRecipeBottomSheet"
+        tools:layout="@layout/fragment_locked_recipe_bottom_sheet">
+
+        <action
+            android:id="@+id/action_lockedRecipeBottomSheet_to_plansFragment"
+            app:destination="@id/plansFragment" />
+
+        <action
+            android:id="@+id/action_lockedRecipeBottomSheet_to_loginFragment"
+            app:destination="@id/loginFragment" />
+
+    </dialog>
 
     <!-- ======== Tela Detalhes da Receita Chá ======== -->
     <fragment

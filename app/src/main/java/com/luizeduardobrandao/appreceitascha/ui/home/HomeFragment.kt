@@ -122,6 +122,27 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
         }
 
+        // Listener do Subtítulo Clicável (Atalho)
+        binding.tvGreetingSubtitle.setOnClickListener {
+            val state = homeViewModel.uiState.value.sessionState
+            val authState = state?.authState ?: AuthState.NAO_LOGADO
+            val planState = state?.planState ?: PlanState.SEM_PLANO
+
+            when {
+                authState == AuthState.NAO_LOGADO -> {
+                    findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+                }
+
+                planState == PlanState.COM_PLANO -> {
+                    findNavController().navigate(R.id.managePlanFragment)
+                }
+
+                else -> {
+                    findNavController().navigate(R.id.plansFragment)
+                }
+            }
+        }
+
         binding.btnBannerAction.setOnClickListener {
             val state = homeViewModel.uiState.value.sessionState
             val authState = state?.authState ?: AuthState.NAO_LOGADO
@@ -264,16 +285,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val context = requireContext()
         val isGuest = authState == AuthState.NAO_LOGADO
         val isPremium = authState == AuthState.LOGADO && planState == PlanState.COM_PLANO
+        val hasPhoto = !avatarUrl.isNullOrBlank() // ✅ Verifica se tem foto real
 
-        // 1. Centralizamos toda lógica de imagem aqui.
-        // NENHUM código abaixo deve alterar o ivProfileAvatar novamente.
         applyAvatar(avatarUrl, isGuest, isPremium)
 
         // Configuração de Textos
         if (isGuest) {
             binding.tvGreetingTitle.text = getString(R.string.home_hello_guest)
             binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_guest)
-            // REMOVIDO: Linhas que alteravam ivProfileAvatar aqui
+            binding.tvGreetingSubtitle.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.text_secondary
+                )
+            )
         } else {
             val displayName = if (!userName.isNullOrBlank()) userName else "Membro"
             binding.tvGreetingTitle.text = getString(R.string.home_hello_user, displayName)
@@ -281,74 +306,62 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             if (isPremium) {
                 binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_premium)
                 binding.tvGreetingSubtitle.setTextColor(
-                    ContextCompat.getColor(context, R.color.color_primary_base)
+                    ContextCompat.getColor(
+                        context,
+                        R.color.color_primary_base
+                    )
                 )
-                // REMOVIDO: Linhas que alteravam ivProfileAvatar aqui
             } else {
                 binding.tvGreetingSubtitle.text = getString(R.string.home_subtitle_free)
                 binding.tvGreetingSubtitle.setTextColor(
-                    ContextCompat.getColor(context, R.color.text_secondary)
+                    ContextCompat.getColor(
+                        context,
+                        R.color.text_secondary
+                    )
                 )
-                // REMOVIDO: Linhas que alteravam ivProfileAvatar aqui
             }
         }
 
-        // Configuração do Banner (mantida igual, apenas removendo o que não mudou para brevidade)
+        // ✅ LÓGICA DO STROKE (BORDA):
+        // Só exibe borda colorida se NÃO for visitante E se TIVER foto carregada.
+        // Caso contrário (Visitante ou Ícone padrão), a borda fica transparente.
+        val strokeColorRes = when {
+            isGuest -> android.R.color.transparent
+            !hasPhoto -> android.R.color.transparent // Sem foto = Sem borda
+            isPremium -> R.color.premium_gold         // Com foto + Premium = Dourado
+            else -> R.color.color_primary_base        // Com foto + Free = Verde
+        }
+        binding.cardAvatarContainer.strokeColor = ContextCompat.getColor(context, strokeColorRes)
+
+
+        // Configuração do Banner (Mantida igual)
         if (isGuest) {
-            binding.cardBanner.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.color_primary_base
-                )
-            )
             binding.tvBannerTitle.text = getString(R.string.banner_guest_title)
             binding.tvBannerDesc.text = getString(R.string.banner_guest_desc)
             binding.btnBannerAction.text = getString(R.string.banner_guest_btn)
             binding.btnBannerAction.visibility = View.VISIBLE
             binding.ivBannerIcon.setImageResource(R.drawable.ic_recipe_lock_24)
-            binding.ivBannerIcon.imageTintList =
-                androidx.core.content.res.ResourcesCompat.getColorStateList(
-                    resources,
-                    R.color.white,
-                    null
-                )?.withAlpha(128)
         } else if (isPremium) {
-            binding.cardBanner.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.color_primary_dark
-                )
-            )
             binding.tvBannerTitle.text = getString(R.string.banner_premium_title)
             binding.tvBannerDesc.text = getString(R.string.banner_premium_desc)
             binding.btnBannerAction.text = getString(R.string.banner_premium_btn)
             binding.btnBannerAction.visibility = View.VISIBLE
             binding.ivBannerIcon.setImageResource(R.drawable.ic_whatshot_24)
-            binding.ivBannerIcon.imageTintList =
-                androidx.core.content.res.ResourcesCompat.getColorStateList(
-                    resources,
-                    R.color.white,
-                    null
-                )?.withAlpha(128)
         } else {
-            binding.cardBanner.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.color_primary_base
-                )
-            )
             binding.tvBannerTitle.text = getString(R.string.banner_free_title)
             binding.tvBannerDesc.text = getString(R.string.banner_free_desc)
             binding.btnBannerAction.text = getString(R.string.banner_free_btn)
             binding.btnBannerAction.visibility = View.VISIBLE
             binding.ivBannerIcon.setImageResource(R.drawable.ic_star_premium_24)
-            binding.ivBannerIcon.imageTintList =
-                androidx.core.content.res.ResourcesCompat.getColorStateList(
-                    resources,
-                    R.color.white,
-                    null
-                )?.withAlpha(128)
         }
+
+        // Ajuste de tint do ícone do banner
+        binding.ivBannerIcon.imageTintList =
+            androidx.core.content.res.ResourcesCompat.getColorStateList(
+                resources,
+                R.color.white,
+                null
+            )?.withAlpha(128)
     }
 
     // Carregar imagem em autenticação via Google

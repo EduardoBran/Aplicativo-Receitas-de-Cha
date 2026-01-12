@@ -50,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
         android:alpha="0.06"
         app:cardBackgroundColor="@color/text_primary"
@@ -88,7 +88,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skCard1"
         android:layout_width="0dp"
-        android:layout_height="76dp"
+        android:layout_height="72dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="4dp"
         android:alpha="0.06"
@@ -103,7 +103,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skCard2"
         android:layout_width="0dp"
-        android:layout_height="76dp"
+        android:layout_height="72dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
         android:alpha="0.06"
@@ -118,7 +118,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skCard3"
         android:layout_width="0dp"
-        android:layout_height="76dp"
+        android:layout_height="72dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
         android:alpha="0.06"
@@ -133,7 +133,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skCard4"
         android:layout_width="0dp"
-        android:layout_height="76dp"
+        android:layout_height="72dp"
         android:layout_marginStart="4dp"
         android:alpha="0.06"
         app:cardBackgroundColor="@color/text_primary"

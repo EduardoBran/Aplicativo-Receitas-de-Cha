@@ -190,12 +190,6 @@ class RecipeListFragment : Fragment() {
         recipesAdapter.submitList(state.recipes)
         binding.recyclerViewRecipes.isVisible = state.recipes.isNotEmpty()
 
-        // Estado vazio (sem erro)
-        val showEmpty =
-            state.recipes.isEmpty() &&
-                    state.errorMessage == null
-
-
         // Erro → Snackbar com texto vindo de strings.xml
         if (state.errorMessage != null) {
             SnackbarFragment.showError(
@@ -210,7 +204,7 @@ class RecipeListFragment : Fragment() {
     /**
      * Clique em uma receita:
      * - Se o usuário puder abrir (regra do ViewModel + isFreePreview/plano), navega para detalhes.
-     * - Caso contrário, mostra Snackbar explicando que precisa de login/plano.
+     * - Caso contrário, exibe BottomSheet para navegação.
      */
     private fun onRecipeClicked(recipe: Recipe) {
         if (viewModel.canOpenRecipe(recipe)) {
@@ -220,10 +214,7 @@ class RecipeListFragment : Fragment() {
                 )
             findNavController().navigate(action)
         } else {
-            SnackbarFragment.showWarning(
-                requireView(),
-                getString(R.string.recipe_locked_requires_plan_or_login)
-            )
+            findNavController().navigate(R.id.action_recipeListFragment_to_lockedRecipeBottomSheet)
         }
     }
 

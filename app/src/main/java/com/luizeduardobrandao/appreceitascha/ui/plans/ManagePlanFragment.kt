@@ -1,7 +1,6 @@
 package com.luizeduardobrandao.appreceitascha.ui.plans
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -9,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.databinding.FragmentManagePlanBinding
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class ManagePlanFragment : Fragment(R.layout.fragment_manage_plan) {
@@ -31,7 +31,7 @@ class ManagePlanFragment : Fragment(R.layout.fragment_manage_plan) {
         binding.btnSupport.setOnClickListener {
             // Abre cliente de email
             val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:")
+                data = "mailto:".toUri()
                 putExtra(Intent.EXTRA_EMAIL, arrayOf("eduardo.desenvolvedor.apps@gmail.com"))
                 putExtra(Intent.EXTRA_SUBJECT, "Suporte - App Nature Chá")
             }

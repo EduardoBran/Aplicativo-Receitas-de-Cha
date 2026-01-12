@@ -127,6 +127,11 @@
     <color name="card_sleep">#9575CD</color>
     <color name="card_energy">#FFB74D</color>
     <color name="card_weight">#86EFAC</color>
+    <color name="card_digestive">#FFE082</color>
+    <color name="card_immunity">#64B5F6</color>
+    <color name="card_medicinal">#80CBC4</color>
+    <color name="card_beauty">#F06292</color>
+    <color name="card_aphrodisiac">#E57373</color>
 
     <!-- Card CategoryFragment Icons -->
     <color name="category_icon_background">#1C3A32</color>
@@ -138,4 +143,12 @@
     <color name="detail_section_icon_tint">@color/color_primary_light</color>
     <color name="color_warning_accent">#FFB74D</color>
     <color name="color_favorite_active">#F48FB1</color>
+
+    <color name="premium_gold">#FFD700</color>
+    <color name="gradient_green_start">#0D261F</color>
+    <color name="gradient_green_end">#1B3A30</color>
+    <color name="card_premium_bg">#2C2618</color>
+    <color name="card_free_bg">#1F2926</color>
+    <color name="login_wave_color">#1F2926</color>
+    <color name="star_color">#FB9908</color>
 </resources>

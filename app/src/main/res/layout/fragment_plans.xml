@@ -1,143 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/plansRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background"
-    android:padding="24dp">
+    android:fillViewport="true">
 
-    <LinearLayout
-        android:id="@+id/headerContainer"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/cardBenefits"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_recipe_lock_open_24"
-            app:tint="@color/color_primary_base" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/plans_hero_title"
-            android:textAlignment="center"
-            android:textAppearance="?attr/textAppearanceHeadline5"
-            android:textColor="@color/color_primary_dark"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:alpha="0.8"
-            android:text="@string/plans_hero_subtitle"
-            android:textAlignment="center"
-            android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="@color/colorOnBackground" />
-    </LinearLayout>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardBenefits"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/surface_card_background"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:contentPadding="24dp"
-        app:layout_constraintBottom_toTopOf="@id/actionsContainer"
-        app:layout_constraintTop_toBottomOf="@id/headerContainer">
+        android:padding="24dp">
 
         <LinearLayout
+            android:id="@+id/headerContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@drawable/divider_transparent_8dp"
+            android:gravity="center"
             android:orientation="vertical"
-            android:showDividers="middle">
+            app:layout_constraintBottom_toTopOf="@id/cardBenefits"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread_inside">
 
-            <include
-                android:id="@+id/benefit1"
-                layout="@layout/item_benefit_check" />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_recipe_lock_open_24"
+                app:tint="@color/color_primary_base" />
 
-            <include
-                android:id="@+id/benefit2"
-                layout="@layout/item_benefit_check" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/plans_hero_title"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textColor="@color/color_primary_dark"
+                android:textStyle="bold" />
 
-            <include
-                android:id="@+id/benefit3"
-                layout="@layout/item_benefit_check" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:alpha="0.8"
+                android:text="@string/plans_hero_subtitle"
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="@color/colorOnBackground" />
+        </LinearLayout>
 
-            <include
-                android:id="@+id/benefit4"
-                layout="@layout/item_benefit_check" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardBenefits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="@color/surface_card_background"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:contentPadding="24dp"
+            app:layout_constraintBottom_toTopOf="@id/actionsContainer"
+            app:layout_constraintTop_toBottomOf="@id/headerContainer">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@drawable/divider_transparent_8dp"
+                android:orientation="vertical"
+                android:showDividers="middle">
+
+                <include
+                    android:id="@+id/benefit1"
+                    layout="@layout/item_benefit_check" />
+
+                <include
+                    android:id="@+id/benefit2"
+                    layout="@layout/item_benefit_check" />
+
+                <include
+                    android:id="@+id/benefit3"
+                    layout="@layout/item_benefit_check" />
+
+                <include
+                    android:id="@+id/benefit4"
+                    layout="@layout/item_benefit_check" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/actionsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardBenefits">
+
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textAppearance="?attr/textAppearanceHeadline4"
+                android:textColor="@color/color_primary_base"
+                android:textStyle="bold"
+                tools:text="R$ 29,90" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPlanLifeBuy"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:backgroundTint="@color/color_primary_base"
+                android:text="@string/plans_btn_buy"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="28dp" />
+
+            <TextView
+                android:id="@+id/tvDisclaimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:alpha="0.6"
+                android:text="@string/plans_disclaimer"
+                android:textSize="12sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPlansRestore"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/plans_btn_restore"
+                android:textColor="@color/color_primary_base" />
 
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
 
-    <LinearLayout
-        android:id="@+id/actionsContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <TextView
-            android:id="@+id/tvPrice"
+        <ProgressBar
+            android:id="@+id/progressPlans"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:textAppearance="?attr/textAppearanceHeadline4"
-            android:textColor="@color/color_primary_base"
-            android:textStyle="bold"
-            tools:text="R$ 29,90" />
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPlanLifeBuy"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:backgroundTint="@color/color_primary_base"
-            android:text="@string/plans_btn_buy"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:cornerRadius="28dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/tvDisclaimer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:alpha="0.6"
-            android:text="@string/plans_disclaimer"
-            android:textSize="12sp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPlansRestore"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/plans_btn_restore"
-            android:textColor="@color/color_primary_base" />
-
-    </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progressPlans"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

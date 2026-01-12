@@ -14,6 +14,9 @@
     <string name="login_no_account">Não tem conta?</string>
     <string name="login_create_account">Criar conta grátis</string>
 
+    <string name="login_welcome_back">Que bom te ver de novo!</string>
+    <string name="login_social_proof">Junte-se à comunidade de amantes de chá</string>
+
     <!-- Erros de login -->
     <string name="error_login_invalid_credentials">E-mail ou senha incorretos.</string>
     <string name="error_login_generic">Erro ao fazer login. Tente novamente.</string>
@@ -39,6 +42,15 @@
     <string name="register_btn_logout">Logout</string>
     <string name="register_edit_mode_title">Editar Perfil</string>
     <string name="snackbar_success_profile_updated">Perfil atualizado com sucesso!</string>
+
+    <string name="register_section_subscription">ASSINATURA</string>
+    <string name="register_section_personal_data">DADOS PESSOAIS</string>
+    <string name="register_member_premium">Membro Vitalício</string>
+    <string name="register_member_free">Plano Gratuito</string>
+    <string name="register_btn_manage">Ver Benefícios</string>
+    <string name="register_btn_upgrade">Seja Premium</string>
+    <string name="register_google_managed_title">Conta Google</string>
+    <string name="register_google_managed_desc">Sua senha é gerenciada pelo Google.</string>
 
     <!-- Botões de alteração -->
     <string name="register_change_email_button">Alterar e-mail</string>
@@ -105,10 +117,10 @@
     <!-- ======== HomeFragment ========-->
     <string name="home_hello_guest">Olá, Visitante</string>
     <string name="home_hello_user">Olá, %s</string>
-    <string name="home_subtitle_guest">Explore o poder dos chás naturais.</string>
+    <string name="home_subtitle_guest">Entrar ou criar conta</string>
     <string name="home_search_hint">Buscar receitas de chá…</string>
-    <string name="home_subtitle_free">Você está no plano Gratuito.</string>
-    <string name="home_subtitle_premium">Membro Premium Vitalício.</string>
+    <string name="home_subtitle_free">Modo Degustação</string>
+    <string name="home_subtitle_premium">Membro Vitalício</string>
 
     <string name="banner_guest_title">Crie sua conta Grátis</string>
     <string name="banner_guest_desc">Salve favoritos e acesse conteúdos exclusivos.</string>
@@ -146,6 +158,16 @@
     <string name="recipes_item_icon_go_content_description">Ver detalhes da receita.</string>
     <string name="recipe_locked_requires_plan_or_login">Para visualizar esta receita, faça login e ative um plano.</string>
     <string name="recipes_list_loading_message">Carregando as receitas…</string>
+
+    <string name="locked_sheet_title">Receita Exclusiva</string>
+    <string name="locked_sheet_desc">Torne-se Vitalício para ver esta e outras 160 receitas!</string>
+    <string name="locked_sheet_btn_offer">Ver Oferta</string>
+    <string name="locked_sheet_title_guest">Faça Login para Acessar</string>
+    <string name="locked_sheet_desc_guest">Para desbloquear esta e outras 160 receitas exclusivas, entre na sua conta ou cadastre-se.</string>
+    <string name="locked_sheet_btn_guest">Entrar ou Cadastrar</string>
+
+    <string name="cd_close_dialog">Fechar diálogo</string>
+    <string name="cd_star_rating">Avaliação 5 estrelas</string>
 
 
     <!-- ======== RecipesDetailFragment ========-->
