@@ -147,6 +147,7 @@
 
     <!-- ======== RecipesDetailFragment ========-->
     <string name="recipe_detail_section_benefits">Benefícios</string>
+    <string name="recipe_detail_section_ingredients">Ingredientes</string>
     <string name="recipe_detail_section_preparation">Modo de Preparo</string>
     <string name="recipe_detail_section_notes">Observações</string>
 
@@ -161,25 +162,13 @@
     <string name="recipe_favorite_requires_plan_or_login">
         Para favoritar receitas, você precisa estar logado e ter acesso vitalício.
     </string>
-    <string name="recipe_favorite_add_content_description">
-        Adicionar receita aos favoritos
-    </string>
-    <string name="recipe_favorite_remove_content_description">
-        Remover receita dos favoritos
-    </string>
-    <string name="recipe_lock_open_content_description">
-        Receita liberada para visualização
-    </string>
-    <string name="recipe_lock_closed_content_description">
-        Receita disponível apenas para usuários com plano ativo
-    </string>
+    <string name="recipe_lock_open_content_description">Receita liberada para visualização</string>
+    <string name="recipe_lock_closed_content_description">Receita disponível apenas para usuários com plano ativo</string>
 
 
     <!-- ======== FavoritesFragment ========-->
     <string name="favorites_title">Favoritos</string>
     <string name="favorites_empty_state">Você ainda não tem receitas favoritas.</string>
-    <string name="favorites_error_generic">Ocorreu um erro ao carregar seus favoritos.</string>
-    <string name="favorites_cont_empty">Sem receitas na lista de favoritos.</string>
     <string name="recipe_favorite_added_success">%1$s adicionada aos favoritos.</string>
     <string name="recipe_favorite_removed_success">%1$s removida de favoritos.</string>
     <string name="favorites_loading_message">Carregando lista de favoritas…</string>
@@ -196,15 +185,12 @@
     <string name="plans_btn_restore">Já comprou? Restaurar acesso</string>
     <string name="plans_disclaimer">Compra segura via Google Play</string>
     <string name="plans_plan_life_price">R$ 29,90</string>
-    <string name="plans_buy_button">Comprar</string>
 
     <!-- Mensagens genéricas de erro/sucesso de planos (usadas na ViewModel) -->
-    <string name="home_plan_no_expiration">Acesso permanente</string>
     <string name="msg_purchase_pending">Compra pendente. Aguarde a confirmação.</string>
     <string name="msg_purchase_cancelled">Compra cancelada pelo usuário.</string>
     <string name="msg_purchase_error">Erro na compra: %s</string>
     <string name="msg_purchase_success">Premium liberado com sucesso! Aproveite.</string>
-    <string name="msg_restore_success">Suas compras foram restauradas.</string>
     <string name="msg_restore_empty">Nenhuma compra ativa encontrada.</string>
     <string name="msg_restore_owned">Você já possui este item. Restaurando…</string>
 
@@ -225,7 +211,6 @@
     <string name="search_error_generic">Erro ao realizar a busca.</string>
     <string name="search_recipe_unlocked">Receita liberada</string>
     <string name="search_recipe_locked">Receita bloqueada</string>
-    <string name="search_category_header">Categoria: %s</string>
 
     <!-- ======== Bottom Navigation Icons ========-->
     <string name="bottom_nav_home">Início</string>

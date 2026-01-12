@@ -17,7 +17,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class FirebaseRecipeDataSource @Inject constructor(
-    private val firebaseDatabase: FirebaseDatabase
+    firebaseDatabase: FirebaseDatabase
 ) {
 
     private val categoriesRef = firebaseDatabase.getReference("categories")

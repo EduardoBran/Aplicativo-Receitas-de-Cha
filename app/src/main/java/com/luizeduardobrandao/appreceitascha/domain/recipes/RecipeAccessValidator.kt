@@ -65,6 +65,7 @@ class RecipeAccessValidator @Inject constructor(
                 title = data["title"] as? String ?: return null,
                 subtitle = data["subtitle"] as? String ?: return null,
                 shortDescription = data["shortDescription"] as? String ?: return null,
+                ingredientes = data["ingredientes"] as? String ?: return null,
                 modoDePreparo = data["modoDePreparo"] as? String ?: return null,
                 beneficios = data["beneficios"] as? String ?: return null,
                 observacoes = data["observacoes"] as? String ?: return null,

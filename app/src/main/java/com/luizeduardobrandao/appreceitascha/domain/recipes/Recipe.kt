@@ -36,6 +36,7 @@ data class Recipe(
     val title: String,
     val subtitle: String,
     val shortDescription: String,
+    val ingredientes: String,
     val modoDePreparo: String,
     val beneficios: String,
     val observacoes: String,

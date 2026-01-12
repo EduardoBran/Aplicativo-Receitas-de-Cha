@@ -88,6 +88,7 @@ class RecipeRepositoryImpl @Inject constructor(
         val title = child("title").getValue(String::class.java)
         val subtitle = child("subtitle").getValue(String::class.java)
         val shortDescription = child("shortDescription").getValue(String::class.java)
+        val ingredientes = child("ingredientes").getValue(String::class.java)
         val modoDePreparo = child("modoDePreparo").getValue(String::class.java)
         val beneficios = child("beneficios").getValue(String::class.java)
         val observacoes = child("observacoes").getValue(String::class.java)
@@ -99,6 +100,7 @@ class RecipeRepositoryImpl @Inject constructor(
             title.isNullOrBlank() ||
             subtitle.isNullOrBlank() ||
             shortDescription.isNullOrBlank() ||
+            ingredientes.isNullOrBlank() ||
             modoDePreparo.isNullOrBlank() ||
             beneficios.isNullOrBlank() ||
             observacoes.isNullOrBlank()
@@ -111,6 +113,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 title = title,
                 subtitle = subtitle,
                 shortDescription = shortDescription,
+                ingredientes = ingredientes,
                 modoDePreparo = modoDePreparo,
                 beneficios = beneficios,
                 observacoes = observacoes,
@@ -157,6 +160,7 @@ class RecipeRepositoryImpl @Inject constructor(
         val title = child("title").getValue(String::class.java)
         val subtitle = child("subtitle").getValue(String::class.java)
         val shortDescription = child("shortDescription").getValue(String::class.java)
+        val ingredientes = child("ingredientes").getValue(String::class.java)
         val modoDePreparo = child("modoDePreparo").getValue(String::class.java)
         val beneficios = child("beneficios").getValue(String::class.java)
         val observacoes = child("observacoes").getValue(String::class.java)
@@ -171,6 +175,7 @@ class RecipeRepositoryImpl @Inject constructor(
             title.isNullOrBlank() ||
             subtitle.isNullOrBlank() ||
             shortDescription.isNullOrBlank() ||
+            ingredientes.isNullOrBlank() ||
             modoDePreparo.isNullOrBlank() ||
             beneficios.isNullOrBlank() ||
             observacoes.isNullOrBlank()
@@ -183,6 +188,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 title = title,
                 subtitle = subtitle,
                 shortDescription = shortDescription,
+                ingredientes = ingredientes,
                 modoDePreparo = modoDePreparo,
                 beneficios = beneficios,
                 observacoes = observacoes,

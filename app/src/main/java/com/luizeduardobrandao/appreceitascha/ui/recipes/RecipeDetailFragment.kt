@@ -62,6 +62,9 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
         binding.cardBenefits.alpha = 0f
         binding.cardBenefits.translationY = 100f
 
+        binding.cardIngredients.alpha = 0f
+        binding.cardIngredients.translationY = 100f
+
         binding.cardPrep.alpha = 0f
         binding.cardPrep.translationY = 100f
 
@@ -94,16 +97,22 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
             .setStartDelay(200)
             .start()
 
-        binding.cardPrep.animate()
+        binding.cardIngredients.animate()
             .alpha(1f).translationY(0f)
             .setDuration(500)
             .setStartDelay(300)
             .start()
 
-        binding.cardNotes.animate()
+        binding.cardPrep.animate()
             .alpha(1f).translationY(0f)
             .setDuration(500)
             .setStartDelay(400)
+            .start()
+
+        binding.cardNotes.animate()
+            .alpha(1f).translationY(0f)
+            .setDuration(500)
+            .setStartDelay(500)
             .start()
     }
 
@@ -135,6 +144,7 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
                         binding.textRecipeTitle.text = recipe.title
                         binding.textRecipeSubtitle.text = recipe.subtitle
                         binding.textShortDescription.text = recipe.shortDescription
+                        binding.textRecipeIngredientes.text = recipe.ingredientes
                         binding.textRecipeModoPreparo.text = recipe.modoDePreparo
                         binding.textRecipeBeneficios.text = recipe.beneficios
                         binding.textRecipeObservacoes.text = recipe.observacoes
@@ -148,8 +158,6 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
                     updateFavoriteIcon(state.isFavorite)
 
                     state.errorMessage?.let { errorMsg ->
-                        // SOLUÇÃO 1: Verifica se é o erro de plano para mostrar LARANJA (Warning)
-                        // SOLUÇÃO 2: Usa getSnackbarAnchorView() para fixar no rodapé
                         if (errorMsg == RecipeDetailViewModel.ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN) {
                             SnackbarFragment.showWarning(
                                 getSnackbarAnchorView(),
