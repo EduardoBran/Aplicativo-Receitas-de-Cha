@@ -93,18 +93,17 @@ class SearchAdapter(
             binding.textRecipeSubtitle.text = recipe.subtitle
 
             val isUnlocked = canOpenRecipe(recipe)
-            val iconRes =
-                if (isUnlocked) R.drawable.ic_recipe_lock_open_24 else R.drawable.ic_recipe_lock_24
 
-            val context = binding.root.context
-            val desc = if (isUnlocked) {
-                context.getString(R.string.search_recipe_unlocked)
+            if (isUnlocked) {
+                // Receita liberada: Esconde o cadeado
+                binding.imageRecipeLock.visibility = View.GONE
             } else {
-                context.getString(R.string.search_recipe_locked)
+                // Receita bloqueada: Mostra o cadeado fechado
+                binding.imageRecipeLock.visibility = View.VISIBLE
+                binding.imageRecipeLock.setImageResource(R.drawable.ic_recipe_lock_24)
+                binding.imageRecipeLock.contentDescription =
+                    binding.root.context.getString(R.string.search_recipe_locked)
             }
-
-            binding.imageRecipeLock.setImageResource(iconRes)
-            binding.imageRecipeLock.contentDescription = desc
 
             setupClickAnimation(binding.cardRecipe, recipe)
         }

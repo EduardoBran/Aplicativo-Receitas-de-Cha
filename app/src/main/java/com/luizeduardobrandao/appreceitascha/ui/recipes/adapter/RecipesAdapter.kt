@@ -61,21 +61,16 @@ class RecipesAdapter(
 
             val isUnlocked = canOpenRecipe(recipe)
 
-            val iconRes = if (isUnlocked) {
-                R.drawable.ic_recipe_lock_open_24
+            if (isUnlocked) {
+                // Receita liberada: Esconde o cadeado totalmente
+                binding.imageRecipeLock.visibility = View.GONE
             } else {
-                R.drawable.ic_recipe_lock_24
+                // Receita bloqueada: Mostra o cadeado fechado
+                binding.imageRecipeLock.visibility = View.VISIBLE
+                binding.imageRecipeLock.setImageResource(R.drawable.ic_recipe_lock_24)
+                binding.imageRecipeLock.contentDescription =
+                    binding.root.context.getString(R.string.recipe_lock_closed_content_description)
             }
-
-            val contentDescRes = if (isUnlocked) {
-                R.string.recipe_lock_open_content_description
-            } else {
-                R.string.recipe_lock_closed_content_description
-            }
-
-            binding.imageRecipeLock.setImageResource(iconRes)
-            binding.imageRecipeLock.contentDescription =
-                binding.root.context.getString(contentDescRes)
 
             // Configura a animação de clique e o listener
             setupClickAnimation(binding.cardRecipe, recipe)

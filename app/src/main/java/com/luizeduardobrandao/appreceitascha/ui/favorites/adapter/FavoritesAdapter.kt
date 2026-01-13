@@ -93,12 +93,15 @@ class FavoritesAdapter(
             binding.textFavoriteSubtitle.text = recipe.subtitle
 
             val isUnlocked = canOpenRecipe(recipe)
-            val iconRes = if (isUnlocked) {
-                R.drawable.ic_recipe_lock_open_24
+
+            if (isUnlocked) {
+                // Receita liberada: Esconde o cadeado
+                binding.imageFavoriteLock.visibility = View.GONE
             } else {
-                R.drawable.ic_recipe_lock_24
+                // Receita bloqueada: Mostra o cadeado fechado
+                binding.imageFavoriteLock.visibility = View.VISIBLE
+                binding.imageFavoriteLock.setImageResource(R.drawable.ic_recipe_lock_24)
             }
-            binding.imageFavoriteLock.setImageResource(iconRes)
 
             setupClickAnimation(binding.cardFavoriteRoot, recipe)
         }

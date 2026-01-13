@@ -72,14 +72,14 @@
 
         <ImageView
             android:id="@+id/imageCategoryArrow"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:contentDescription="@string/categories_item_icon_go_content_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_right_24"
-            app:tint="@color/colorPrimary" />
+            app:tint="@color/text_secondary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
