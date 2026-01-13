@@ -4,6 +4,7 @@ import com.google.firebase.database.DataSnapshot
 import com.luizeduardobrandao.appreceitascha.domain.recipes.Category
 import com.luizeduardobrandao.appreceitascha.domain.recipes.Recipe
 import com.luizeduardobrandao.appreceitascha.domain.recipes.RecipeRepository
+import java.text.Normalizer
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -122,22 +123,32 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    // ✅ IMPLEMENTAÇÃO DA NOVA BUSCA
+    /** Implementação da Busca por Receitas em Título, Subtítulo e Ingredientes */
     override suspend fun searchRecipes(query: String): Result<List<Recipe>> {
         return try {
             // 1. Busca todas as receitas do DataSource
             val snapshot = firebaseRecipeDataSource.getAllRecipesSnapshot()
 
-            // 2. Converte Snapshot -> List<Recipe> usando a função auxiliar
+            // 2. Converte Snapshot -> List<Recipe>
             val allRecipes = snapshot.children.mapNotNull { child ->
                 child.toDomainRecipe()
             }
 
-            // 3. Filtra localmente pelo título (ignora maiúsculas/minúsculas)
+            // 3. Prepara o termo de busca: remove acentos e espaços extras
+            val sanitizedQuery = query.unaccent().trim()
+
+            // 4. Filtra verificando Título, Subtítulo E Ingredientes
             val filteredList = allRecipes.filter { recipe ->
-                recipe.title.contains(query, ignoreCase = true)
+                val titleNorm = recipe.title.unaccent()
+                val subtitleNorm = recipe.subtitle.unaccent()
+                val ingredientsNorm = recipe.ingredientes.unaccent()
+
+                titleNorm.contains(sanitizedQuery, ignoreCase = true) ||
+                        subtitleNorm.contains(sanitizedQuery, ignoreCase = true) ||
+                        ingredientsNorm.contains(sanitizedQuery, ignoreCase = true)
             }
 
+            // Retorna a lista filtrada (a ordenação alfabética final é feita no ViewModel)
             Result.success(filteredList)
         } catch (e: Exception) {
             Result.failure(e)
@@ -145,7 +156,7 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     // =========================================================================
-    // ✅ FUNÇÃO AUXILIAR PARA BUSCA (Adicione no final da classe)
+    // ✅ FUNÇÕES AUXILIARES PARA BUSCA
     // =========================================================================
     /**
      * Converte um DataSnapshot (nó de receita) para o objeto de domínio [Recipe].
@@ -195,5 +206,13 @@ class RecipeRepositoryImpl @Inject constructor(
                 isFreePreview = isFreePreview
             )
         }
+    }
+
+    /**
+     * Remove acentos de uma String para facilitar a busca.
+     */
+    private fun String.unaccent(): String {
+        val nfdNormalizedString = Normalizer.normalize(this, Normalizer.Form.NFD)
+        return nfdNormalizedString.replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
     }
 }

@@ -85,10 +85,8 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
                 )
             findNavController().navigate(action)
         } else {
-            SnackbarFragment.showWarning(
-                requireView(),
-                getString(R.string.recipe_locked_requires_plan_or_login)
-            )
+            // Navega para o BottomSheet de bloqueio
+            findNavController().navigate(R.id.action_favoritesFragment_to_lockedRecipeBottomSheet)
         }
     }
 

@@ -41,6 +41,10 @@
         <action
             android:id="@+id/action_searchFragment_to_recipeDetailFragment"
             app:destination="@id/recipeDetailFragment" />
+
+        <action
+            android:id="@+id/action_searchFragment_to_lockedRecipeBottomSheet"
+            app:destination="@id/lockedRecipeBottomSheet" />
     </fragment>
 
     <!-- ======== Tela Categorias Chá ======== -->
@@ -80,7 +84,6 @@
     </fragment>
 
     <!-- ======== Dialog Receita Bloqueada -> PlansFragment ======== -->
-
     <dialog
         android:id="@+id/lockedRecipeBottomSheet"
         android:name="com.luizeduardobrandao.appreceitascha.ui.recipes.LockedRecipeBottomSheet"
@@ -123,6 +126,10 @@
                 android:name="recipeId"
                 app:argType="string" />
         </action>
+
+        <action
+            android:id="@+id/action_favoritesFragment_to_lockedRecipeBottomSheet"
+            app:destination="@id/lockedRecipeBottomSheet" />
     </fragment>
 
     <!-- ======== Tela Planos ======== -->

@@ -121,10 +121,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 SearchFragmentDirections.actionSearchFragmentToRecipeDetailFragment(recipe.id)
             findNavController().navigate(action)
         } else {
-            SnackbarFragment.showWarning(
-                binding.root,
-                getString(R.string.recipe_locked_requires_plan_or_login)
-            )
+            // Navega para o BottomSheet de bloqueio
+            findNavController().navigate(R.id.action_searchFragment_to_lockedRecipeBottomSheet)
         }
     }
 
