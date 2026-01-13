@@ -227,8 +227,10 @@
 
 
     <!-- ======== ManagePlanFragment ======== -->
+    <string name="manage_plan_screen_title">Meu Plano</string>
     <string name="manage_status_active">Membro Premium Ativo</string>
     <string name="manage_status_desc">Você possui acesso vitalício. Aproveite todos os benefícios sem preocupações.</string>
+    <string name="manage_helps">Precisa de ajuda com sua assinatura?</string>
     <string name="manage_btn_support">Suporte / Dúvidas</string>
     <string name="manage_btn_back">Voltar para o Início</string>
 

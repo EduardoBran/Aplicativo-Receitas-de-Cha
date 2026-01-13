@@ -8,20 +8,45 @@
     android:background="@color/app_background"
     android:padding="24dp">
 
+    <TextView
+        android:id="@+id/tvScreenTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/manage_plan_screen_title"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:textColor="@color/manage_plan_title"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Meu Plano" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardMember"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        app:cardBackgroundColor="@color/color_primary_base"
+        app:cardBackgroundColor="@android:color/transparent"
         app:cardCornerRadius="24dp"
         app:cardElevation="8dp"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/tvScreenTitle">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_premium_card_gradient"
             android:padding="32dp">
+
+            <View
+                android:id="@+id/bgCircle"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/bg_circle_icon_category"
+                android:backgroundTint="@color/premium_overlay_circle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/iconCrown"
@@ -29,35 +54,37 @@
                 android:layout_height="64dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_star_premium_24"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="#FFD700" />
+                app:layout_constraintBottom_toBottomOf="@id/bgCircle"
+                app:layout_constraintEnd_toEndOf="@id/bgCircle"
+                app:layout_constraintStart_toStartOf="@id/bgCircle"
+                app:layout_constraintTop_toTopOf="@id/bgCircle"
+                app:tint="@color/premium_icon_tint" />
 
             <TextView
                 android:id="@+id/tvStatusTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/manage_status_active"
                 android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textColor="@color/text_on_premium_primary"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iconCrown" />
+                app:layout_constraintTop_toBottomOf="@id/bgCircle" />
 
             <TextView
                 android:id="@+id/tvStatusDesc"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
+                android:lineSpacingExtra="4sp"
                 android:text="@string/manage_status_desc"
                 android:textAlignment="center"
-                android:textColor="#E0E0E0"
-                android:textSize="14sp"
+                android:textColor="@color/text_on_premium_secondary"
+                android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvStatusTitle" />
@@ -65,28 +92,45 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <TextView
+        android:id="@+id/tvSupportHint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:alpha="0.8"
+        android:gravity="center"
+        android:text="@string/manage_helps"
+        android:textColor="@color/manage_plan_hint"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/btnSupport"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSupport"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/manage_btn_support"
         android:textColor="@color/color_primary_base"
-        app:cornerRadius="28dp"
-        app:layout_constraintTop_toBottomOf="@id/cardMember"
-        app:strokeColor="@color/color_primary_base" />
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toTopOf="@id/btnBack"
+        app:strokeColor="@color/color_primary_base"
+        app:strokeWidth="1dp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBack"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
         android:text="@string/manage_btn_back"
-        android:textColor="@color/colorOnBackground"
+        android:textColor="@color/manage_plan_hint"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnSupport" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

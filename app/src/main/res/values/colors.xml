@@ -88,6 +88,8 @@
     <color name="button_disabled_background">#AFC3BD</color>
     <color name="button_disabled_text">#F9FBFA</color>
 
+    <color name="btn_google_background">#FFFFFF</color>
+
     <!-- ===================== -->
     <!-- BOTTOM NAV             -->
     <!-- ===================== -->
@@ -126,7 +128,7 @@
     <color name="colorOnError">@color/color_on_primary_base</color>
     <color name="warning_color">#FB9908</color> <!-- Laranja para avisos -->
 
-    <!-- Card HomeFragment Icons -->
+    <!-- Card HomeFragment e CategoriesFragment Icons -->
     <color name="card_sleep">#5E35B1</color>
     <color name="card_energy">#F57C00</color>
     <color name="card_weight">#22A06B</color>
@@ -153,4 +155,15 @@
     <color name="card_premium_bg">#FFF8E1</color>
     <color name="card_free_bg">#F1F8F6</color>
     <color name="icon_login_star_color">#FB9908</color>
+
+    <!-- ManageFragmentPlans -->
+    <color name="premium_gradient_start">#FFC107</color>
+    <color name="premium_gradient_center">#FFB300</color>
+    <color name="premium_gradient_end">#FF8F00</color>
+    <color name="premium_icon_tint">#FFFFFF</color>
+    <color name="premium_overlay_circle">#20FFFFFF</color>
+    <color name="text_on_premium_primary">#FFFFFF</color>
+    <color name="text_on_premium_secondary">#FFF3E0</color>
+    <color name="manage_plan_title">@color/color_primary_dark</color>
+    <color name="manage_plan_hint">@color/text_secondary</color>
 </resources>

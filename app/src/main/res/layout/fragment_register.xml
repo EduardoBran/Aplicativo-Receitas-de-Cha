@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="32dp">
+            android:paddingBottom="16dp">
 
             <ImageView
                 android:id="@+id/ivAppLogo"
@@ -34,7 +34,7 @@
                 android:id="@+id/sectionSubscription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginBottom="16dp"
                 android:orientation="vertical"
                 android:visibility="gone"
@@ -62,7 +62,8 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp">
+                        android:paddingVertical="8dp"
+                        android:paddingHorizontal="16dp">
 
                         <ImageView
                             android:id="@+id/ivSubIcon"
@@ -122,7 +123,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/register_title"
                 android:textAlignment="center"
@@ -134,8 +135,8 @@
                 android:id="@+id/tvSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/register_subtitle"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
@@ -145,7 +146,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
+                android:layout_marginHorizontal="20dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -175,15 +176,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="16dp">
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="12dp">
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilName"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
+                            android:layout_marginBottom="12dp"
                             android:hint="@string/register_name_hint"
                             app:boxBackgroundColor="@color/edittext_background"
                             app:boxCornerRadiusBottomEnd="12dp"
@@ -218,7 +219,6 @@
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="8dp"
                                 android:hint="@string/register_email_hint"
                                 app:boxBackgroundColor="@color/edittext_background"
                                 app:boxCornerRadiusBottomEnd="12dp"
@@ -249,7 +249,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
-                                android:layout_marginBottom="8dp"
+                                android:layout_marginBottom="6dp"
                                 android:text="@string/register_change_email_button"
                                 android:textColor="@color/color_primary_base"
                                 android:visibility="gone"
@@ -267,7 +267,7 @@
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="16dp"
+                                android:layout_marginBottom="12dp"
                                 android:hint="@string/register_password_hint"
                                 app:boxBackgroundColor="@color/edittext_background"
                                 app:boxCornerRadiusBottomEnd="12dp"
@@ -299,7 +299,6 @@
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="8dp"
                                 android:hint="@string/register_confirm_password_hint"
                                 app:boxBackgroundColor="@color/edittext_background"
                                 app:boxCornerRadiusBottomEnd="12dp"
@@ -332,6 +331,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
+                                android:layout_marginBottom="8dp"
                                 android:text="@string/register_change_password_button"
                                 android:textColor="@color/color_primary_base"
                                 android:visibility="gone"
@@ -346,7 +346,8 @@
                             android:backgroundTint="@color/edittext_background"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="16dp"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="24dp"
                             android:visibility="gone"
                             tools:visibility="visible">
 
@@ -384,8 +385,7 @@
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginBottom="24dp"
+                            android:layout_marginBottom="20dp"
                             android:hint="@string/register_phone_hint"
                             app:boxBackgroundColor="@color/edittext_background"
                             app:boxCornerRadiusBottomEnd="12dp"
@@ -415,7 +415,6 @@
                             style="@style/Widget.MaterialComponents.Button"
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
-                            android:layout_marginBottom="12dp"
                             android:backgroundTint="@color/button_primary_background"
                             android:enabled="false"
                             android:text="@string/register_button_text"
@@ -445,7 +444,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginHorizontal="24dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/register_btn_logout"
                 android:textAllCaps="false"
                 android:textColor="@color/text_error"
@@ -462,7 +462,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"

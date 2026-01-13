@@ -80,6 +80,8 @@
     <color name="button_disabled_background">#37554B</color>
     <color name="button_disabled_text">#9DB3AB</color>
 
+    <color name="btn_google_background">@color/surface_card_background</color>
+
     <!-- ===================== -->
     <!-- BOTTOM NAV             -->
     <!-- ===================== -->
@@ -150,4 +152,15 @@
     <color name="card_premium_bg">#2C2618</color>
     <color name="card_free_bg">#1F2926</color>
     <color name="icon_login_star_color">#FB9908</color>
+
+    <!-- ManageFragmentPlans -->
+    <color name="premium_gradient_start">#FF8F00</color>
+    <color name="premium_gradient_center">#F57C00</color>
+    <color name="premium_gradient_end">#EF6C00</color>
+    <color name="premium_icon_tint">#FFECB3</color>
+    <color name="premium_overlay_circle">#0DFFFFFF</color>
+    <color name="text_on_premium_primary">#EEEEEE</color>
+    <color name="text_on_premium_secondary">#FFE0B2</color>
+    <color name="manage_plan_title">#E0E0E0</color>
+    <color name="manage_plan_hint">#B0BEC5</color>
 </resources>

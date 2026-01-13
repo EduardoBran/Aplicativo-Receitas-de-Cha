@@ -17,7 +17,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:padding="20dp">
 
             <ImageView
                 android:id="@+id/ivAppLogo"
@@ -51,8 +51,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="24dp">
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp">
 
                     <TextView
                         android:id="@+id/tvTitle"
@@ -266,7 +266,7 @@
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:backgroundTint="@android:color/white"
+                        android:backgroundTint="@color/btn_google_background"
                         android:text="@string/login_google_button"
                         android:textAllCaps="false"
                         android:textColor="@color/text_primary"
