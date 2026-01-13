@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -24,6 +25,8 @@ class LockedRecipeBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private val mainViewModel: MainViewModel by activityViewModels()
+
+    private val args: LockedRecipeBottomSheetArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,15 +70,33 @@ class LockedRecipeBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun updateContentForUserState() {
-        if (mainViewModel.isUserLoggedIn()) {
-            // Cenário 2: Usuário Logado (Free) -> Texto de Venda
-            binding.tvTitle.text = getString(R.string.locked_sheet_title)
-            binding.tvDesc.text = getString(R.string.locked_sheet_desc)
+        val isUserLoggedIn = mainViewModel.isUserLoggedIn()
+        val isFavoriteAction = args.isFavoriteAction
+
+        if (isUserLoggedIn) {
+            // Cenário: Usuário Logado (Free)
+            if (isFavoriteAction) {
+                // Veio do clique no coração
+                binding.tvTitle.text = getString(R.string.locked_favorite_title_user)
+                binding.tvDesc.text = getString(R.string.locked_favorite_desc_user)
+            } else {
+                // Veio do clique na receita bloqueada
+                binding.tvTitle.text = getString(R.string.locked_sheet_title)
+                binding.tvDesc.text = getString(R.string.locked_sheet_desc)
+            }
             binding.btnOffer.text = getString(R.string.locked_sheet_btn_offer)
+
         } else {
-            // Cenário 1: Visitante -> Texto de Login/Cadastro
-            binding.tvTitle.text = getString(R.string.locked_sheet_title_guest)
-            binding.tvDesc.text = getString(R.string.locked_sheet_desc_guest)
+            // Cenário: Visitante
+            if (isFavoriteAction) {
+                // Veio do clique no coração
+                binding.tvTitle.text = getString(R.string.locked_favorite_title_guest)
+                binding.tvDesc.text = getString(R.string.locked_favorite_desc_guest)
+            } else {
+                // Veio do clique na receita bloqueada
+                binding.tvTitle.text = getString(R.string.locked_sheet_title_guest)
+                binding.tvDesc.text = getString(R.string.locked_sheet_desc_guest)
+            }
             binding.btnOffer.text = getString(R.string.locked_sheet_btn_guest)
         }
     }

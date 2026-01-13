@@ -165,12 +165,18 @@
     <string name="locked_sheet_title_guest">Faça Login para Acessar</string>
     <string name="locked_sheet_desc_guest">Para desbloquear esta e outras 160 receitas exclusivas, entre na sua conta ou cadastre-se.</string>
     <string name="locked_sheet_btn_guest">Entrar ou Cadastrar</string>
+    <string name="locked_favorite_title_guest">Faça Login para Favoritar</string>
+    <string name="locked_favorite_desc_guest">Para favoritar esta e outras 160 receitas exclusivas, entre na sua conta ou cadastre-se.</string>
+    <string name="locked_favorite_title_user">Favorito Exclusivo</string>
+    <string name="locked_favorite_desc_user">Torne-se Vitalício para favoritar esta e quantas receitas desejar!</string>
 
     <string name="cd_close_dialog">Fechar diálogo</string>
     <string name="cd_star_rating">Avaliação 5 estrelas</string>
 
 
     <!-- ======== RecipesDetailFragment ========-->
+    <string name="cd_navigate_up">Voltar</string>
+    <string name="recipe_detail_section_intro">Resumo</string>
     <string name="recipe_detail_section_benefits">Benefícios</string>
     <string name="recipe_detail_section_ingredients">Ingredientes</string>
     <string name="recipe_detail_section_preparation">Modo de Preparo</string>

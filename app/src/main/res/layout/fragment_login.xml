@@ -94,35 +94,35 @@
                                 android:layout_height="16dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
-                                app:tint="@color/star_color" />
+                                app:tint="@color/icon_login_star_color" />
 
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
-                                app:tint="@color/star_color" />
+                                app:tint="@color/icon_login_star_color" />
 
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
-                                app:tint="@color/star_color" />
+                                app:tint="@color/icon_login_star_color" />
 
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
-                                app:tint="@color/star_color" />
+                                app:tint="@color/icon_login_star_color" />
 
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
-                                app:tint="@color/star_color" />
+                                app:tint="@color/icon_login_star_color" />
                         </LinearLayout>
                     </LinearLayout>
 

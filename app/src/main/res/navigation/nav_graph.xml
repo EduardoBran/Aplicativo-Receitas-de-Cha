@@ -90,6 +90,11 @@
         android:label="LockedRecipeBottomSheet"
         tools:layout="@layout/fragment_locked_recipe_bottom_sheet">
 
+        <argument
+            android:name="isFavoriteAction"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
         <action
             android:id="@+id/action_lockedRecipeBottomSheet_to_plansFragment"
             app:destination="@id/plansFragment" />
@@ -110,6 +115,10 @@
         <argument
             android:name="recipeId"
             app:argType="string" />
+
+        <action
+            android:id="@+id/action_recipeDetailFragment_to_lockedRecipeBottomSheet"
+            app:destination="@id/lockedRecipeBottomSheet" />
     </fragment>
 
     <!-- ======== Tela Favoritos ======== -->

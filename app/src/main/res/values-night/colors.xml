@@ -149,6 +149,5 @@
     <color name="gradient_green_end">#1B3A30</color>
     <color name="card_premium_bg">#2C2618</color>
     <color name="card_free_bg">#1F2926</color>
-    <color name="login_wave_color">#1F2926</color>
-    <color name="star_color">#FB9908</color>
+    <color name="icon_login_star_color">#FB9908</color>
 </resources>

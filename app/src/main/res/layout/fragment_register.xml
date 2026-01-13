@@ -332,7 +332,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
-                                android:layout_marginBottom="8dp"
                                 android:text="@string/register_change_password_button"
                                 android:textColor="@color/color_primary_base"
                                 android:visibility="gone"
@@ -354,6 +353,7 @@
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
+                                android:contentDescription="@null"
                                 android:src="@drawable/ic_google_24"
                                 app:tint="@color/text_secondary" />
 
