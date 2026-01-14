@@ -7,13 +7,14 @@
     android:layout_height="match_parent"
     android:background="@color/app_background"
     android:paddingBottom="8dp"
+    android:paddingHorizontal="@dimen/categories_list_paddingHorizontal"
     tools:context=".ui.categories.CategoriesFragment">
 
     <TextView
         android:id="@+id/textCategoriesTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/categories_textCategoriesTitle_marginTop"
         android:paddingBottom="16dp"
         android:text="@string/categories_title"
         android:textAlignment="center"
@@ -29,7 +30,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -183,7 +183,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.btnCatDetox.setOnClickListener {
             navigateToCategory(
                 "emagrecimento",
-                "Emagrecimento e Equilíbrio"
+                "Emagrecimento e Hábitos"
             )
         }
         binding.btnCatMore.setOnClickListener { findNavController().navigate(R.id.categoriesFragment) }

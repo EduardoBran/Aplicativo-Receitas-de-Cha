@@ -5,7 +5,7 @@
     android:id="@+id/cardCategory"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="@dimen/categories_list_marginBottom"
     android:clickable="true"
     android:focusable="true"
     app:cardBackgroundColor="@color/surface_card_background"
@@ -42,14 +42,14 @@
             android:maxLines="1"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             android:textColor="@color/colorOnSurface"
-            android:textSize="18sp"
+            android:textSize="@dimen/categories_textCategoryName"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/textCategoryDescription"
             app:layout_constraintEnd_toStartOf="@id/imageCategoryArrow"
             app:layout_constraintStart_toEndOf="@id/imageCategoryIcon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
-            tools:text="Imunidade e Proteção Natural" />
+            tools:text="Afrodisíacos e Vitalidade" />
 
         <TextView
             android:id="@+id/textCategoryDescription"
@@ -63,7 +63,7 @@
             android:maxLines="3"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="@color/text_secondary"
-            android:textSize="14sp"
+            android:textSize="@dimen/categories_textCategoryDescription"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/imageCategoryArrow"
             app:layout_constraintStart_toEndOf="@id/imageCategoryIcon"

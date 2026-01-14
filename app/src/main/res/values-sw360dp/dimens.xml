@@ -2,10 +2,16 @@
 <resources>
 
     <!-- HomeFragment / HomeSkeleton -->
-
+    <dimen name="home_paddingHorizontal">24dp</dimen>
+    <dimen name="home_cardAvatarContainer_marginTop">26dp</dimen>
+    <dimen name="home_viewSearchBar_height">54dp</dimen>
+    <dimen name="home_viewSearchBar_marginTop">26dp</dimen>
+    <dimen name="home_cardBanner_marginTop">34dp</dimen>
+    <dimen name="home_cardBanner_paddingHorizontal">22dp</dimen>
+    <dimen name="home_ivBannerIcon_size">56dp</dimen>
+    <dimen name="home_tvSectionCat_marginTop">32dp</dimen>
 
     <!-- SearchFragment -->
-
 
     <!-- LoginFragment -->
     <dimen name="login_ivAppLogo_size">80dp</dimen>
@@ -20,30 +26,55 @@
     <dimen name="login_tvNoAccount">16sp</dimen>
 
     <!-- RegisterFragment -->
-    <dimen name="register_ivAppLogo_size">60dp</dimen>
+    <dimen name="register_ivAppLogo_size">64dp</dimen>
     <dimen name="register_ivAppLogo_marginTop">0dp</dimen>
     <dimen name="register_card_marginHorizontal">0dp</dimen>
     <dimen name="register_btn_marginHorizontal">0dp</dimen>
-    <dimen name="register_btn_logout_marginHorizontal">0dp</dimen>
+    <dimen name="register_btn_logout_marginHorizontal">24dp</dimen>
     <dimen name="register_btnGoToLogin_paddingVertical">0dp</dimen>
 
     <!-- ResetPasswordFragment -->
     <dimen name="reset_tvTitle">22sp</dimen>
 
     <!-- CategoriesFragment -->
-
+    <dimen name="categories_textCategoriesTitle_marginTop">24dp</dimen>
+    <dimen name="categories_list_paddingHorizontal">16dp</dimen>
+    <dimen name="categories_list_marginBottom">8dp</dimen>
+    <dimen name="categories_textCategoryName">17sp</dimen>
+    <dimen name="categories_textCategoryDescription">14sp</dimen>
 
     <!-- RecipeListFragment -->
-
+    <dimen name="recipes_textRecipesTitle_marginTop">24dp</dimen>
+    <dimen name="recipes_list_paddingHorizontal">16dp</dimen>
+    <dimen name="recipes_list_marginBottom">12dp</dimen>
+    <dimen name="recipes_textRecipeTitle">16sp</dimen>
+    <dimen name="recipes_textRecipeSubtitle">14sp</dimen>
 
     <!-- RecipeDetailFragment -->
-
+    <dimen name="recipe_hero_header_height_original">156dp</dimen>
+    <dimen name="recipe_hero_header_height_expanded">172dp</dimen>
 
     <!-- FavoritesFragment -->
-
+    <dimen name="favorites_textFavoritesTitle_marginTop">24dp</dimen>
+    <dimen name="favorites_list_paddingHorizontal">16dp</dimen>
+    <dimen name="favorites_list_marginBottom">12dp</dimen>
+    <dimen name="favorites_textFavoriteTitle">16sp</dimen>
+    <dimen name="favorites_textFavoriteSubtitle">14sp</dimen>
 
     <!-- PlansFragment -->
-
+    <dimen name="plans_content_paddingVertical">16dp</dimen>
+    <dimen name="plans_content_paddingHorizontal">22dp</dimen>
+    <dimen name="plans_icon_size">54dp</dimen>
+    <dimen name="plans_textTitle_marginTop">10dp</dimen>
+    <dimen name="plans_textTitle_size">22sp</dimen>
+    <dimen name="plans_textSubTitle_size">16sp</dimen>
+    <dimen name="plans_cardBenefits_padding">16dp</dimen>
+    <dimen name="plans_tvPrice_size">30sp</dimen>
+    <dimen name="plans_btnPlanLifeBuy_size">50dp</dimen>
+    <dimen name="plans_btnPlanLifeBuy_text_size">15sp</dimen>
+    <dimen name="plans_tvPrice_marginBottom">10dp</dimen>
+    <dimen name="plans_tvDisclaimer_marginTop">6dp</dimen>
+    <dimen name="plans_btnPlansRestore_marginTop">10dp</dimen>
 
     <!-- ManagePlanFragment -->
 

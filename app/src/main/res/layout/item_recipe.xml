@@ -5,7 +5,7 @@
     android:id="@+id/cardRecipe"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
+    android:layout_marginBottom="@dimen/recipes_list_marginBottom"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
@@ -53,13 +53,14 @@
             android:maxLines="2"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             android:textColor="@color/color_primary_dark"
+            android:textSize="@dimen/recipes_textRecipeTitle"
             android:textStyle="bold"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@+id/imageRecipeLock"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Chá de Camomila" />
+            tools:text="Chá Amanhecer de Café Verde" />
 
         <TextView
             android:id="@+id/textRecipeSubtitle"
@@ -71,6 +72,7 @@
             android:maxLines="2"
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="@color/colorOnSurface"
+            android:textSize="@dimen/recipes_textRecipeSubtitle"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@+id/imageRecipeLock"
             app:layout_constraintHorizontal_bias="0.0"

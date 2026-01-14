@@ -251,8 +251,15 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
 
                             val lineCount = binding.textRecipeTitle.lineCount
                             val params = binding.viewHeroHeader.layoutParams
-                            val heightOriginal = dpToPx(156f)
-                            val heightExpandida = dpToPx(172f)
+
+                            // Busca os valores dos recursos
+                            val heightOriginal = resources.getDimensionPixelSize(
+                                R.dimen.recipe_hero_header_height_original
+                            )
+                            val heightExpandida = resources.getDimensionPixelSize(
+                                R.dimen.recipe_hero_header_height_expanded
+                            )
+
                             val targetHeight =
                                 if (lineCount > 1) heightExpandida else heightOriginal
 
@@ -350,13 +357,5 @@ class RecipeDetailFragment : Fragment(R.layout.fragment_recipe_detail) {
         binding.imageHeroIcon.setImageResource(iconRes)
         // Garante que o ícone fique visível e com a transparência correta
         binding.imageHeroIcon.alpha = 0.2f
-    }
-
-    private fun dpToPx(dp: Float): Int {
-        return android.util.TypedValue.applyDimension(
-            android.util.TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            resources.displayMetrics
-        ).toInt()
     }
 }
