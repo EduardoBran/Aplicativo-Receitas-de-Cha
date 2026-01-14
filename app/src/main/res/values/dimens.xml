@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- HomeFragment / HomeSkeleton -->
+
+
+    <!-- SearchFragment -->
+
+
+    <!-- LoginFragment -->
+
+
+    <!-- RegisterFragment -->
+
+
+    <!-- ResetPasswordFragment -->
+
+
+    <!-- CategoriesFragment -->
+
+
+    <!-- RecipeListFragment -->
+
+
+    <!-- RecipeDetailFragment -->
+
+
+    <!-- FavoritesFragment -->
+
+
+    <!-- PlansFragment -->
+
+
+    <!-- ManagePlanFragment -->
+
+
+
+</resources>

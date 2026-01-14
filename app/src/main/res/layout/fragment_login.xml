@@ -17,7 +17,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:padding="24dp">
 
             <ImageView
                 android:id="@+id/ivAppLogo"
@@ -36,7 +36,6 @@
                 android:id="@+id/card_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="@color/surface_card_background"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="8dp"
@@ -51,8 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="16dp">
+                    android:padding="16dp">
 
                     <TextView
                         android:id="@+id/tvTitle"
@@ -161,7 +159,6 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
                         android:hint="@string/login_password_hint"
                         app:boxBackgroundColor="@color/edittext_background"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -194,7 +191,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="8dp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:paddingHorizontal="4dp"
@@ -286,8 +283,9 @@
                 android:id="@+id/layoutFooter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -298,7 +296,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login_no_account"
                     android:textColor="@color/color_primary_dark"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
@@ -308,12 +306,12 @@
                     android:layout_height="wrap_content"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="54dp"
+                    android:paddingVertical="10dp"
                     android:text="@string/login_create_account"
                     android:textAllCaps="false"
                     android:textColor="@color/color_primary_base"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
