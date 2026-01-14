@@ -1,2 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+
+    <!-- HomeFragment / HomeSkeleton -->
+
+
+    <!-- SearchFragment -->
+
+
+    <!-- LoginFragment -->
+    <dimen name="login_ivAppLogo_size">80dp</dimen>
+    <dimen name="login_ivAppLogo_marginBottom">0dp</dimen>
+    <dimen name="login_card_padding">16dp</dimen>
+    <dimen name="login_card_constraintWidth_max">400dp</dimen>
+    <dimen name="login_card_tvSubtitle_marginBottom">16dp</dimen>
+    <dimen name="login_btn_marginHorizontal">0dp</dimen>
+    <dimen name="login_btnGoToRegister_paddingVertical">0dp</dimen>
+    <dimen name="login_layoutFooter_marginTop">18dp</dimen>
+    <dimen name="login_tvTitle">22sp</dimen>
+    <dimen name="login_tvNoAccount">16sp</dimen>
+
+    <!-- RegisterFragment -->
+    <dimen name="register_ivAppLogo_size">60dp</dimen>
+    <dimen name="register_ivAppLogo_marginTop">0dp</dimen>
+    <dimen name="register_card_marginHorizontal">0dp</dimen>
+    <dimen name="register_btn_marginHorizontal">0dp</dimen>
+    <dimen name="register_btn_logout_marginHorizontal">0dp</dimen>
+    <dimen name="register_btnGoToLogin_paddingVertical">0dp</dimen>
+
+    <!-- ResetPasswordFragment -->
+    <dimen name="reset_tvTitle">22sp</dimen>
+
+    <!-- CategoriesFragment -->
+
+
+    <!-- RecipeListFragment -->
+
+
+    <!-- RecipeDetailFragment -->
+
+
+    <!-- FavoritesFragment -->
+
+
+    <!-- PlansFragment -->
+
+
+    <!-- ManagePlanFragment -->
+
+</resources>

@@ -8,13 +8,28 @@
 
 
     <!-- LoginFragment -->
-
+    <dimen name="login_ivAppLogo_size">112dp</dimen>
+    <dimen name="login_ivAppLogo_marginBottom">8dp</dimen>
+    <dimen name="login_card_padding">16dp</dimen>
+    <dimen name="login_card_constraintWidth_max">400dp</dimen>
+    <dimen name="login_card_tvSubtitle_marginBottom">24dp</dimen>
+    <dimen name="login_btn_marginHorizontal">0dp</dimen>
+    <dimen name="login_btnGoToRegister_paddingVertical">10dp</dimen>
+    <dimen name="login_layoutFooter_marginTop">24dp</dimen>
+    <dimen name="login_tvTitle">24sp</dimen>
+    <dimen name="login_tvNoAccount">18sp</dimen>
 
     <!-- RegisterFragment -->
+    <dimen name="register_ivAppLogo_size">80dp</dimen>
+    <dimen name="register_ivAppLogo_marginTop">24dp</dimen>
+    <dimen name="register_card_marginHorizontal">0dp</dimen>
+    <dimen name="register_btn_marginHorizontal">0dp</dimen>
+    <dimen name="register_btn_logout_marginHorizontal">0dp</dimen>
+    <dimen name="register_btnGoToLogin_paddingVertical">8dp</dimen>
 
 
     <!-- ResetPasswordFragment -->
-
+    <dimen name="reset_tvTitle">24sp</dimen>
 
     <!-- CategoriesFragment -->
 
@@ -32,7 +47,6 @@
 
 
     <!-- ManagePlanFragment -->
-
 
 
 </resources>

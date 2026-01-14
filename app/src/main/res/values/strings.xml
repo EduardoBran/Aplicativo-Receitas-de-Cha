@@ -15,7 +15,7 @@
     <string name="login_create_account">Criar conta grátis</string>
 
     <string name="login_welcome_back">Que bom te ver de novo!</string>
-    <string name="login_social_proof">Junte-se à comunidade de amantes de chá</string>
+    <string name="login_social_proof">Feito para amantes de chá</string>
 
     <!-- Erros de login -->
     <string name="error_login_invalid_credentials">E-mail ou senha incorretos.</string>

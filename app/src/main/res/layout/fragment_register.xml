@@ -18,14 +18,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="16dp">
+            android:paddingBottom="8dp">
 
             <ImageView
                 android:id="@+id/ivAppLogo"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="@dimen/register_ivAppLogo_size"
+                android:layout_height="@dimen/register_ivAppLogo_size"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/register_ivAppLogo_marginTop"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_xicara_logo"
                 tools:visibility="visible" />
@@ -39,7 +39,7 @@
                 android:layout_marginBottom="16dp"
                 android:orientation="vertical"
                 android:visibility="gone"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -57,6 +57,7 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
+                    android:layout_marginHorizontal="@dimen/register_card_marginHorizontal"
                     app:strokeColor="@color/divider"
                     app:strokeWidth="1dp">
 
@@ -146,7 +147,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
+                android:layout_marginHorizontal="22dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -167,6 +168,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
+                    android:layout_marginHorizontal="@dimen/register_card_marginHorizontal"
                     app:cardBackgroundColor="@color/surface_card_background"
                     app:cardCornerRadius="24dp"
                     app:cardElevation="4dp">
@@ -348,7 +350,7 @@
                             android:paddingHorizontal="16dp"
                             android:paddingVertical="8dp"
                             android:visibility="gone"
-                            tools:visibility="visible">
+                            tools:visibility="gone">
 
                             <ImageView
                                 android:layout_width="24dp"
@@ -418,6 +420,7 @@
                             android:backgroundTint="@color/button_primary_background"
                             android:enabled="false"
                             android:text="@string/register_button_text"
+                            android:layout_marginHorizontal="@dimen/register_btn_marginHorizontal"
                             android:textAllCaps="false"
                             android:textColor="@color/button_primary_text"
                             android:textSize="16sp"
@@ -443,7 +446,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginHorizontal="24dp"
+                android:layout_marginHorizontal="@dimen/register_btn_logout_marginHorizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/register_btn_logout"
@@ -485,8 +488,8 @@
                     android:layout_height="wrap_content"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="8dp"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="@dimen/login_btnGoToRegister_paddingVertical"
                     android:text="@string/register_go_to_login"
                     android:textAllCaps="false"
                     android:textColor="@color/color_primary_base"

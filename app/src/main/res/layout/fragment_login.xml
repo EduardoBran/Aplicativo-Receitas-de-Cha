@@ -17,20 +17,22 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:paddingStart="22dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="16dp">
 
             <ImageView
                 android:id="@+id/ivAppLogo"
-                android:layout_width="112dp"
-                android:layout_height="112dp"
-                android:layout_marginBottom="8dp"
+                android:layout_width="@dimen/login_ivAppLogo_size"
+                android:layout_height="@dimen/login_ivAppLogo_size"
+                android:layout_marginBottom="@dimen/login_ivAppLogo_marginBottom"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_xicara_logo"
                 app:layout_constraintBottom_toTopOf="@+id/card_login"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_login"
@@ -43,14 +45,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ivAppLogo"
-                app:layout_constraintWidth_max="400dp">
+                app:layout_constraintWidth_max="@dimen/login_card_constraintWidth_max">
 
                 <LinearLayout
                     android:id="@+id/container_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="@dimen/login_card_padding">
 
                     <TextView
                         android:id="@+id/tvTitle"
@@ -61,13 +63,13 @@
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
                         android:textColor="@color/text_primary"
-                        android:textSize="24sp"
+                        android:textSize="@dimen/login_tvTitle"
                         android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="24dp"
+                        android:layout_marginBottom="@dimen/login_card_tvSubtitle_marginBottom"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -88,36 +90,36 @@
                             android:orientation="horizontal">
 
                             <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
                                 app:tint="@color/icon_login_star_color" />
 
                             <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
                                 app:tint="@color/icon_login_star_color" />
 
                             <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
                                 app:tint="@color/icon_login_star_color" />
 
                             <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
                                 app:tint="@color/icon_login_star_color" />
 
                             <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
                                 android:contentDescription="@string/cd_star_rating"
                                 android:src="@drawable/ic_whatshot_24"
                                 app:tint="@color/icon_login_star_color" />
@@ -206,7 +208,8 @@
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginHorizontal="@dimen/login_btn_marginHorizontal"
+                        android:layout_marginBottom="8dp"
                         android:backgroundTint="@color/button_primary_background"
                         android:enabled="false"
                         android:text="@string/login_button_text"
@@ -222,7 +225,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="8dp"
                         android:indeterminateTint="@color/color_primary_base"
                         android:visibility="gone"
                         tools:visibility="gone" />
@@ -230,7 +233,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="8dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
@@ -263,6 +266,7 @@
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
+                        android:layout_marginHorizontal="@dimen/login_btn_marginHorizontal"
                         android:backgroundTint="@color/btn_google_background"
                         android:text="@string/login_google_button"
                         android:textAllCaps="false"
@@ -283,7 +287,7 @@
                 android:id="@+id/layoutFooter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/login_layoutFooter_marginTop"
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -296,7 +300,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login_no_account"
                     android:textColor="@color/color_primary_dark"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/login_tvNoAccount"
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
@@ -307,11 +311,11 @@
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:paddingHorizontal="54dp"
-                    android:paddingVertical="10dp"
+                    android:paddingVertical="@dimen/login_btnGoToRegister_paddingVertical"
                     android:text="@string/login_create_account"
                     android:textAllCaps="false"
                     android:textColor="@color/color_primary_base"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/login_tvNoAccount"
                     android:textStyle="bold" />
             </LinearLayout>
 
