@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
     <!-- ===================== -->
@@ -43,9 +37,6 @@
     <!-- Texto secundário (descrições) -->
     <color name="text_secondary">#5F726C</color>
 
-    <!-- Hint dos campos -->
-    <color name="text_hint">#5F726C</color>
-
     <!-- Texto sobre botões verdes (branco) -->
     <color name="text_on_primary">@color/color_on_primary_base</color>
 
@@ -59,14 +50,8 @@
     <!-- Texto do campo (conteúdo digitado) -->
     <color name="edittext_text">@color/text_primary</color>
 
-    <!-- Hint do campo -->
-    <color name="edittext_hint">@color/text_hint</color>
-
     <!-- Borda do campo - estado normal -->
     <color name="edittext_stroke">#AFC3BD</color>
-
-    <!-- Borda do campo - estado focado -->
-    <color name="edittext_stroke_focused">@color/color_primary_base</color>
 
     <!-- Cor de erro para campos / textos -->
     <color name="text_error">#B3261E</color>
@@ -81,13 +66,6 @@
     <!-- Texto dentro dos botões principais -->
     <color name="button_primary_text">@color/text_on_primary</color>
 
-    <!-- Ícone dentro dos botões principais -->
-    <color name="button_primary_icon">@color/text_on_primary</color>
-
-    <!-- Botão desabilitado -->
-    <color name="button_disabled_background">#AFC3BD</color>
-    <color name="button_disabled_text">#F9FBFA</color>
-
     <color name="btn_google_background">#FFFFFF</color>
 
     <!-- ===================== -->
@@ -97,18 +75,12 @@
     <!-- Cor da “pílula” ativa do item selecionado -->
     <color name="bottom_nav_active_indicator">@color/color_primary_base</color>
 
-    <!-- Fundo do bottom nav (barra) -->
-    <color name="bottom_nav_background">@color/surface_card_background</color>
-
     <!-- ===================== -->
     <!-- DIVISÓRIAS / SOMBRA    -->
     <!-- ===================== -->
 
     <!-- Pode ser usada como borda leve, divisórias, etc. -->
     <color name="divider">#AFC3BD</color>
-
-    <!-- Sombra leve (15% preto) para cards/botões elevados -->
-    <color name="shadow_light">#26000000</color>
 
     <!-- ============================== -->
     <!-- MAPEAMENTO PARA TEMA MATERIAL  -->

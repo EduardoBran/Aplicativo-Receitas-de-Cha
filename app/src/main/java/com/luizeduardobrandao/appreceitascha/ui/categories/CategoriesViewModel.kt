@@ -15,13 +15,19 @@ import javax.inject.Inject
 /**
  * ViewModel responsável pela tela de categorias.
  *
- * - Carrega todas as categorias do Firebase via [RecipeRepository].
- * - Expõe um [CategoriesUiState] observável pela UI.
+ * Responsabilidades:
+ * - Carrega todas as categorias do Firebase via [RecipeRepository]
+ * - Expõe estado observável para a UI
+ * - Trata erros usando códigos técnicos (traduzidos no Fragment)
  */
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository
 ) : ViewModel() {
+
+    companion object {
+        private const val ERROR_LOAD_CATEGORIES = "CATEGORIES_LOAD_FAILED"
+    }
 
     private val _uiState = MutableStateFlow(CategoriesUiState())
     val uiState: StateFlow<CategoriesUiState> = _uiState.asStateFlow()
@@ -31,7 +37,8 @@ class CategoriesViewModel @Inject constructor(
     }
 
     /**
-     * Recarrega a lista de categorias do Firebase.
+     * Carrega lista de categorias do Firebase.
+     * Em caso de erro, armazena código técnico para tradução na UI.
      */
     fun loadCategories() {
         viewModelScope.launch {
@@ -49,11 +56,11 @@ class CategoriesViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure { throwable ->
+                .onFailure { _ ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = throwable.message ?: "Erro ao carregar categorias."
+                            errorMessage = ERROR_LOAD_CATEGORIES
                         )
                     }
                 }
@@ -61,7 +68,7 @@ class CategoriesViewModel @Inject constructor(
     }
 
     /**
-     * Limpa a mensagem de erro atual (para ser chamada após Snackbar, por exemplo).
+     * Limpa mensagem de erro após exibição na UI.
      */
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
@@ -69,7 +76,11 @@ class CategoriesViewModel @Inject constructor(
 }
 
 /**
- * Estado da UI para a lista de categorias.
+ * Estado da UI para lista de categorias.
+ *
+ * @property isLoading Indica carregamento em andamento
+ * @property categories Lista de categorias carregadas
+ * @property errorMessage Código de erro técnico (ou null)
  */
 data class CategoriesUiState(
     val isLoading: Boolean = false,

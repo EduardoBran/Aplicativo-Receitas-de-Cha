@@ -18,6 +18,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel responsável pelos detalhes de uma receita.
+ *
+ * Responsabilidades:
+ * - Carrega receita completa por ID
+ * - Gerencia estado de favorito
+ * - Controla permissões de favoritar (requer login + plano)
+ * - Sincroniza estado de favorito com Firebase
+ */
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
@@ -28,6 +37,7 @@ class RecipeDetailViewModel @Inject constructor(
     companion object {
         const val ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN =
             "ERROR_FAVORITE_REQUIRES_PLAN_OR_LOGIN"
+        private const val ERROR_RECIPE_NOT_FOUND = "RECIPE_NOT_FOUND"
         private const val ERROR_GENERIC = "RECIPE_DETAIL_GENERIC_ERROR"
     }
 
@@ -43,12 +53,14 @@ class RecipeDetailViewModel @Inject constructor(
     val uiState: StateFlow<RecipeDetailUiState> = _uiState.asStateFlow()
 
     /**
-     * Carrega a receita pelo ID.
+     * Carrega receita pelo ID.
      *
      * ✅ SEM VALIDAÇÃO DE ACESSO:
      * - RecipeListFragment já validou antes de navegar
      * - FavoritesFragment já validou antes de navegar
      * - Validação em 3 lugares é redundante e causa problemas de timing
+     *
+     * @param recipeId ID da receita a carregar
      */
     fun loadRecipe(recipeId: String) {
         viewModelScope.launch {
@@ -67,7 +79,7 @@ class RecipeDetailViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = "Receita não encontrada."
+                                errorMessage = ERROR_RECIPE_NOT_FOUND
                             )
                         }
                         return@onSuccess
@@ -80,11 +92,11 @@ class RecipeDetailViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure { throwable ->
+                .onFailure { _ ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = throwable.message ?: ERROR_GENERIC
+                            errorMessage = ERROR_GENERIC
                         )
                     }
                 }
@@ -92,7 +104,7 @@ class RecipeDetailViewModel @Inject constructor(
     }
 
     /**
-     * Atualiza o estado de sessão com base no AuthRepository (auth + plano).
+     * Atualiza estado de sessão com base no AuthRepository (auth + plano).
      */
     fun refreshSessionState() {
         viewModelScope.launch {
@@ -110,7 +122,7 @@ class RecipeDetailViewModel @Inject constructor(
     }
 
     /**
-     * Sincroniza o estado de favorito da receita atual com o nó /favorites/{uid}.
+     * Sincroniza estado de favorito da receita atual com /favorites/{uid}.
      */
     fun syncFavoriteState() {
         viewModelScope.launch {
@@ -130,16 +142,21 @@ class RecipeDetailViewModel @Inject constructor(
                     _uiState.update { it.copy(isFavorite = isFav) }
                 }
                 .onFailure {
-                    // Erro de rede: não marca favorito e não quebra a tela.
+                    // Erro de rede: não marca favorito e não quebra a tela
                 }
         }
     }
 
     /**
-     * Alterna o favorito da receita atual.
-     * - Se usuário não tiver login ou plano: erro de regra de negócio.
-     * - Caso contrário: adiciona/remove de /favorites/{uid}/{recipeId}
-     *   e preenche lastFavoriteAction para Snackbar de sucesso.
+     * Alterna estado de favorito da receita atual.
+     *
+     * Validações:
+     * - Requer usuário logado
+     * - Requer plano ativo (COM_PLANO)
+     *
+     * Se autorizado:
+     * - Adiciona/remove de /favorites/{uid}/{recipeId}
+     * - Emite lastFavoriteAction para Snackbar de sucesso
      */
     fun toggleFavorite() {
         viewModelScope.launch {
@@ -177,11 +194,9 @@ class RecipeDetailViewModel @Inject constructor(
                             )
                         }
                     }
-                    .onFailure { throwable ->
+                    .onFailure { _ ->
                         _uiState.update {
-                            it.copy(
-                                errorMessage = throwable.message ?: ERROR_GENERIC
-                            )
+                            it.copy(errorMessage = ERROR_GENERIC)
                         }
                     }
             } else {
@@ -196,11 +211,9 @@ class RecipeDetailViewModel @Inject constructor(
                             )
                         }
                     }
-                    .onFailure { throwable ->
+                    .onFailure { _ ->
                         _uiState.update {
-                            it.copy(
-                                errorMessage = throwable.message ?: ERROR_GENERIC
-                            )
+                            it.copy(errorMessage = ERROR_GENERIC)
                         }
                     }
             }
@@ -226,6 +239,14 @@ enum class RecipeFavoriteAction {
 
 /**
  * Estado da UI de detalhes da receita.
+ *
+ * @property isLoading Indica carregamento em andamento
+ * @property currentRecipeId ID da receita atual
+ * @property recipe Dados completos da receita
+ * @property isFavorite Se a receita está nos favoritos do usuário
+ * @property sessionState Estado de autenticação e plano
+ * @property errorMessage Código de erro técnico (ou null)
+ * @property lastFavoriteAction Última ação de favorito (para Snackbar)
  */
 data class RecipeDetailUiState(
     val isLoading: Boolean = false,

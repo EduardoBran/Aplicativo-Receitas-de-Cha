@@ -35,9 +35,6 @@
     <!-- Texto secundário / descrições -->
     <color name="text_secondary">#A0B9B1</color>
 
-    <!-- Hint dos campos -->
-    <color name="text_hint">@color/text_secondary</color>
-
     <!-- Texto sobre botões verdes (branco) -->
     <color name="text_on_primary">@color/color_on_primary_base</color>
 
@@ -51,14 +48,8 @@
     <!-- Texto do campo (conteúdo digitado) -->
     <color name="edittext_text">@color/text_primary</color>
 
-    <!-- Hint do campo -->
-    <color name="edittext_hint">@color/text_hint</color>
-
     <!-- Borda do campo - estado normal -->
     <color name="edittext_stroke">#37554B</color>
-
-    <!-- Borda do campo - estado focado -->
-    <color name="edittext_stroke_focused">@color/color_primary_base</color>
 
     <!-- Cor de erro para campos / textos (tom claro pra destacar no fundo escuro) -->
     <color name="text_error">#F2B8B5</color>
@@ -73,13 +64,6 @@
     <!-- Texto dentro dos botões principais -->
     <color name="button_primary_text">@color/text_on_primary</color>
 
-    <!-- Ícone dentro dos botões principais -->
-    <color name="button_primary_icon">@color/text_on_primary</color>
-
-    <!-- Botão desabilitado -->
-    <color name="button_disabled_background">#37554B</color>
-    <color name="button_disabled_text">#9DB3AB</color>
-
     <color name="btn_google_background">@color/surface_card_background</color>
 
     <!-- ===================== -->
@@ -89,18 +73,12 @@
     <!-- Cor da “pílula” ativa do item selecionado -->
     <color name="bottom_nav_active_indicator">@color/color_primary_base</color>
 
-    <!-- Fundo do bottom nav (barra) -->
-    <color name="bottom_nav_background">@color/surface_card_background</color>
-
     <!-- ===================== -->
     <!-- DIVISÓRIAS / SOMBRA   -->
     <!-- ===================== -->
 
     <!-- Divisórias / bordas sutis -->
     <color name="divider">#37554B</color>
-
-    <!-- Sombra mais forte em dark (40% preto) -->
-    <color name="shadow_light">#66000000</color>
 
     <!-- ============================== -->
     <!-- MAPEAMENTO PARA TEMA MATERIAL  -->

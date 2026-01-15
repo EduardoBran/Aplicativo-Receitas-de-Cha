@@ -20,14 +20,20 @@ import java.util.Locale
 /**
  * ViewModel responsável pela lista de receitas de uma categoria.
  *
- * - Carrega receitas via [RecipeRepository.getRecipesByCategory].
- * - Mantém o [UserSessionState] para a lógica de bloqueio/liberação de clique.
- * - A regra de quem pode abrir o quê é feita pela função [canOpenRecipe].
+ * Responsabilidades:
+ * - Carrega receitas via [RecipeRepository.getRecipesByCategory]
+ * - Ordena receitas alfabeticamente (locale-aware)
+ * - Mantém [UserSessionState] para lógica de acesso
+ * - Determina se usuário pode abrir cada receita via [canOpenRecipe]
  */
 @HiltViewModel
 class RecipeListViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository
 ) : ViewModel() {
+
+    companion object {
+        private const val ERROR_LOAD_RECIPES = "RECIPES_LIST_LOAD_FAILED"
+    }
 
     private val _uiState = MutableStateFlow(
         RecipeListUiState(
@@ -40,18 +46,20 @@ class RecipeListViewModel @Inject constructor(
     val uiState: StateFlow<RecipeListUiState> = _uiState.asStateFlow()
 
     /**
-     * Atualiza o estado de sessão (NAO_LOGADO / LOGADO + SEM_PLANO / LOGADO + COM_PLANO).
-     * Deve ser chamado pelo Fragment, usando o estado vindo de outro ViewModel (ex.: Auth/Main).
+     * Atualiza estado de sessão (NAO_LOGADO / LOGADO + SEM_PLANO / COM_PLANO).
+     * Deve ser chamado pelo Fragment usando estado do MainViewModel.
      */
     fun updateSessionState(sessionState: UserSessionState) {
         _uiState.update { it.copy(sessionState = sessionState) }
     }
 
     /**
-     * Carrega todas as receitas de uma categoria específica.
+     * Carrega receitas de uma categoria específica.
      *
-     * - Não filtra receitas premium; a UI usa "Recipe.isFreePreview" + "sessionState"
-     *   para decidir se o usuário pode abrir ou não.
+     * Não filtra receitas premium - a UI usa {Recipe.isFreePreview} + {sessionState}
+     * para decidir acesso.
+     *
+     * @param categoryId ID da categoria para filtrar receitas
      */
     fun loadRecipes(categoryId: String) {
         if (categoryId.isBlank()) return
@@ -70,7 +78,7 @@ class RecipeListViewModel @Inject constructor(
             result
                 .onSuccess { recipes ->
                     val collator = Collator.getInstance(Locale.getDefault()).apply {
-                        // Ignora maiúsc/minúsc, mas considera acentos (bom para PT-BR)
+                        // Ignora maiúsc/minúsc, considera acentos (bom para PT-BR)
                         strength = Collator.SECONDARY
                     }
 
@@ -86,12 +94,11 @@ class RecipeListViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure { throwable ->
+                .onFailure { _ ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = throwable.message
-                                ?: "Erro ao carregar receitas da categoria."
+                            errorMessage = ERROR_LOAD_RECIPES
                         )
                     }
                 }
@@ -99,9 +106,14 @@ class RecipeListViewModel @Inject constructor(
     }
 
     /**
-     * Regra de negócio de acesso:
-     * - LOGADO + COM_PLANO → pode abrir qualquer receita.
-     * - NAO_LOGADO ou LOGADO + SEM_PLANO → apenas receitas com [Recipe.isFreePreview] = true.
+     * Regra de negócio de acesso a receitas.
+     *
+     * Lógica:
+     * - LOGADO + COM_PLANO → pode abrir qualquer receita
+     * - NAO_LOGADO ou LOGADO + SEM_PLANO → apenas receitas com isFreePreview = true
+     *
+     * @param recipe Receita a verificar acesso
+     * @return true se usuário pode abrir, false caso contrário
      */
     fun canOpenRecipe(recipe: Recipe): Boolean {
         val session = _uiState.value.sessionState
@@ -115,7 +127,7 @@ class RecipeListViewModel @Inject constructor(
     }
 
     /**
-     * Limpa a mensagem de erro atual.
+     * Limpa mensagem de erro após exibição na UI.
      */
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
@@ -123,7 +135,13 @@ class RecipeListViewModel @Inject constructor(
 }
 
 /**
- * Estado da UI para a lista de receitas de uma categoria.
+ * Estado da UI para lista de receitas de uma categoria.
+ *
+ * @property isLoading Indica carregamento em andamento
+ * @property currentCategoryId ID da categoria atual
+ * @property recipes Lista de receitas ordenadas alfabeticamente
+ * @property sessionState Estado de autenticação e plano do usuário
+ * @property errorMessage Código de erro técnico (ou null)
  */
 data class RecipeListUiState(
     val isLoading: Boolean = false,

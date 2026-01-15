@@ -200,13 +200,13 @@ class LoginFragment : Fragment() {
             } catch (_: NoCredentialException) {
                 SnackbarFragment.showError(
                     binding.root,
-                    "Nenhuma conta Google disponível (ou Play Services/Google Play desatualizados)."
+                    getString(R.string.erro_google_nenhuma_conta)
                 )
 
             } catch (e: GetCredentialException) {
                 SnackbarFragment.showError(
                     binding.root,
-                    "Falha no login Google: ${e.message ?: "erro do provedor"}"
+                    getString(R.string.erro_google_falha_provedor)
                 )
 
             } catch (_: Exception) {

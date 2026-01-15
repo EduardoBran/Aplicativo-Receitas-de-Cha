@@ -10,6 +10,13 @@ import com.luizeduardobrandao.appreceitascha.databinding.FragmentManagePlanBindi
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.core.net.toUri
 
+/**
+ * Fragment responsável pela tela de gerenciamento de plano.
+ *
+ * Permite ao usuário:
+ * - Voltar para a tela anterior
+ * - Entrar em contato com o suporte via e-mail
+ */
 @AndroidEntryPoint
 class ManagePlanFragment : Fragment(R.layout.fragment_manage_plan) {
 
@@ -23,20 +30,31 @@ class ManagePlanFragment : Fragment(R.layout.fragment_manage_plan) {
         setupListeners()
     }
 
+    /**
+     * Configura listeners dos botões da tela.
+     */
     private fun setupListeners() {
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
 
         binding.btnSupport.setOnClickListener {
-            // Abre cliente de email
-            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = "mailto:".toUri()
-                putExtra(Intent.EXTRA_EMAIL, arrayOf("eduardo.desenvolvedor.apps@gmail.com"))
-                putExtra(Intent.EXTRA_SUBJECT, "Suporte - App Nature Chá")
-            }
-            startActivity(Intent.createChooser(intent, "Enviar email"))
+            openSupportEmail()
         }
+    }
+
+    /**
+     * Abre o cliente de e-mail padrão para enviar mensagem ao suporte.
+     *
+     * O assunto do e-mail é pré-preenchido para facilitar a identificação.
+     */
+    private fun openSupportEmail() {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = "mailto:".toUri()
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("eduardo.desenvolvedor.apps@gmail.com"))
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject_support))
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.email_chooser_title)))
     }
 
     override fun onDestroyView() {

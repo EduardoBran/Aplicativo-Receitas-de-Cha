@@ -77,7 +77,7 @@ class AuthRepositoryImpl @Inject constructor(
         if (signUpResult.isFailure) {
             return Result.failure(
                 signUpResult.exceptionOrNull()
-                    ?: Exception("Erro desconhecido ao cadastrar usuário.")
+                    ?: Exception("UNKNOWN_REGISTER_ERROR")
             )
         }
         val firebaseUser = signUpResult.getOrThrow()
@@ -325,7 +325,7 @@ class AuthRepositoryImpl @Inject constructor(
         if (signInResult.isFailure) {
             return Result.failure(
                 signInResult.exceptionOrNull()
-                    ?: Exception("Erro desconhecido ao fazer login com Google.")
+                    ?: Exception("UNKNOWN_GOOGLE_LOGIN_ERROR")
             )
         }
 

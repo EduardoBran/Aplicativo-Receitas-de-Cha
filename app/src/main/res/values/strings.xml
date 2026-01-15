@@ -3,8 +3,6 @@
 
 
     <!-- ======== Login Fragment ======== -->
-    <string name="login_title">Acessar conta</string>
-    <string name="login_subtitle">Explore o poder dos chás e transforme sua rotina.</string>
     <string name="login_email_hint">E-mail</string>
     <string name="login_password_hint">Senha</string>
     <string name="login_button_text">Acessar</string>
@@ -82,9 +80,6 @@
     <string name="dialog_no">Não</string>
 
     <!-- Email Verification -->
-    <string name="email_verification_sent">Conta criada! Ative seu acesso pelo link enviado para %s.</string>
-    <string name="email_not_verified">Login bloqueado. Valide sua conta no link enviado para %s.</string>
-
     <string name="dialog_email_verification_title">Verifique seu e-mail</string>
     <string name="dialog_email_verification_desc">Enviamos um link de confirmação para:</string>
     <string name="dialog_email_verification_instruction">Toque no link recebido para ativar sua conta e liberar o acesso.</string>
@@ -109,13 +104,10 @@
     <string name="error_register_email_in_use">Este e-mail já está cadastrado.</string>
     <string name="error_register_generic">Erro ao cadastrar. Tente novamente.</string>
     <string name="error_register_verification_failed">Cadastro feito, mas erro ao enviar e-mail de verificação.</string>
+
     <!-- Erros de atualização de perfil -->
     <string name="error_update_profile_failed">Erro ao atualizar perfil. Tente novamente.</string>
     <string name="error_user_not_identified">Erro: usuário não identificado.</string>
-
-    <!-- Google User Restrictions -->
-    <string name="error_google_user_cannot_change_email">Esta operação não está disponível para contas Google. Gerencie seu e-mail nas configurações da sua conta Google.</string>
-    <string name="error_google_user_cannot_change_password">Esta operação não está disponível para contas Google. Gerencie sua senha nas configurações da sua conta Google.</string>
 
 
     <!-- ======== ResetPasswordFragment ======== -->
@@ -164,10 +156,7 @@
 
 
     <!-- ======== RecipesListFragment ========-->
-    <string name="recipes_list_empty_state">Não encontramos nenhuma receita para esta categoria.\nTente novamente mais tarde.</string>
     <string name="recipes_list_error_generic">Ocorreu um erro ao carregar as receitas. Por favor, tente novamente.</string>
-    <string name="recipes_item_icon_go_content_description">Ver detalhes da receita.</string>
-    <string name="recipe_locked_requires_plan_or_login">Para visualizar esta receita, faça login e ative um plano.</string>
     <string name="recipes_list_loading_message">Carregando as receitas…</string>
 
     <string name="locked_sheet_title">Receita Exclusiva</string>
@@ -186,25 +175,16 @@
 
 
     <!-- ======== RecipesDetailFragment ========-->
-    <string name="cd_navigate_up">Voltar</string>
     <string name="recipe_detail_section_intro">Resumo</string>
     <string name="recipe_detail_section_benefits">Benefícios</string>
     <string name="recipe_detail_section_ingredients">Ingredientes</string>
     <string name="recipe_detail_section_preparation">Modo de Preparo</string>
     <string name="recipe_detail_section_notes">Observações</string>
 
-    <string name="cd_decorative_tea_bg">Ilustração decorativa de chá ao fundo</string>
-    <string name="cd_icon_benefits">Ícone ilustrativo de benefícios</string>
-    <string name="cd_icon_preparation">Ícone ilustrativo de relógio</string>
-    <string name="cd_icon_notes">Ícone ilustrativo de informação</string>
     <string name="cd_favorite_add">Adicionar aos favoritos</string>
     <string name="cd_favorite_remove">Remover dos favoritos</string>
 
     <!-- Favoritos na tela de detalhe -->
-    <string name="recipe_favorite_requires_plan_or_login">
-        Para favoritar receitas, você precisa estar logado e ter acesso vitalício.
-    </string>
-    <string name="recipe_lock_open_content_description">Receita liberada para visualização</string>
     <string name="recipe_lock_closed_content_description">Receita disponível apenas para usuários com plano ativo</string>
 
 
@@ -253,7 +233,6 @@
     <string name="search_empty_title">Não encontramos nenhuma receita com este nome.</string>
     <string name="search_btn_back">Voltar para o Início</string>
     <string name="search_error_generic">Erro ao realizar a busca.</string>
-    <string name="search_recipe_unlocked">Receita liberada</string>
     <string name="search_recipe_locked">Receita bloqueada</string>
 
     <!-- ======== Bottom Navigation Icons ========-->
@@ -263,6 +242,44 @@
     <string name="bottom_nav_login">Login</string>
     <string name="bottom_nav_profile">Perfil</string>
 
+    <!-- ========================================
+         ERROS DE LOGIN FRAGMENT
+         ======================================== -->
+    <string name="erro_google_nenhuma_conta">Nenhuma conta Google disponível. Verifique se o Google Play Services está atualizado.</string>
+    <string name="erro_google_falha_provedor">Falha no login Google. Tente novamente.</string>
+
+    <!-- ========================================
+         CHANGE EMAIL - MENSAGENS
+         ======================================== -->
+    <string name="erro_google_user_alterar_email">Esta operação não está disponível para contas Google. Gerencie seu e-mail nas configurações da sua conta Google.</string>
+    <string name="erro_senha_incorreta_reauth">Senha atual incorreta.</string>
+    <string name="erro_operacao_indisponivel_conta">Esta operação não está disponível para sua conta.</string>
+    <string name="erro_email_ja_em_uso">Este e-mail já está em uso.</string>
+    <string name="erro_email_invalido_update">E-mail inválido.</string>
+    <string name="erro_requer_login_recente_email">Por segurança, faça login novamente antes de alterar o e-mail.</string>
+    <string name="erro_alterar_email_generico">Erro ao alterar e-mail. Tente novamente.</string>
+
+    <!-- ========================================
+         CHANGE PASSWORD - MENSAGENS
+         ======================================== -->
+    <string name="erro_google_user_alterar_senha">Esta operação não está disponível para contas Google. Gerencie sua senha nas configurações da sua conta Google.</string>
+    <string name="erro_senha_igual_atual">A nova senha deve ser diferente da atual.</string>
+    <string name="erro_senha_fraca_update">A senha é muito fraca. Use pelo menos 6 caracteres.</string>
+    <string name="erro_requer_login_recente_senha">Por segurança, faça login novamente antes de alterar a senha.</string>
+    <string name="erro_alterar_senha_generico">Erro ao alterar senha. Tente novamente.</string>
+
+    <!-- ========================================
+     MANAGE PLAN - SUPORTE
+     ======================================== -->
+    <string name="email_subject_support">Suporte - App Receitas Chá</string>
+    <string name="email_chooser_title">Enviar email</string>
+
+    <!-- ========================================
+         SEGURANÇA - DISPOSITIVO ROOTEADO
+         ======================================== -->
+    <string name="security_title">Dispositivo não seguro</string>
+    <string name="security_message">Este app não pode ser executado em dispositivos com root ou modificados por questões de segurança.</string>
+    <string name="security_button_exit">Sair</string>
 
     <!-- OAuth Client ID - será substituído pelo google-services.json -->
     <string name="default_web_client_id" translatable="false">your_web_client_id_here</string>

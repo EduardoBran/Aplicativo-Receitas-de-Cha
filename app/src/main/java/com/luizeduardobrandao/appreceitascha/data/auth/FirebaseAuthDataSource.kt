@@ -38,7 +38,7 @@ class FirebaseAuthDataSource @Inject constructor(
 
             val user = authResult.user
                 ?: return Result.failure(
-                    IllegalStateException("Usuário Firebase retornou nulo após login.")
+                    IllegalStateException("USER_NULL_AFTER_LOGIN")
                 )
 
             Result.success(user)
@@ -70,7 +70,7 @@ class FirebaseAuthDataSource @Inject constructor(
 
             val user = authResult.user
                 ?: return Result.failure(
-                    IllegalStateException("Usuário Firebase retornou nulo após cadastro.")
+                    IllegalStateException("USER_NULL_AFTER_SIGNUP")
                 )
 
             // Atualiza o displayName do usuário no Firebase, se o nome não for vazio.
@@ -120,10 +120,10 @@ class FirebaseAuthDataSource @Inject constructor(
     suspend fun reauthenticateWithPassword(currentPassword: String): Result<Unit> {
         return try {
             val user = firebaseAuth.currentUser
-                ?: return Result.failure(IllegalStateException("Nenhum usuário logado."))
+                ?: return Result.failure(IllegalStateException("NO_USER_LOGGED_IN"))
 
             val email = user.email
-                ?: return Result.failure(IllegalStateException("E-mail do usuário não encontrado."))
+                ?: return Result.failure(IllegalStateException("USER_EMAIL_NOT_FOUND"))
 
             val credential = EmailAuthProvider.getCredential(email, currentPassword)
             user.reauthenticate(credential).await()
@@ -144,7 +144,7 @@ class FirebaseAuthDataSource @Inject constructor(
     suspend fun updateEmail(newEmail: String): Result<Unit> {
         return try {
             val user = firebaseAuth.currentUser
-                ?: return Result.failure(IllegalStateException("Nenhum usuário logado."))
+                ?: return Result.failure(IllegalStateException("NO_USER_LOGGED_IN"))
 
             user.verifyBeforeUpdateEmail(newEmail).await()
 
@@ -161,7 +161,7 @@ class FirebaseAuthDataSource @Inject constructor(
     suspend fun updatePassword(newPassword: String): Result<Unit> {
         return try {
             val user = firebaseAuth.currentUser
-                ?: return Result.failure(IllegalStateException("Nenhum usuário logado."))
+                ?: return Result.failure(IllegalStateException("NO_USER_LOGGED_IN"))
 
             user.updatePassword(newPassword).await()
 
@@ -182,7 +182,7 @@ class FirebaseAuthDataSource @Inject constructor(
 
             val user = authResult.user
                 ?: return Result.failure(
-                    IllegalStateException("Usuário Firebase retornou nulo após login com Google.")
+                    IllegalStateException("USER_NULL_AFTER_GOOGLE_LOGIN")
                 )
 
             Result.success(user)
@@ -198,7 +198,7 @@ class FirebaseAuthDataSource @Inject constructor(
     suspend fun sendEmailVerification(): Result<Unit> {
         return try {
             val user = firebaseAuth.currentUser
-                ?: return Result.failure(IllegalStateException("Nenhum usuário logado."))
+                ?: return Result.failure(IllegalStateException("NO_USER_LOGGED_IN"))
 
             user.sendEmailVerification().await()
             Result.success(Unit)
