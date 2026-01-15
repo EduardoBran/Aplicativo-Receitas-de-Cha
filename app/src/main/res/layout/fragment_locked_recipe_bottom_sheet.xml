@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/btnClose"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/locked_btnClose_size"
+            android:layout_height="@dimen/locked_btnClose_size"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cd_close_dialog"
             android:src="@drawable/ic_close_24"
@@ -26,8 +26,8 @@
 
         <ImageView
             android:id="@+id/ivLockIcon"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="@dimen/locked_ivLockIcon_size"
+            android:layout_height="@dimen/locked_ivLockIcon_size"
             android:layout_marginTop="16dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_recipe_lock_24"
@@ -45,6 +45,7 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="@color/white"
+            android:textSize="@dimen/locked_tvTitle_size"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +59,8 @@
             android:text="@string/locked_sheet_desc"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textColor="#E0F2F1"
+            android:textColor="@color/tvDescLockedBottomSheet"
+            android:textSize="@dimen/locked_tvDesc_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
@@ -67,11 +69,12 @@
             android:id="@+id/btnOffer"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="@dimen/locked_btnOffer_height"
             android:layout_marginTop="32dp"
             android:backgroundTint="@color/white"
             android:text="@string/locked_sheet_btn_offer"
             android:textColor="@color/color_primary_base"
+            android:textSize="@dimen/locked_btnOffer_text"
             android:textStyle="bold"
             app:cornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -81,7 +81,7 @@
                             android:textAlignment="center"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                             android:textColor="@color/text_secondary"
-                            android:textSize="14sp" />
+                            android:textSize="@dimen/login_tvSubTitle" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"

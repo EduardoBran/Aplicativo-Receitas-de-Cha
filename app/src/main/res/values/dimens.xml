@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Título Listas -->
+    <dimen name="textTitlesList">24sp</dimen>
+
     <!-- HomeFragment / HomeSkeleton -->
     <dimen name="home_paddingHorizontal">24dp</dimen>
     <dimen name="home_cardAvatarContainer_marginTop">26dp</dimen>
     <dimen name="home_viewSearchBar_height">50dp</dimen>
     <dimen name="home_viewSearchBar_marginTop">26dp</dimen>
-    <dimen name="home_cardBanner_marginTop">34dp</dimen>
+    <dimen name="home_cardBanner_marginTop">36dp</dimen>
     <dimen name="home_cardBanner_paddingHorizontal">24dp</dimen>
     <dimen name="home_ivBannerIcon_size">80dp</dimen>
     <dimen name="home_tvSectionCat_marginTop">32dp</dimen>
+    <dimen name="home_iconsCardsCategory_size">26dp</dimen>
+    <dimen name="home_cardAvatarContainer_size">52dp</dimen>
+
+    <dimen name="home_tvGreetingTitle_size">20sp</dimen>
+    <dimen name="home_tvGreetingSubtitle_size">15sp</dimen>
+    <dimen name="home_viewSearchBarText_size">14sp</dimen>
+    <dimen name="home_tvBannerTitle_size">20sp</dimen>
+    <dimen name="home_tvBannerDesc_size">14sp</dimen>
+    <dimen name="home_btnBannerActionText_size">14sp</dimen>
+    <dimen name="home_tvSectionCat_size">18sp</dimen>
+    <dimen name="home_tvSectionCatTextCards_size">13sp</dimen>
 
     <!-- SearchFragment -->
 
     <!-- LoginFragment -->
-    <dimen name="login_ivAppLogo_size">112dp</dimen>
+    <dimen name="login_ivAppLogo_size">96dp</dimen>
     <dimen name="login_ivAppLogo_marginBottom">8dp</dimen>
     <dimen name="login_card_padding">16dp</dimen>
     <dimen name="login_card_constraintWidth_max">400dp</dimen>
@@ -23,11 +37,17 @@
     <dimen name="login_btnGoToRegister_paddingVertical">10dp</dimen>
     <dimen name="login_layoutFooter_marginTop">24dp</dimen>
     <dimen name="login_tvTitle">24sp</dimen>
+    <dimen name="login_tvSubTitle">14sp</dimen>
     <dimen name="login_tvNoAccount">18sp</dimen>
 
     <!-- RegisterFragment -->
-    <dimen name="register_ivAppLogo_size">80dp</dimen>
+    <dimen name="register_ivAppLogo_size">58dp</dimen>
     <dimen name="register_ivAppLogo_marginTop">24dp</dimen>
+    <dimen name="register_tvSection_marginStart">0dp</dimen>
+    <dimen name="register_tvTitle">20sp</dimen>
+    <dimen name="register_tvSubtitle">14sp</dimen>
+    <dimen name="register_btnRegisterText">16sp</dimen>
+    <dimen name="register_btnGoToLoginText">18sp</dimen>
     <dimen name="register_card_marginHorizontal">0dp</dimen>
     <dimen name="register_btn_marginHorizontal">0dp</dimen>
     <dimen name="register_btn_logout_marginHorizontal">24dp</dimen>
@@ -56,30 +76,51 @@
     <dimen name="recipeDetail_hero_icon_size">64dp</dimen>
     <dimen name="recipeDetail_content_paddingHorizontal">16dp</dimen>
 
+    <dimen name="recipeDetail_textRecipeTitle">24sp</dimen>
+    <dimen name="recipeDetail_textRecipeSubtitle">16sp</dimen>
+    <dimen name="recipeDetail_textTitleCards">14sp</dimen>
+    <dimen name="recipeDetail_textContentCards">14sp</dimen>
+
+
     <!-- FavoritesFragment -->
     <dimen name="favorites_textFavoritesTitle_marginTop">24dp</dimen>
     <dimen name="favorites_list_paddingHorizontal">16dp</dimen>
     <dimen name="favorites_list_marginBottom">12dp</dimen>
     <dimen name="favorites_textFavoriteTitle">16sp</dimen>
     <dimen name="favorites_textFavoriteSubtitle">14sp</dimen>
+    <dimen name="favorites_textFavoritesEmpty">16sp</dimen>
 
     <!-- PlansFragment -->
     <dimen name="plans_content_paddingVertical">24dp</dimen>
     <dimen name="plans_content_paddingHorizontal">24dp</dimen>
-    <dimen name="plans_icon_size">80dp</dimen>
+    <dimen name="plans_icon_size">64dp</dimen>
     <dimen name="plans_textTitle_marginTop">16dp</dimen>
     <dimen name="plans_textTitle_size">24sp</dimen>
     <dimen name="plans_textSubTitle_size">16sp</dimen>
     <dimen name="plans_cardBenefits_padding">24dp</dimen>
+    <dimen name="plans_tvBenefit_size">15sp</dimen>
     <dimen name="plans_tvPrice_size">34sp</dimen>
     <dimen name="plans_btnPlanLifeBuy_size">56dp</dimen>
     <dimen name="plans_btnPlanLifeBuy_text_size">16sp</dimen>
     <dimen name="plans_tvPrice_marginBottom">16dp</dimen>
     <dimen name="plans_tvDisclaimer_marginTop">8dp</dimen>
     <dimen name="plans_btnPlansRestore_marginTop">16dp</dimen>
+    <dimen name="plans_btnbtnPlansRestore_size">14sp</dimen>
+    <dimen name="plans_tvDisclaimer_size">12sp</dimen>
 
     <!-- ManagePlanFragment -->
     <dimen name="managePlans_content_paddingHorizontal">24dp</dimen>
     <dimen name="plans_tvScreenTitle_marginTop">32dp</dimen>
+
+    <!-- Dialogs -->
+    <dimen name="dialogsRegister_btn_text">13sp</dimen>
+
+    <!-- Locked Recipe Bottom Sheet -->
+    <dimen name="locked_btnClose_size">32dp</dimen>
+    <dimen name="locked_ivLockIcon_size">64dp</dimen>
+    <dimen name="locked_tvTitle_size">24sp</dimen>
+    <dimen name="locked_tvDesc_size">16sp</dimen>
+    <dimen name="locked_btnOffer_height">56dp</dimen>
+    <dimen name="locked_btnOffer_text">14sp</dimen>
 
 </resources>

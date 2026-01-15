@@ -21,6 +21,7 @@
         android:textAppearance="?attr/textAppearanceHeadline5"
         android:textColor="@color/colorOnBackground"
         android:textStyle="bold"
+        android:textSize="@dimen/textTitlesList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

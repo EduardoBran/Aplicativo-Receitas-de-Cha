@@ -52,6 +52,7 @@
                     android:layout_marginEnd="14dp"
                     android:textAppearance="?attr/textAppearanceHeadline5"
                     android:textColor="@color/white"
+                    android:textSize="@dimen/recipeDetail_textRecipeTitle"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@id/imageHeroIcon"
                     app:layout_constraintStart_toStartOf="parent"
@@ -67,6 +68,7 @@
                     android:alpha="0.9"
                     android:textAppearance="?attr/textAppearanceSubtitle1"
                     android:textColor="@color/white"
+                    android:textSize="@dimen/recipeDetail_textRecipeSubtitle"
                     app:layout_constraintEnd_toStartOf="@id/imageHeroIcon"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textRecipeTitle"
@@ -144,6 +146,7 @@
                         android:textAllCaps="true"
                         android:textAppearance="?attr/textAppearanceSubtitle2"
                         android:textColor="@color/color_primary_base"
+                        android:textSize="@dimen/recipeDetail_textTitleCards"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_tea_24"
                         app:drawableTint="@color/detail_section_icon_tint" />
@@ -156,6 +159,7 @@
                         android:lineSpacingExtra="4sp"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="@color/colorOnSurface"
+                        android:textSize="@dimen/recipeDetail_textContentCards"
                         tools:text="Um chá amargo e fresco, usado tradicionalmente após refeições mais pesadas." />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -186,6 +190,7 @@
                         android:textAllCaps="true"
                         android:textAppearance="?attr/textAppearanceSubtitle2"
                         android:textColor="@color/color_primary_base"
+                        android:textSize="@dimen/recipeDetail_textTitleCards"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_spa_24"
                         app:drawableTint="@color/detail_section_icon_tint" />
@@ -198,6 +203,7 @@
                         android:lineSpacingExtra="4sp"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="@color/colorOnSurface"
+                        android:textSize="@dimen/recipeDetail_textContentCards"
                         tools:text="Pode ajudar na hidratação e no conforto digestivo após refeições, além de ser uma alternativa leve a bebidas calóricas. O efeito desinchante do boldo contribui para a sensação de abdômen mais plano." />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -226,6 +232,7 @@
                         android:textAllCaps="true"
                         android:textAppearance="?attr/textAppearanceSubtitle2"
                         android:textColor="@color/color_primary_base"
+                        android:textSize="@dimen/recipeDetail_textTitleCards"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_receipt_long_24"
                         app:drawableTint="@color/detail_section_icon_tint" />
@@ -238,6 +245,7 @@
                         android:lineSpacingExtra="4sp"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="@color/colorOnSurface"
+                        android:textSize="@dimen/recipeDetail_textContentCards"
                         tools:text="• 1 colher de sopa de hortelã (fresca ou seca)\n• 1 colher de sopa de boldo-do-chile (peumus boldus) seco (ou 1 sachê)\n• 300 ml de água quente" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -247,9 +255,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:cardBackgroundColor="@color/surface_card_background"
+                app:cardBackgroundColor="@color/bg_card_benefits"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="1dp">
+                app:cardElevation="0dp"
+                app:strokeColor="@color/color_primary_light"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -266,6 +276,7 @@
                         android:textAllCaps="true"
                         android:textAppearance="?attr/textAppearanceSubtitle2"
                         android:textColor="@color/color_primary_base"
+                        android:textSize="@dimen/recipeDetail_textTitleCards"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_timer_24"
                         app:drawableTint="@color/detail_section_icon_tint" />
@@ -278,6 +289,7 @@
                         android:lineSpacingExtra="4sp"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="@color/colorOnSurface"
+                        android:textSize="@dimen/recipeDetail_textContentCards"
                         tools:text="1. Desligue o fogo antes de ferver forte.\n2. Adicione as ervas e abafe por 5 a 7 minutos (não prolongue muito para não amargar).\n3. Coe e beba morno." />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -306,6 +318,7 @@
                         android:textAllCaps="true"
                         android:textAppearance="?attr/textAppearanceSubtitle2"
                         android:textColor="@color/color_warning_accent"
+                        android:textSize="@dimen/recipeDetail_textTitleCards"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_info_24"
                         app:drawableTint="@color/color_warning_accent" />
@@ -318,6 +331,7 @@
                         android:lineSpacingExtra="4sp"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="@color/colorOnSurface"
+                        android:textSize="@dimen/recipeDetail_textContentCards"
                         tools:text="Uso adulto. Boldo é amargo e deve ser usado por períodos curtos. Não é recomendado para gestantes, lactantes, crianças e pessoas com problemas hepáticos graves, obstrução biliar ou uso de muidos medicamentos sem orientação profissional. Se causar mal-estar, supenda." />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

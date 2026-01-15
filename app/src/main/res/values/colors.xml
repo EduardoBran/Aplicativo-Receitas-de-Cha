@@ -166,4 +166,6 @@
     <color name="text_on_premium_secondary">#FFF3E0</color>
     <color name="manage_plan_title">@color/color_primary_dark</color>
     <color name="manage_plan_hint">@color/text_secondary</color>
+
+    <color name="tvDescLockedBottomSheet">#E0F2F1</color>
 </resources>

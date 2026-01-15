@@ -10,11 +10,18 @@
     <dimen name="home_cardBanner_paddingHorizontal">64dp</dimen>
     <dimen name="home_ivBannerIcon_size">80dp</dimen>
     <dimen name="home_tvSectionCat_marginTop">32dp</dimen>
+    <dimen name="home_iconsCardsCategory_size">30dp</dimen>
+
+    <dimen name="home_tvBannerTitle_size">22sp</dimen>
+    <dimen name="home_tvBannerDesc_size">16sp</dimen>
+    <dimen name="home_btnBannerActionText_size">16sp</dimen>
+    <dimen name="home_tvSectionCat_size">20sp</dimen>
+    <dimen name="home_tvSectionCatTextCards_size">15sp</dimen>
 
     <!-- SearchFragment -->
 
     <!-- LoginFragment -->
-    <dimen name="login_ivAppLogo_size">104dp</dimen>
+    <dimen name="login_ivAppLogo_size">96dp</dimen>
     <dimen name="login_ivAppLogo_marginBottom">0dp</dimen>
     <dimen name="login_card_padding">20dp</dimen>
     <dimen name="login_card_constraintWidth_max">700dp</dimen>
@@ -26,7 +33,7 @@
     <dimen name="login_tvNoAccount">18sp</dimen>
 
     <!-- RegisterFragment -->
-    <dimen name="register_ivAppLogo_size">80dp</dimen>
+    <dimen name="register_ivAppLogo_size">58dp</dimen>
     <dimen name="register_ivAppLogo_marginTop">24dp</dimen>
     <dimen name="register_card_marginHorizontal">32dp</dimen>
     <dimen name="register_btn_marginHorizontal">80dp</dimen>
@@ -71,6 +78,7 @@
     <dimen name="plans_textTitle_size">24sp</dimen>
     <dimen name="plans_textSubTitle_size">16sp</dimen>
     <dimen name="plans_cardBenefits_padding">24dp</dimen>
+    <dimen name="plans_tvBenefit_size">16sp</dimen>
     <dimen name="plans_tvPrice_size">32sp</dimen>
     <dimen name="plans_btnPlanLifeBuy_size">56dp</dimen>
     <dimen name="plans_btnPlanLifeBuy_text_size">16sp</dimen>
@@ -81,5 +89,15 @@
     <!-- ManagePlanFragment -->
     <dimen name="managePlans_content_paddingHorizontal">88dp</dimen>
     <dimen name="plans_tvScreenTitle_marginTop">16dp</dimen>
+
+    <!-- Dialogs -->
+    <dimen name="dialogsRegister_btn_text">14sp</dimen>
+
+    <!-- Locked Recipe Bottom Sheet -->
+    <dimen name="locked_btnClose_size">32dp</dimen>
+    <dimen name="locked_ivLockIcon_size">64dp</dimen>
+    <dimen name="locked_tvTitle_size">24sp</dimen>
+    <dimen name="locked_tvDesc_size">18sp</dimen>
+    <dimen name="locked_btnOffer_text">16sp</dimen>
 
 </resources>

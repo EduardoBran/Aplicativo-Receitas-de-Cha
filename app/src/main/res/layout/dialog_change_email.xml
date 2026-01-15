@@ -97,7 +97,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="@string/dialog_cancel" />
+            android:text="@string/dialog_cancel"
+            android:textSize="@dimen/dialogsRegister_btn_text" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfirm"
@@ -106,7 +107,8 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/button_primary_background"
             android:text="@string/dialog_confirm"
-            android:textColor="@color/button_primary_text" />
+            android:textColor="@color/button_primary_text"
+            android:textSize="@dimen/dialogsRegister_btn_text" />
     </LinearLayout>
 
     <!-- ProgressBar -->

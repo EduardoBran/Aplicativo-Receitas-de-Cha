@@ -10,11 +10,21 @@
     <dimen name="home_cardBanner_paddingHorizontal">64dp</dimen>
     <dimen name="home_ivBannerIcon_size">88dp</dimen>
     <dimen name="home_tvSectionCat_marginTop">32dp</dimen>
+    <dimen name="home_iconsCardsCategory_size">32dp</dimen>
+
+    <dimen name="home_tvGreetingTitle_size">20sp</dimen>
+    <dimen name="home_tvGreetingSubtitle_size">15sp</dimen>
+    <dimen name="home_viewSearchBarText_size">14sp</dimen>
+    <dimen name="home_tvBannerTitle_size">22sp</dimen>
+    <dimen name="home_tvBannerDesc_size">16sp</dimen>
+    <dimen name="home_btnBannerActionText_size">16sp</dimen>
+    <dimen name="home_tvSectionCat_size">20sp</dimen>
+    <dimen name="home_tvSectionCatTextCards_size">15sp</dimen>
 
     <!-- SearchFragment -->
 
     <!-- LoginFragment -->
-    <dimen name="login_ivAppLogo_size">104dp</dimen>
+    <dimen name="login_ivAppLogo_size">96dp</dimen>
     <dimen name="login_ivAppLogo_marginBottom">0dp</dimen>
     <dimen name="login_card_padding">20dp</dimen>
     <dimen name="login_card_constraintWidth_max">800dp</dimen>
@@ -26,7 +36,7 @@
     <dimen name="login_tvNoAccount">20sp</dimen>
 
     <!-- RegisterFragment -->
-    <dimen name="register_ivAppLogo_size">72dp</dimen>
+    <dimen name="register_ivAppLogo_size">64dp</dimen>
     <dimen name="register_ivAppLogo_marginTop">16dp</dimen>
     <dimen name="register_card_marginHorizontal">32dp</dimen>
     <dimen name="register_btn_marginHorizontal">80dp</dimen>
@@ -77,5 +87,8 @@
     <dimen name="plans_btnPlansRestore_marginTop">16dp</dimen>
 
     <!-- ManagePlanFragment -->
+
+    <!-- Dialogs -->
+    <dimen name="dialogsRegister_btn_text">14sp</dimen>
 
 </resources>

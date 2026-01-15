@@ -3,17 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background">
+    android:background="@color/app_background"
+    android:paddingVertical="24dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skAvatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="24dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="@dimen/home_cardAvatarContainer_marginTop"
+        android:layout_marginEnd="@dimen/home_paddingHorizontal"
         android:alpha="0.08"
         app:cardBackgroundColor="@color/text_primary"
-        app:cardCornerRadius="24dp"
+        app:cardCornerRadius="26dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,26 +22,29 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skTitle"
         android:layout_width="0dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="@dimen/home_paddingHorizontal"
         android:layout_marginEnd="16dp"
         android:alpha="0.08"
         app:cardBackgroundColor="@color/text_primary"
-        app:cardCornerRadius="9dp"
+        app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
+        app:layout_constraintBottom_toTopOf="@id/skSubtitle"
         app:layout_constraintEnd_toStartOf="@id/skAvatar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/skAvatar" />
+        app:layout_constraintTop_toTopOf="@id/skAvatar"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skSubtitle"
         android:layout_width="0dp"
-        android:layout_height="14dp"
+        android:layout_height="16dp"
         android:layout_marginTop="8dp"
         android:alpha="0.08"
         app:cardBackgroundColor="@color/text_primary"
         app:cardCornerRadius="7dp"
         app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/skAvatar"
         app:layout_constraintEnd_toEndOf="@id/skTitle"
         app:layout_constraintStart_toStartOf="@id/skTitle"
         app:layout_constraintTop_toBottomOf="@id/skTitle" />
@@ -48,10 +52,10 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skSearch"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="24dp"
+        android:layout_height="@dimen/home_viewSearchBar_height"
+        android:layout_marginStart="@dimen/home_paddingHorizontal"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="@dimen/home_paddingHorizontal"
         android:alpha="0.06"
         app:cardBackgroundColor="@color/text_primary"
         app:cardCornerRadius="25dp"
@@ -63,8 +67,8 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skBanner"
         android:layout_width="0dp"
-        android:layout_height="156dp"
-        android:layout_marginTop="24dp"
+        android:layout_height="168dp"
+        android:layout_marginTop="40dp"
         android:alpha="0.06"
         app:cardBackgroundColor="@color/text_primary"
         app:cardCornerRadius="24dp"
@@ -75,9 +79,9 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skSectionTitle"
-        android:layout_width="140dp"
-        android:layout_height="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="192dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="48dp"
         android:alpha="0.08"
         app:cardBackgroundColor="@color/text_primary"
         app:cardCornerRadius="8dp"
@@ -88,8 +92,8 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skCard1"
         android:layout_width="0dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="84dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="4dp"
         android:alpha="0.06"
         app:cardBackgroundColor="@color/text_primary"
@@ -103,7 +107,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skCard2"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="84dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
         android:alpha="0.06"
@@ -118,7 +122,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skCard3"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="84dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
         android:alpha="0.06"
@@ -133,7 +137,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/skCard4"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="84dp"
         android:layout_marginStart="4dp"
         android:alpha="0.06"
         app:cardBackgroundColor="@color/text_primary"

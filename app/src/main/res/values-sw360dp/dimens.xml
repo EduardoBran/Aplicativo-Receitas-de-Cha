@@ -6,15 +6,25 @@
     <dimen name="home_cardAvatarContainer_marginTop">26dp</dimen>
     <dimen name="home_viewSearchBar_height">54dp</dimen>
     <dimen name="home_viewSearchBar_marginTop">26dp</dimen>
-    <dimen name="home_cardBanner_marginTop">34dp</dimen>
+    <dimen name="home_cardBanner_marginTop">38dp</dimen>
     <dimen name="home_cardBanner_paddingHorizontal">22dp</dimen>
     <dimen name="home_ivBannerIcon_size">56dp</dimen>
     <dimen name="home_tvSectionCat_marginTop">32dp</dimen>
+    <dimen name="home_iconsCardsCategory_size">28dp</dimen>
+
+    <dimen name="home_tvGreetingTitle_size">20sp</dimen>
+    <dimen name="home_tvGreetingSubtitle_size">15sp</dimen>
+    <dimen name="home_viewSearchBarText_size">14sp</dimen>
+    <dimen name="home_tvBannerTitle_size">20sp</dimen>
+    <dimen name="home_tvBannerDesc_size">14sp</dimen>
+    <dimen name="home_btnBannerActionText_size">14sp</dimen>
+    <dimen name="home_tvSectionCat_size">18sp</dimen>
+    <dimen name="home_tvSectionCatTextCards_size">13sp</dimen>
 
     <!-- SearchFragment -->
 
     <!-- LoginFragment -->
-    <dimen name="login_ivAppLogo_size">80dp</dimen>
+    <dimen name="login_ivAppLogo_size">72dp</dimen>
     <dimen name="login_ivAppLogo_marginBottom">0dp</dimen>
     <dimen name="login_card_padding">16dp</dimen>
     <dimen name="login_card_constraintWidth_max">400dp</dimen>
@@ -26,7 +36,7 @@
     <dimen name="login_tvNoAccount">16sp</dimen>
 
     <!-- RegisterFragment -->
-    <dimen name="register_ivAppLogo_size">64dp</dimen>
+    <dimen name="register_ivAppLogo_size">58dp</dimen>
     <dimen name="register_ivAppLogo_marginTop">0dp</dimen>
     <dimen name="register_card_marginHorizontal">0dp</dimen>
     <dimen name="register_btn_marginHorizontal">0dp</dimen>
@@ -64,7 +74,7 @@
     <!-- PlansFragment -->
     <dimen name="plans_content_paddingVertical">16dp</dimen>
     <dimen name="plans_content_paddingHorizontal">22dp</dimen>
-    <dimen name="plans_icon_size">54dp</dimen>
+    <dimen name="plans_icon_size">48dp</dimen>
     <dimen name="plans_textTitle_marginTop">10dp</dimen>
     <dimen name="plans_textTitle_size">22sp</dimen>
     <dimen name="plans_textSubTitle_size">16sp</dimen>
@@ -77,5 +87,8 @@
     <dimen name="plans_btnPlansRestore_marginTop">10dp</dimen>
 
     <!-- ManagePlanFragment -->
+
+    <!-- Dialogs -->
+    <dimen name="dialogsRegister_btn_text">13sp</dimen>
 
 </resources>

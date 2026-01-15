@@ -24,7 +24,7 @@
         android:layout_weight="1"
         android:textAppearance="?attr/textAppearanceBody1"
         android:textColor="@color/colorOnSurface"
-        android:textSize="15sp"
+        android:textSize="@dimen/plans_tvBenefit_size"
         tools:text="Acesso ilimitado a todas as receitas" />
 
 </LinearLayout>
