@@ -22,6 +22,7 @@ import com.luizeduardobrandao.appreceitascha.databinding.FragmentLoginBinding
 import com.luizeduardobrandao.appreceitascha.R
 import com.luizeduardobrandao.appreceitascha.ui.auth.AuthErrorCode
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
+import com.luizeduardobrandao.appreceitascha.ui.common.extensions.showEmailVerificationDialog
 import com.luizeduardobrandao.appreceitascha.ui.common.utils.KeyboardUtils
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidationRules
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidator
@@ -190,13 +191,13 @@ class LoginFragment : Fragment() {
 
                 handleSignInResult(result)
 
-            } catch (e: GetCredentialCancellationException) {
+            } catch (_: GetCredentialCancellationException) {
                 SnackbarFragment.showWarning(
                     binding.root,
                     getString(R.string.google_sign_in_cancelled)
                 )
 
-            } catch (e: NoCredentialException) {
+            } catch (_: NoCredentialException) {
                 SnackbarFragment.showError(
                     binding.root,
                     "Nenhuma conta Google disponível (ou Play Services/Google Play desatualizados)."
@@ -208,7 +209,7 @@ class LoginFragment : Fragment() {
                     "Falha no login Google: ${e.message ?: "erro do provedor"}"
                 )
 
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 SnackbarFragment.showError(
                     binding.root,
                     getString(R.string.error_google_signin_generic)
@@ -230,7 +231,7 @@ class LoginFragment : Fragment() {
                         // Envia o token para o ViewModel
                         viewModel.signInWithGoogle(idToken)
 
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         SnackbarFragment.showError(
                             binding.root,
                             getString(R.string.error_google_signin_generic)
@@ -272,22 +273,27 @@ class LoginFragment : Fragment() {
         // Mostra/esconde ProgressBar
         binding.progressLogin.visibility = if (state.isLoading) View.VISIBLE else View.GONE
 
-        // ✅ Traduz código de erro para mensagem
+        // Traduz código de erro para mensagem ou Dialog
         state.errorCode?.let { errorCode ->
-            val message = when (errorCode) {
-                AuthErrorCode.INVALID_CREDENTIALS ->
-                    getString(R.string.error_login_invalid_credentials)
 
-                AuthErrorCode.EMAIL_NOT_VERIFIED ->
-                    getString(R.string.email_not_verified, state.userEmail ?: "")
+            if (errorCode == AuthErrorCode.EMAIL_NOT_VERIFIED) {
+                // Passamos o clearErrorMessage APENAS na lambda (quando o dialog fechar)
+                requireContext().showEmailVerificationDialog(state.userEmail ?: "") {
+                    viewModel.clearErrorMessage()
+                }
 
-                AuthErrorCode.GOOGLE_SIGNIN_FAILED ->
-                    getString(R.string.error_google_signin_generic)
+            } else {
+                // Para erros normais (Snackbar), mantemos a lógica antiga
+                val message = when (errorCode) {
+                    AuthErrorCode.INVALID_CREDENTIALS -> getString(R.string.error_login_invalid_credentials)
+                    AuthErrorCode.GOOGLE_SIGNIN_FAILED -> getString(R.string.error_google_signin_generic)
+                    else -> getString(R.string.error_login_generic)
+                }
+                SnackbarFragment.showError(binding.root, message)
 
-                else -> getString(R.string.error_login_generic)
+                // Erros de snackbar podem ser limpos imediatamente
+                viewModel.clearErrorMessage()
             }
-            SnackbarFragment.showError(binding.root, message)
-            viewModel.clearErrorMessage()
         }
 
         // Se login foi bem-sucedido, navega para a Home

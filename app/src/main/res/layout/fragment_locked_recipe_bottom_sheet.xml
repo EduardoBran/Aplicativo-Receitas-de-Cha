@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomSheetContent"
@@ -28,7 +29,7 @@
             android:id="@+id/ivLockIcon"
             android:layout_width="@dimen/locked_ivLockIcon_size"
             android:layout_height="@dimen/locked_ivLockIcon_size"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_recipe_lock_24"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +41,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/locked_tvTitle_tvTitle"
             android:text="@string/locked_sheet_title"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
@@ -70,7 +71,7 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/locked_btnOffer_height"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/locked_btnOffer_marginTop"
             android:backgroundTint="@color/white"
             android:text="@string/locked_sheet_btn_offer"
             android:textColor="@color/color_primary_base"
@@ -82,4 +83,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.core.widget.NestedScrollView>

@@ -119,7 +119,9 @@
     <dimen name="locked_btnClose_size">32dp</dimen>
     <dimen name="locked_ivLockIcon_size">64dp</dimen>
     <dimen name="locked_tvTitle_size">24sp</dimen>
+    <dimen name="locked_tvTitle_tvTitle">16dp</dimen>
     <dimen name="locked_tvDesc_size">16sp</dimen>
+    <dimen name="locked_btnOffer_marginTop">32dp</dimen>
     <dimen name="locked_btnOffer_height">56dp</dimen>
     <dimen name="locked_btnOffer_text">14sp</dimen>
 

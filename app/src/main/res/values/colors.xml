@@ -168,4 +168,5 @@
     <color name="manage_plan_hint">@color/text_secondary</color>
 
     <color name="tvDescLockedBottomSheet">#E0F2F1</color>
+    <color name="bg_email_highlight_color">#F5F5F5</color>
 </resources>

@@ -23,6 +23,7 @@ import com.luizeduardobrandao.appreceitascha.domain.auth.AuthRepository
 import com.luizeduardobrandao.appreceitascha.domain.auth.PlanType
 import com.luizeduardobrandao.appreceitascha.ui.auth.AuthErrorCode
 import com.luizeduardobrandao.appreceitascha.ui.common.SnackbarFragment
+import com.luizeduardobrandao.appreceitascha.ui.common.extensions.showEmailVerificationDialog
 import com.luizeduardobrandao.appreceitascha.ui.common.utils.KeyboardUtils
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidationRules
 import com.luizeduardobrandao.appreceitascha.ui.common.validation.FieldValidator
@@ -255,7 +256,7 @@ class RegisterFragment : Fragment() {
 
             // 2. Configurar visibilidade de campos baseada no provider
             if (isGoogleUser) {
-                // Esconde todo container de senha
+                // Esconde container de senha
                 binding.containerPasswordFields.isVisible = false
                 // Mostra aviso Google
                 binding.containerGoogleManaged.isVisible = true
@@ -332,13 +333,21 @@ class RegisterFragment : Fragment() {
 
         if (state.isRegistered && state.registeredUser != null && !hasNavigatedToHome) {
             hasNavigatedToHome = true
+
             if (state.verificationEmailSent) {
+                // Feedback com DialogModal imediato com ação de abrir e-mail
+                requireContext().showEmailVerificationDialog(state.registeredUser.email) {
+                    // Só navega para sair da tela de cadastro após o usuário clicar em "Entendi"
+                    findNavController().navigateUp()
+                }
+            } else {
+                // Fallback (caso raro onde e-mail não foi enviado mas cadastro ocorreu)
                 SnackbarFragment.showSuccess(
                     binding.root,
-                    getString(R.string.email_verification_sent, state.registeredUser.email)
+                    getString(R.string.register_success_no_email)
                 )
+                binding.root.postDelayed({ findNavController().navigateUp() }, 2000)
             }
-            binding.root.postDelayed({ findNavController().navigateUp() }, 2500)
         }
     }
 

@@ -82,8 +82,19 @@
     <string name="dialog_no">Não</string>
 
     <!-- Email Verification -->
-    <string name="email_verification_sent">E-mail enviado para %s. Confirme para fazer login.</string>
-    <string name="email_not_verified">Confirme o e-mail enviado para %s antes de entrar.</string>
+    <string name="email_verification_sent">Conta criada! Ative seu acesso pelo link enviado para %s.</string>
+    <string name="email_not_verified">Login bloqueado. Valide sua conta no link enviado para %s.</string>
+
+    <string name="dialog_email_verification_title">Verifique seu e-mail</string>
+    <string name="dialog_email_verification_desc">Enviamos um link de confirmação para:</string>
+    <string name="dialog_email_verification_instruction">Toque no link recebido para ativar sua conta e liberar o acesso.</string>
+    <string name="dialog_email_verification_spam_warning">Não encontrou? Verifique sua caixa de Spam ou Lixo Eletrônico.</string>
+
+    <string name="dialog_action_understood">Entendi</string>
+    <string name="dialog_action_open_email">Abrir App de E-mail</string>
+    <string name="dialog_chooser_title">Escolha seu app de e-mail</string>
+
+    <string name="register_success_no_email">Cadastro realizado! Verifique seu e-mail.</string>
 
     <!-- Erros de cadastro -->
     <string name="error_name_required">Informe o nome.</string>
